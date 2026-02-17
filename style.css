@@ -209,6 +209,36 @@ h3 {
     color: var(--primary-orange);
 }
 
+.nav-socials {
+    display: flex;
+    gap: 0.8rem;
+    margin-left: 1rem;
+    align-items: center;
+}
+
+.nav-socials a {
+    text-decoration: none;
+    color: var(--primary-blue);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    transition: all 0.3s ease;
+    font-size: 1.2rem;
+    backdrop-filter: blur(4px);
+}
+
+.nav-socials a:hover {
+    background: white;
+    color: var(--primary-orange);
+    transform: translateY(-3px) rotate(8deg);
+    box-shadow: 0 5px 15px rgba(242, 101, 34, 0.2);
+}
+
 .mobile-menu-btn {
     display: none;
     /* Hidden on desktop */
