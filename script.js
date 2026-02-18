@@ -39,4 +39,31 @@ document.addEventListener('DOMContentLoaded', () => {
     // Note: Since we hid the links in CSS for mobile, a more robust solution 
     // would involve toggling a class on the nav-links to show/hide them.
     // For this task, we'll keep it simple or expand if requested.
+
+    // Login Modal Logic
+    const loginBtn = document.getElementById('loginBtn');
+    const loginModal = document.getElementById('loginModal');
+    const closeBtn = document.querySelector('.close-btn');
+
+    if (loginBtn && loginModal && closeBtn) {
+        // Open Modal
+        loginBtn.addEventListener('click', () => {
+            loginModal.classList.add('show');
+            document.body.style.overflow = 'hidden'; // Prevent background scrolling
+        });
+
+        // Close Modal via X button
+        closeBtn.addEventListener('click', () => {
+            loginModal.classList.remove('show');
+            document.body.style.overflow = '';
+        });
+
+        // Close Modal via Outside Click
+        window.addEventListener('click', (e) => {
+            if (e.target === loginModal) {
+                loginModal.classList.remove('show');
+                document.body.style.overflow = '';
+            }
+        });
+    }
 });
