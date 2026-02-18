@@ -35,10 +35,37 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // Mobile Menu Toggle (Basic Implementation)
-    // Note: Since we hid the links in CSS for mobile, a more robust solution 
-    // would involve toggling a class on the nav-links to show/hide them.
-    // For this task, we'll keep it simple or expand if requested.
+    // Mobile Menu Toggle
+    const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+    const navLinks = document.querySelector('.nav-links');
+
+    if (mobileMenuBtn && navLinks) {
+        mobileMenuBtn.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+            mobileMenuBtn.textContent = navLinks.classList.contains('active') ? 'Close' : 'Menu';
+        });
+
+        // Close menu when a link is clicked
+        navLinks.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                navLinks.classList.remove('active');
+                mobileMenuBtn.textContent = 'Menu';
+            });
+        });
+    }
+
+    // Mobile Login Link Trigger
+    const mobileLoginLink = document.getElementById('mobileLoginLink');
+    if (mobileLoginLink) {
+        mobileLoginLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            const loginModal = document.getElementById('loginModal');
+            if (loginModal) {
+                loginModal.classList.add('show');
+                document.body.style.overflow = 'hidden';
+            }
+        });
+    }
 
     // Login Modal Logic
     const loginBtn = document.getElementById('loginBtn');

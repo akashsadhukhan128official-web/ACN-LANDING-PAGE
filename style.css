@@ -176,6 +176,12 @@ h3 {
         inset 0 0 20px rgba(255, 255, 255, 0.5);
 }
 
+.nav-actions {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
 .logo {
     font-size: 1.5rem;
     font-weight: 800;
@@ -187,6 +193,10 @@ h3 {
     list-style: none;
     display: flex;
     gap: 1rem;
+}
+
+.mobile-only {
+    display: none;
 }
 
 .nav-links a {
@@ -212,7 +222,6 @@ h3 {
 .nav-socials {
     display: flex;
     gap: 0.8rem;
-    margin-left: 1rem;
     align-items: center;
 }
 
@@ -310,7 +319,6 @@ h3 {
     backdrop-filter: blur(5px);
     position: relative;
     overflow: hidden;
-    margin-right: 1rem;
 }
 
 .login-btn::before {
@@ -883,14 +891,54 @@ h3 {
 }
 
 /* Mobile Responsiveness */
+/* Mobile Responsiveness */
 @media (max-width: 768px) {
+    .navbar {
+        justify-content: space-between;
+        padding: 0.8rem 1.5rem;
+    }
+
     .hero-headline {
         font-size: 2.5rem;
     }
 
+    .mobile-menu-btn {
+        display: block;
+        z-index: 1001;
+    }
+
     .nav-links {
         display: none;
-        /* Hide nav links on mobile for now */
+        flex-direction: column;
+        position: absolute;
+        top: 80px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(15px);
+        width: 90%;
+        padding: 2rem;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        border: 1px solid rgba(255, 255, 255, 0.5);
+    }
+
+    .nav-links.active {
+        display: flex;
+        animation: fadeIn 0.3s ease;
+    }
+
+    .mobile-only {
+        display: block;
+        margin-top: 1rem;
+        border-top: 1px solid #eee;
+        padding-top: 1rem;
+    }
+
+    .nav-actions {
+        display: none;
+        /* Hide desktop actions on mobile */
     }
 
     .plan-card.popular {
@@ -918,5 +966,17 @@ h3 {
 
     .social-icons {
         justify-content: center;
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
     }
 }
