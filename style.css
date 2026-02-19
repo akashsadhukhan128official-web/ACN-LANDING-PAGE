@@ -21,27 +21,24 @@
 
 body {
     font-family: var(--font-body);
-    /* New Deep Navy Gradient Background */
-    background: linear-gradient(180deg, #0f172a 0%, #172554 40%, #1e3a8a 70%, #eff6ff 100%);
+    /* Premium SaaS Gradient Background */
+    background: linear-gradient(180deg, #eef2ff 0%, #f8fafc 50%, #ffffff 100%);
     background-attachment: fixed;
     color: var(--text-dark);
-    /* Default text stays dark for lower sections with light bg */
     line-height: 1.6;
     overflow-x: hidden;
     position: relative;
 }
 
-/* Hero Text Override for Dark Background */
-.hero-headline,
-.hero-subheadline {
-    color: #f8fafc !important;
-    /* White/Light text for contrast on navy */
-    text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+/* Hero Text - Restore Dark Contrast */
+.hero-headline {
+    color: var(--primary-blue);
+    text-shadow: none;
 }
 
 .hero-subheadline {
-    color: #cbd5e1 !important;
-    /* Light cool gray */
+    color: #475569;
+    /* Slate gray */
 }
 
 /* Background Layer Styles */
@@ -56,33 +53,45 @@ body {
     pointer-events: none;
 }
 
-/* Radial Glow behind Headline */
+/* Headline Highlight (Soft White Glow to lift text) */
 .glow-effect {
     position: absolute;
-    top: -20%;
+    top: -25%;
     left: 50%;
     transform: translateX(-50%);
-    width: 800px;
-    height: 800px;
-    background: radial-gradient(circle, rgba(242, 101, 34, 0.15) 0%, rgba(242, 101, 34, 0) 70%);
+    width: 900px;
+    height: 900px;
+    background: radial-gradient(circle, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 0) 60%);
     filter: blur(80px);
-    animation: pulse-glow 8s infinite alternate;
+    opacity: 0.8;
 }
 
-/* Abstract Wave Shape */
+/* Abstract Wave (Very Subtle Blue Top Right) */
 .wave-shape {
     position: absolute;
-    top: 10%;
+    top: -15%;
     right: -10%;
-    width: 600px;
-    height: 600px;
-    background: radial-gradient(circle, rgba(59, 130, 246, 0.1) 0%, rgba(30, 58, 138, 0) 70%);
-    border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
-    filter: blur(60px);
-    animation: float-wave 20s infinite linear;
+    width: 800px;
+    height: 800px;
+    background: radial-gradient(circle, rgba(59, 130, 246, 0.06) 0%, rgba(59, 130, 246, 0) 70%);
+    border-radius: 50%;
+    filter: blur(100px);
+    animation: float-wave 30s infinite ease-in-out;
 }
 
-/* Floating Particles */
+/* CTA Glow (Barely there warm warmth) */
+.cta-glow {
+    position: absolute;
+    bottom: 10%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 600px;
+    height: 500px;
+    background: radial-gradient(circle, rgba(242, 101, 34, 0.05) 0%, rgba(242, 101, 34, 0) 70%);
+    filter: blur(80px);
+}
+
+/* Floating Particles (Minimal tech specks) */
 .particles {
     position: absolute;
     width: 100%;
@@ -91,63 +100,93 @@ body {
 
 .particle {
     position: absolute;
-    background: rgba(255, 255, 255, 0.3);
+    background: rgba(15, 23, 42, 0.1);
+    /* Slate 900 low opacity */
     border-radius: 50%;
-    box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
-    animation: float-particle 10s infinite ease-in-out;
+    box-shadow: none;
+    animation: float-particle 20s infinite ease-in-out;
 }
 
 .particle:nth-child(1) {
-    top: 20%;
-    left: 20%;
+    top: 15%;
+    left: 10%;
     width: 6px;
     height: 6px;
-    animation-duration: 12s;
+    animation-duration: 25s;
 }
 
 .particle:nth-child(2) {
-    top: 60%;
-    left: 80%;
+    top: 65%;
+    left: 85%;
     width: 4px;
     height: 4px;
-    animation-duration: 15s;
-    animation-delay: 1s;
+    animation-duration: 30s;
+    animation-delay: 2s;
 }
 
 .particle:nth-child(3) {
-    top: 40%;
-    left: 40%;
+    top: 35%;
+    left: 45%;
     width: 8px;
     height: 8px;
-    animation-duration: 18s;
-    animation-delay: 2s;
+    animation-duration: 35s;
+    animation-delay: 5s;
 }
 
 .particle:nth-child(4) {
     top: 80%;
-    left: 10%;
+    left: 15%;
     width: 5px;
     height: 5px;
-    animation-duration: 20s;
-    animation-delay: 0.5s;
+    animation-duration: 28s;
+    animation-delay: 1s;
 }
 
 .particle:nth-child(5) {
-    top: 15%;
+    top: 20%;
     left: 70%;
     width: 7px;
     height: 7px;
-    animation-duration: 14s;
+    animation-duration: 22s;
     animation-delay: 3s;
 }
 
 .particle:nth-child(6) {
-    top: 70%;
-    left: 50%;
+    top: 60%;
+    left: 40%;
     width: 3px;
     height: 3px;
-    animation-duration: 16s;
-    animation-delay: 1.5s;
+    animation-duration: 32s;
+    animation-delay: 4s;
+}
+
+/* Animations */
+@keyframes float-wave {
+    0% {
+        transform: translate(0, 0);
+    }
+
+    50% {
+        transform: translate(-20px, 15px);
+    }
+
+    100% {
+        transform: translate(0, 0);
+    }
+}
+
+@keyframes float-particle {
+
+    0%,
+    100% {
+        transform: translateY(0);
+        opacity: 0.1;
+    }
+
+    50% {
+        transform: translateY(-20px);
+        opacity: 0.2;
+    }
 }
 
 /* Animations */
