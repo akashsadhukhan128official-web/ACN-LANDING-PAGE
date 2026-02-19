@@ -796,26 +796,460 @@ body {
     margin-bottom: 1.5rem;
 }
 
-/* Mobile Responsive */
+/* --- Payments Page Styles --- */
+
+/* Alert Banner */
+.alert-banner {
+    display: none;
+    /* Hidden by default */
+    align-items: center;
+    gap: 15px;
+    background: rgba(220, 53, 69, 0.15);
+    border: 1px solid rgba(220, 53, 69, 0.4);
+    color: #a71d2a;
+    padding: 1rem 1.5rem;
+    margin-bottom: 2rem;
+    position: relative;
+    border-radius: 15px;
+}
+
+.alert-banner i {
+    font-size: 1.5rem;
+}
+
+.alert-banner .alert-text span {
+    font-weight: 700;
+}
+
+.close-alert {
+    background: none;
+    border: none;
+    color: #a71d2a;
+    font-size: 1.2rem;
+    position: absolute;
+    right: 15px;
+    cursor: pointer;
+}
+
+/* Payment Layout Grid */
+.payments-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+}
+
+/* Billing Summary */
+.billing-summary h2 {
+    color: var(--primary-blue);
+    margin-bottom: 1.5rem;
+}
+
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.8rem;
+    color: #666;
+    font-size: 0.95rem;
+}
+
+.summary-row .highlight {
+    color: var(--text-dark);
+    font-weight: 600;
+}
+
+.total-row {
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    padding-top: 1rem;
+    margin-top: 1rem;
+    font-weight: 700;
+    color: var(--primary-blue);
+    font-size: 1.2rem;
+}
+
+.billing-dates {
+    display: flex;
+    gap: 2rem;
+    margin-top: 1.5rem;
+}
+
+.date-box {
+    display: flex;
+    flex-direction: column;
+}
+
+.date-box .label {
+    font-size: 0.8rem;
+    color: #888;
+}
+
+.date-box .value {
+    font-weight: 600;
+    color: var(--text-dark);
+}
+
+.date-box .value.overdue {
+    color: #dc3545;
+}
+
+.account-status {
+    margin-top: 1.5rem;
+}
+
+/* Pay Now Card */
+.pay-now-card {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(240, 248, 255, 0.8));
+    border: 1px solid rgba(242, 101, 34, 0.3);
+}
+
+.pay-now-card h2 {
+    color: var(--primary-blue);
+    margin-bottom: 1rem;
+}
+
+.amount-display {
+    text-align: center;
+    margin: 1.5rem 0;
+    color: var(--primary-blue);
+}
+
+.amount-display .currency {
+    font-size: 1.5rem;
+    vertical-align: top;
+    font-weight: 600;
+}
+
+.amount-display .amount {
+    font-size: 3rem;
+    font-weight: 800;
+    line-height: 1;
+}
+
+.payment-method-selector {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 2rem;
+}
+
+.method-card {
+    background: rgba(255, 255, 255, 0.6);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+    padding: 10px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+}
+
+.method-card:hover {
+    background: rgba(255, 255, 255, 0.9);
+    transform: translateY(-2px);
+}
+
+.method-card.selected {
+    border-color: var(--primary-orange);
+    background: rgba(242, 101, 34, 0.1);
+}
+
+.method-card input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.method-card .icon {
+    font-size: 1.5rem;
+    color: var(--primary-blue);
+}
+
+.method-card .label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #555;
+}
+
+.secure-badge {
+    text-align: center;
+    font-size: 0.8rem;
+    color: #27ae60;
+    margin: 1rem 0 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+}
+
+.gateway-logos {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    opacity: 0.6;
+}
+
+.logo-box {
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: #888;
+}
+
+/* Auto Pay Toggle */
+.auto-pay-card {
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.auto-pay-content {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.auto-pay-content .icon-wrapper {
+    width: 50px;
+    height: 50px;
+    background: rgba(31, 78, 140, 0.1);
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.5rem;
+    color: var(--primary-blue);
+}
+
+.auto-pay-content .text-wrapper {
+    flex: 1;
+}
+
+.auto-pay-content h3 {
+    font-size: 1.1rem;
+    margin-bottom: 2px;
+}
+
+.auto-pay-content p {
+    font-size: 0.8rem;
+    color: #888;
+}
+
+/* Toggle Switch */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+
+input:checked+.slider {
+    background-color: var(--primary-orange);
+}
+
+input:focus+.slider {
+    box-shadow: 0 0 1px var(--primary-orange);
+}
+
+input:checked+.slider:before {
+    -webkit-transform: translateX(26px);
+    -ms-transform: translateX(26px);
+    transform: translateX(26px);
+}
+
+.slider.round {
+    border-radius: 34px;
+}
+
+.slider.round:before {
+    border-radius: 50%;
+}
+
+/* History Table */
+.history-card h2 {
+    font-size: 1.4rem;
+    margin-bottom: 1rem;
+    color: var(--primary-blue);
+}
+
+.glass-table {
+    width: 100%;
+    margin-top: 1rem;
+}
+
+.glass-table th {
+    font-size: 0.9rem;
+    color: #888;
+    font-weight: 500;
+}
+
+.glass-table td {
+    font-size: 0.95rem;
+    padding: 15px 12px;
+}
+
+.download-btn {
+    background: none;
+    border: none;
+    color: var(--primary-blue);
+    cursor: pointer;
+    font-size: 1.2rem;
+    transition: color 0.3s;
+}
+
+.download-btn:hover {
+    color: var(--primary-orange);
+}
+
+/* Confirm Details */
+.confirm-details {
+    background: rgba(255, 255, 255, 0.5);
+    padding: 1.5rem;
+    border-radius: 15px;
+    margin: 1.5rem 0;
+}
+
+.detail-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.detail-row:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.price-text {
+    font-weight: 700;
+    color: var(--primary-blue);
+    font-size: 1.2rem;
+}
+
+.method-text {
+    font-weight: 600;
+    color: #555;
+}
+
+/* Loader */
+.loader {
+    border: 5px solid rgba(242, 101, 34, 0.2);
+    border-top: 5px solid var(--primary-orange);
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 1.5rem;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.text-center {
+    text-align: center;
+}
+
+.success-icon-anim i {
+    font-size: 4rem;
+    color: #27ae60;
+    margin-bottom: 1rem;
+    animation: scaleUp 0.5s ease-out;
+}
+
+@keyframes scaleUp {
+    from {
+        transform: scale(0);
+    }
+
+    to {
+        transform: scale(1);
+    }
+}
+
+.text-success {
+    color: #27ae60;
+    margin-bottom: 0.5rem;
+}
+
+.mono-font {
+    font-family: monospace;
+    background: rgba(0, 0, 0, 0.05);
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+
+.small-text {
+    font-size: 0.85rem;
+    color: #888;
+    margin-top: 0.5rem;
+    margin-bottom: 2rem;
+}
+
+/* Responsive Payments */
 @media (max-width: 900px) {
-    .dashboard-grid {
+    .payments-grid {
         grid-template-columns: 1fr;
     }
+}
 
-    .dashboard-grid-secondary {
-        grid-template-columns: 1fr;
-    }
+.dashboard-grid {
+    grid-template-columns: 1fr;
+}
 
-    .welcome-card {
-        flex-direction: column;
-        text-align: center;
-        gap: 1.5rem;
-    }
+.dashboard-grid-secondary {
+    grid-template-columns: 1fr;
+}
 
-    .user-details {
-        flex-direction: column;
-        gap: 1rem;
-    }
+.welcome-card {
+    flex-direction: column;
+    text-align: center;
+    gap: 1.5rem;
+}
+
+.user-details {
+    flex-direction: column;
+    gap: 1rem;
+}
 }
 
 @media (max-width: 768px) {

@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ACN Broadband | Payments & Billing</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="dashboard.css">
+</head>
+
+<body>
+
+    <!-- Top Navbar -->
+    <nav class="dashboard-nav">
+        <div class="container nav-content">
+            <div class="logo">ACN Broadband</div>
+            <div class="nav-right">
+                <ul class="dashboard-links">
+                    <li><a href="dashboard.html">Dashboard</a></li>
+                    <li><a href="plans.html">More Plans</a></li>
+                    <li><a href="payments.html" class="active">Payments</a></li>
+                    <li><a href="#">Support</a></li>
+                </ul>
+                <div class="user-profile">
+                    <img src="https://ui-avatars.com/api/?name=Akash+Sadhukhan&background=F26522&color=fff"
+                        alt="Profile" class="avatar">
+                    <span class="logout-btn"><i class="ph ph-sign-out"></i> Logout</span>
+                </div>
+                <button class="mobile-menu-btn"><i class="ph ph-list"></i></button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container dashboard-container">
+
+        <!-- Late Fee Banner (Hidden by Default) -->
+        <div id="lateFeeBanner" class="alert-banner glass-card fade-in">
+            <i class="ph ph-warning-circle"></i>
+            <div class="alert-text">
+                Your payment is overdue! A late fee of <span>₹50</span> has been added.
+            </div>
+            <button class="close-alert"><i class="ph ph-x"></i></button>
+        </div>
+
+        <div class="page-header fade-in">
+            <h1>Payments & Billing</h1>
+            <p>Manage your invoices and payment methods securely.</p>
+        </div>
+
+        <div class="dashboard-grid payments-grid fade-in delay-1">
+
+            <!-- Left Column: Summary & Pay Now -->
+            <div class="payments-left">
+                <!-- Billing Summary -->
+                <div class="glass-card billing-summary">
+                    <h2>Billing Summary</h2>
+                    <div class="summary-row">
+                        <span>Current Plan</span>
+                        <span class="highlight">ACN 100 Mbps Unlimited</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Monthly Rental</span>
+                        <span>₹699.00</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>CGST (9%)</span>
+                        <span>₹62.91</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>SGST (9%)</span>
+                        <span>₹62.91</span>
+                    </div>
+                    <div class="summary-row total-row">
+                        <span>Total Payable</span>
+                        <span class="total-amount" id="displayAmount">₹824.82</span>
+                    </div>
+                    <div class="billing-dates">
+                        <div class="date-box">
+                            <span class="label">Bill Date</span>
+                            <span class="value">01 Aug 2026</span>
+                        </div>
+                        <div class="date-box">
+                            <span class="label">Due Date</span>
+                            <span class="value overdue">10 Aug 2026</span>
+                        </div>
+                    </div>
+                    <div class="account-status">
+                        <span class="status-badge pending">Payment Pending</span>
+                    </div>
+                </div>
+
+                <!-- Pay Now Section -->
+                <div class="glass-card pay-now-card">
+                    <h2>Pay Now</h2>
+                    <div class="amount-display">
+                        <span class="currency">₹</span>
+                        <span class="amount" id="payAmount">824.82</span>
+                    </div>
+
+                    <div class="payment-method-selector">
+                        <label class="method-card selected">
+                            <input type="radio" name="payment_method" value="UPI" checked>
+                            <span class="icon"><i class="ph ph-qr-code"></i></span>
+                            <span class="label">UPI</span>
+                        </label>
+                        <label class="method-card">
+                            <input type="radio" name="payment_method" value="Card">
+                            <span class="icon"><i class="ph ph-credit-card"></i></span>
+                            <span class="label">Card</span>
+                        </label>
+                        <label class="method-card">
+                            <input type="radio" name="payment_method" value="NetBanking">
+                            <span class="icon"><i class="ph ph-bank"></i></span>
+                            <span class="label">NetBanking</span>
+                        </label>
+                    </div>
+
+                    <button class="btn-primary width-full proceed-btn" id="proceedBtn">Proceed to Pay</button>
+
+                    <div class="secure-badge">
+                        <i class="ph ph-lock-key"></i> 100% Secure Payment via
+                    </div>
+                    <div class="gateway-logos">
+                        <span class="logo-box">Razorpay</span>
+                        <span class="logo-box">Stripe</span>
+                        <span class="logo-box">PhonePe</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Auto Pay & History -->
+            <div class="payments-right">
+                <!-- Auto Pay Toggle -->
+                <div class="glass-card auto-pay-card">
+                    <div class="auto-pay-content">
+                        <div class="icon-wrapper"><i class="ph ph-arrows-clockwise"></i></div>
+                        <div class="text-wrapper">
+                            <h3>Enable Auto Pay</h3>
+                            <p>Never miss a due date again.</p>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" id="autoPayToggle">
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Payment History -->
+                <div class="glass-card history-card">
+                    <h2>Payment History</h2>
+                    <div class="table-responsive">
+                        <table class="history-table glass-table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Method</th>
+                                    <th>Amount</th>
+                                    <th>Status</th>
+                                    <th>Invoice</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>10 Jul 2026</td>
+                                    <td>UPI</td>
+                                    <td>₹824.82</td>
+                                    <td><span class="status-badge success">Paid</span></td>
+                                    <td><button class="download-btn"><i class="ph ph-download-simple"></i></button></td>
+                                </tr>
+                                <tr>
+                                    <td>10 Jun 2026</td>
+                                    <td>Card</td>
+                                    <td>₹824.82</td>
+                                    <td><span class="status-badge success">Paid</span></td>
+                                    <td><button class="download-btn"><i class="ph ph-download-simple"></i></button></td>
+                                </tr>
+                                <tr>
+                                    <td>10 May 2026</td>
+                                    <td>UPI</td>
+                                    <td>₹824.82</td>
+                                    <td><span class="status-badge success">Paid</span></td>
+                                    <td><button class="download-btn"><i class="ph ph-download-simple"></i></button></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div id="confirmPaymentModal" class="modal">
+        <div class="modal-content glass-modal">
+            <span class="close-btn" id="closeConfirmPay">&times;</span>
+            <h2>Confirm Payment</h2>
+            <div class="confirm-details">
+                <div class="detail-row">
+                    <span>Amount</span>
+                    <span class="price-text" id="confirmAmount">₹824.82</span>
+                </div>
+                <div class="detail-row">
+                    <span>Payment Method</span>
+                    <span class="method-text" id="confirmMethod">UPI</span>
+                </div>
+            </div>
+            <p class="impact-note">You will be redirected to the secure payment gateway.</p>
+            <button class="btn-primary width-full" id="finalPayBtn">Confirm & Pay</button>
+            <button class="btn-secondary-outline width-full" style="margin-top: 10px;" id="cancelPayBtn">Cancel</button>
+        </div>
+    </div>
+
+    <!-- Processing Modal -->
+    <div id="processingModal" class="modal">
+        <div class="modal-content glass-modal text-center">
+            <div class="loader"></div>
+            <h3>Processing Payment...</h3>
+            <p>Please do not close this window.</p>
+        </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div id="successModal" class="modal">
+        <div class="modal-content glass-modal text-center">
+            <div class="success-icon-anim">
+                <i class="ph ph-check-circle"></i>
+            </div>
+            <h2 class="text-success">Payment Successful!</h2>
+            <p>Transaction ID: <span class="mono-font">TXN88291039</span></p>
+            <p class="small-text">An invoice has been sent to your registered email & mobile.</p>
+            <button class="btn-primary width-full" id="closeSuccessBtn">Done</button>
+        </div>
+    </div>
+
+
+    <!-- Footer -->
+    <footer class="dashboard-footer">
+        <div class="container">
+            <p>&copy; 2026 ACN Broadband. All rights reserved. | <a href="#">Privacy Policy</a> | <a href="#">Terms</a>
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile Menu Toggle
+        document.querySelector('.mobile-menu-btn').addEventListener('click', () => {
+            document.querySelector('.dashboard-links').classList.toggle('active');
+        });
+
+        // Logout
+        document.querySelector('.logout-btn').addEventListener('click', () => {
+            window.location.href = 'index.html';
+        });
+
+        // Late Fee Logic (Simulation)
+        const lateFeeBanner = document.getElementById('lateFeeBanner');
+        const displayAmount = document.getElementById('displayAmount');
+        const payAmount = document.getElementById('payAmount');
+
+        // Mock date check: Assume strictly for demo that today is past due date
+        const isOverdue = true;
+        if (isOverdue) {
+            lateFeeBanner.style.display = 'flex';
+            // Update amounts to reflect typical late fee if desired, but sticking to design request
+            // Adding 50 to base 824.82
+            const base = 824.82;
+            const lateFee = 50.00;
+            const total = (base + lateFee).toFixed(2);
+
+            displayAmount.textContent = '₹' + total;
+            payAmount.textContent = total;
+            document.querySelector('.alert-text span').textContent = '₹' + lateFee;
+        }
+
+        document.querySelector('.close-alert').addEventListener('click', () => {
+            lateFeeBanner.style.display = 'none';
+        });
+
+
+        // Payment Flow
+        const proceedBtn = document.getElementById('proceedBtn');
+        const confirmModal = document.getElementById('confirmPaymentModal');
+        const processingModal = document.getElementById('processingModal');
+        const successModal = document.getElementById('successModal');
+
+        const closeConfirmPay = document.getElementById('closeConfirmPay');
+        const cancelPayBtn = document.getElementById('cancelPayBtn');
+        const finalPayBtn = document.getElementById('finalPayBtn');
+        const closeSuccessBtn = document.getElementById('closeSuccessBtn');
+
+        // Method Highlight
+        const methodRadios = document.querySelectorAll('input[name="payment_method"]');
+        methodRadios.forEach(radio => {
+            radio.addEventListener('change', (e) => {
+                document.querySelectorAll('.method-card').forEach(c => c.classList.remove('selected'));
+                e.target.closest('.method-card').classList.add('selected');
+            });
+        });
+
+        proceedBtn.addEventListener('click', () => {
+            const selectedMethod = document.querySelector('input[name="payment_method"]:checked').value;
+            const amount = payAmount.textContent;
+
+            document.getElementById('confirmMethod').textContent = selectedMethod;
+            document.getElementById('confirmAmount').textContent = '₹' + amount;
+
+            confirmModal.classList.add('show');
+        });
+
+        [closeConfirmPay, cancelPayBtn].forEach(el => {
+            el.addEventListener('click', () => confirmModal.classList.remove('show'));
+        });
+
+        finalPayBtn.addEventListener('click', () => {
+            confirmModal.classList.remove('show');
+            processingModal.classList.add('show');
+
+            // Simulate Processing
+            setTimeout(() => {
+                processingModal.classList.remove('show');
+                successModal.classList.add('show');
+
+                // Add new row to history table (Visual feedback)
+                const tbody = document.querySelector('.history-table tbody');
+                const newRow = `
+                    <tr class="fade-in">
+                        <td>${new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}</td>
+                        <td>${document.getElementById('confirmMethod').textContent}</td>
+                        <td>₹${document.getElementById('payAmount').textContent}</td>
+                        <td><span class="status-badge success">Paid</span></td>
+                        <td><button class="download-btn"><i class="ph ph-download-simple"></i></button></td>
+                    </tr>
+                 `;
+                tbody.insertAdjacentHTML('afterbegin', newRow);
+
+            }, 2500);
+        });
+
+        closeSuccessBtn.addEventListener('click', () => {
+            successModal.classList.remove('show');
+            // Hide late fee banner as paid
+            lateFeeBanner.style.display = 'none';
+            // Update status
+            document.querySelector('.account-status .status-badge').className = 'status-badge success';
+            document.querySelector('.account-status .status-badge').textContent = 'Paid';
+        });
+
+        // Access Invoice 
+        document.addEventListener('click', (e) => {
+            if (e.target.closest('.download-btn')) {
+                alert('Downloading Invoice PDF...');
+            }
+        });
+
+    </script>
+</body>
+
+</html>
