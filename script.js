@@ -71,6 +71,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const loginBtn = document.getElementById('loginBtn');
     const loginModal = document.getElementById('loginModal');
     const closeBtn = document.querySelector('.close-btn');
+    const loginForm = document.querySelector('.login-form');
 
     if (loginBtn && loginModal && closeBtn) {
         // Open Modal
@@ -91,6 +92,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 loginModal.classList.remove('show');
                 document.body.style.overflow = '';
             }
+        });
+    }
+
+    // Handle Login Submit -> Redirect to Dashboard
+    if (loginForm) {
+        loginForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            // Simulate login delay or validation here if needed
+            window.location.href = 'dashboard.html';
         });
     }
 });

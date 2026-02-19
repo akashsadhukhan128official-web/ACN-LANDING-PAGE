@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ACN Broadband | Customer Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="dashboard.css">
+</head>
+
+<body>
+
+    <!-- Top Navbar -->
+    <nav class="dashboard-nav">
+        <div class="container nav-content">
+            <div class="logo">ACN Broadband</div>
+            <div class="nav-right">
+                <ul class="dashboard-links">
+                    <li><a href="#" class="active">Dashboard</a></li>
+                    <li><a href="#">My Plan</a></li>
+                    <li><a href="#">Payments</a></li>
+                    <li><a href="#">Support</a></li>
+                </ul>
+                <div class="user-profile">
+                    <img src="https://ui-avatars.com/api/?name=Akash+Sadhukhan&background=F26522&color=fff"
+                        alt="Profile" class="avatar">
+                    <span class="logout-btn"><i class="ph ph-sign-out"></i> Logout</span>
+                </div>
+                <button class="mobile-menu-btn"><i class="ph ph-list"></i></button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container dashboard-container">
+
+        <!-- Welcome Section -->
+        <div class="glass-card welcome-card fade-in">
+            <div class="welcome-text">
+                <h1>Welcome, Akash Sadhukhan</h1>
+                <p>Manage your internet connection with ease.</p>
+            </div>
+            <div class="user-details">
+                <div class="detail-item">
+                    <span class="label">Customer ID</span>
+                    <span class="value">ACN882910</span>
+                </div>
+                <div class="detail-item">
+                    <span class="label">Mobile</span>
+                    <span class="value">+91 98765 43210</span>
+                </div>
+                <div class="detail-item">
+                    <span class="label">Address</span>
+                    <span class="value">Sector 5, Salt Lake, Kolkata</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="dashboard-grid">
+            <!-- Current Plan -->
+            <div class="glass-card plan-card fade-in delay-1">
+                <h2>My Current Plan</h2>
+                <div class="plan-info">
+                    <h3 class="plan-name">ACN 100 Mbps Unlimited</h3>
+                    <div class="plan-stat">
+                        <i class="ph ph-lightning"></i>
+                        <span>100 Mbps Speed</span>
+                    </div>
+                    <div class="plan-stat">
+                        <i class="ph ph-currency-inr"></i>
+                        <span>₹699 / month</span>
+                    </div>
+                    <div class="plan-validity">
+                        <span class="label">Valid Till:</span>
+                        <span class="value">28th Aug 2026</span>
+                    </div>
+                    <div class="plan-status active">Active</div>
+                </div>
+                <button class="btn-primary upgrade-btn">Upgrade Plan</button>
+            </div>
+
+            <!-- Data Usage -->
+            <div class="glass-card usage-card fade-in delay-2">
+                <h2>Data Usage</h2>
+                <div class="usage-chart">
+                    <!-- Simple CSS/SVG Circular Progress Simulation -->
+                    <div class="progress-circle" style="--p:45; --c:#F26522;">
+                        <div class="progress-inner">
+                            <span class="usage-val">320GB</span>
+                            <span class="usage-total">Unlimited</span>
+                        </div>
+                    </div>
+                </div>
+                <p class="usage-note">Resets in 12 days</p>
+            </div>
+
+            <!-- Payment Section -->
+            <div class="glass-card payment-card fade-in delay-3">
+                <h2>Payments</h2>
+                <div class="payment-details">
+                    <div class="payment-row">
+                        <span>Due Amount</span>
+                        <span class="amount">₹699.00</span>
+                    </div>
+                    <div class="payment-row">
+                        <span>Last Paid</span>
+                        <span>28th July 2026</span>
+                    </div>
+                    <div class="payment-row">
+                        <span>Next Due</span>
+                        <span>28th Aug 2026</span>
+                    </div>
+                </div>
+                <button class="btn-primary width-full pay-btn">Pay Now</button>
+                <div class="payment-methods">
+                    <i class="ph ph-credit-card" title="Card"></i>
+                    <i class="ph ph-bank" title="Net Banking"></i>
+                    <i class="ph ph-qr-code" title="UPI"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions & Support Grid -->
+        <div class="dashboard-grid-secondary">
+            <!-- Quick Actions -->
+            <div class="glass-card actions-card fade-in delay-4">
+                <h2>Quick Actions</h2>
+                <div class="actions-grid">
+                    <button class="action-btn">
+                        <div class="icon-box"><i class="ph ph-warning-circle"></i></div>
+                        <span>Raise Complaint</span>
+                    </button>
+                    <button class="action-btn">
+                        <div class="icon-box"><i class="ph ph-broadcast"></i></div>
+                        <span>Service Status</span>
+                    </button>
+                    <button class="action-btn">
+                        <div class="icon-box"><i class="ph ph-file-pdf"></i></div>
+                        <span>Invoice</span>
+                    </button>
+                    <button class="action-btn">
+                        <div class="icon-box"><i class="ph ph-lock-key"></i></div>
+                        <span>Change Password</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Support Section -->
+            <div class="glass-card support-card fade-in delay-5">
+                <h2>24/7 Support</h2>
+                <div class="support-content">
+                    <p class="support-text">Need help with your connection?</p>
+                    <div class="support-number">
+                        <i class="ph ph-phone-call"></i> +91 98740 26889
+                    </div>
+                    <div class="support-buttons">
+                        <button class="btn-action whatsapp"><i class="ph ph-whatsapp-logo"></i> WhatsApp</button>
+                        <button class="btn-action chat"><i class="ph ph-chat-circle-text"></i> Live Chat</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Footer -->
+    <footer class="dashboard-footer">
+        <div class="container">
+            <p>&copy; 2026 ACN Broadband. All rights reserved. | <a href="#">Privacy Policy</a> | <a href="#">Terms</a>
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile Menu Toggle for Dashboard
+        const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+        const dashboardLinks = document.querySelector('.dashboard-links');
+        const userProfile = document.querySelector('.user-profile');
+
+        if (mobileMenuBtn && dashboardLinks) {
+            mobileMenuBtn.addEventListener('click', () => {
+                dashboardLinks.classList.toggle('active');
+                // Also toggle profile visibility on mobile if needed, or keep it separate
+                userProfile.classList.toggle('active');
+            });
+        }
+
+        // Logout Logic
+        document.querySelector('.logout-btn').addEventListener('click', () => {
+            window.location.href = 'index.html';
+        });
+    </script>
+</body>
+
+</html>

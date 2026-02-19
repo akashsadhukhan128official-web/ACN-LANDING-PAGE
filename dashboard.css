@@ -1,0 +1,492 @@
+/* Dashboard CSS */
+
+/* Base Styles from style.css are inherited, adding specific dashboard overrides */
+
+body {
+    background: linear-gradient(135deg, #eef2f3 0%, #dbdee4 100%);
+    /* Slightly different/cleaner bg for dashboard */
+    min-height: 100vh;
+}
+
+/* Dashboard Navigation */
+.dashboard-nav {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.5);
+    padding: 1rem 0;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+}
+
+.nav-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.nav-right {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+}
+
+.dashboard-links {
+    list-style: none;
+    display: flex;
+    gap: 1.5rem;
+}
+
+.dashboard-links a {
+    text-decoration: none;
+    color: #555;
+    font-weight: 600;
+    font-size: 0.95rem;
+    padding: 8px 16px;
+    border-radius: 20px;
+    transition: all 0.3s;
+}
+
+.dashboard-links a:hover,
+.dashboard-links a.active {
+    background: rgba(31, 78, 140, 0.1);
+    color: var(--primary-blue);
+}
+
+.user-profile {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding-left: 1.5rem;
+    border-left: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 2px solid white;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.logout-btn {
+    font-size: 0.9rem;
+    color: #777;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    transition: color 0.2s;
+}
+
+.logout-btn:hover {
+    color: var(--primary-orange);
+}
+
+/* Dashboard Layout */
+.dashboard-container {
+    padding-top: 2rem;
+    padding-bottom: 4rem;
+}
+
+.glass-card {
+    background: rgba(255, 255, 255, 0.65);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    border-radius: 20px;
+    padding: 2rem;
+    box-shadow:
+        0 8px 32px rgba(31, 38, 135, 0.05),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.3);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.glass-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 40px rgba(31, 38, 135, 0.1);
+    background: rgba(255, 255, 255, 0.8);
+}
+
+.glass-card h2 {
+    color: var(--primary-blue);
+    font-size: 1.25rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+/* Welcome Section */
+.welcome-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.4));
+}
+
+.welcome-text h1 {
+    font-size: 1.8rem;
+    color: var(--primary-blue);
+    margin-bottom: 0.5rem;
+}
+
+.welcome-text p {
+    color: #666;
+}
+
+.user-details {
+    display: flex;
+    gap: 2rem;
+}
+
+.detail-item {
+    display: flex;
+    flex-direction: column;
+}
+
+.detail-item .label {
+    font-size: 0.8rem;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.detail-item .value {
+    font-weight: 600;
+    color: var(--text-dark);
+}
+
+/* Grid Layout */
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+
+/* Plan Card */
+.plan-info {
+    margin-bottom: 1.5rem;
+}
+
+.plan-name {
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+    color: var(--text-dark);
+}
+
+.plan-stat {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    margin-bottom: 0.8rem;
+    color: #555;
+}
+
+.plan-stat i {
+    color: var(--primary-orange);
+    font-size: 1.2rem;
+}
+
+.plan-validity {
+    margin-top: 1rem;
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.plan-status {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    margin-top: 1rem;
+}
+
+.plan-status.active {
+    background: rgba(46, 204, 113, 0.15);
+    color: #27ae60;
+}
+
+.upgrade-btn {
+    width: 100%;
+    margin-top: 1rem;
+}
+
+/* Usage Card */
+.usage-chart {
+    display: flex;
+    justify-content: center;
+    margin: 1.5rem 0;
+}
+
+/* CSS Circular Progress */
+.progress-circle {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    background: conic-gradient(var(--c) calc(var(--p)*1%), #eee 0%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.05);
+}
+
+.progress-inner {
+    width: 120px;
+    height: 120px;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+}
+
+.usage-val {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--primary-blue);
+}
+
+.usage-total {
+    font-size: 0.8rem;
+    color: #777;
+}
+
+.usage-note {
+    text-align: center;
+    font-size: 0.9rem;
+    color: #888;
+}
+
+/* Payment Card */
+.payment-details {
+    margin-bottom: 1.5rem;
+}
+
+.payment-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.8rem 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    font-size: 0.95rem;
+    color: #555;
+}
+
+.payment-row .amount {
+    font-weight: 700;
+    color: var(--primary-blue);
+    font-size: 1.1rem;
+}
+
+.payment-methods {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+    color: #888;
+    font-size: 1.5rem;
+}
+
+/* Secondary Grid */
+.dashboard-grid-secondary {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 2rem;
+}
+
+/* Actions Grid */
+.actions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 1.5rem;
+}
+
+.action-btn {
+    background: white;
+    border: none;
+    padding: 1.5rem;
+    border-radius: 15px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.03);
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+}
+
+.action-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+}
+
+.action-btn .icon-box {
+    margin: 0;
+    width: 50px;
+    height: 50px;
+    font-size: 1.5rem;
+}
+
+.action-btn span {
+    font-weight: 600;
+    color: #555;
+    font-size: 0.9rem;
+}
+
+/* Support Card */
+.support-content {
+    text-align: center;
+}
+
+.support-text {
+    color: #666;
+    margin-bottom: 1rem;
+}
+
+.support-number {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--primary-blue);
+    margin-bottom: 1.5rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.support-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+}
+
+.support-buttons .btn-action {
+    justify-content: center;
+    width: 100%;
+}
+
+.btn-action.chat {
+    background: linear-gradient(135deg, #1F4E8C, #14325c);
+}
+
+/* Footer */
+.dashboard-footer {
+    text-align: center;
+    padding: 2rem 0;
+    color: #888;
+    font-size: 0.9rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.5);
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.dashboard-footer a {
+    color: var(--primary-blue);
+    text-decoration: none;
+}
+
+/* Animations */
+.fade-in {
+    opacity: 0;
+    animation: fadeIn 0.8s ease forwards;
+}
+
+.delay-1 {
+    animation-delay: 0.1s;
+}
+
+.delay-2 {
+    animation-delay: 0.2s;
+}
+
+.delay-3 {
+    animation-delay: 0.3s;
+}
+
+.delay-4 {
+    animation-delay: 0.4s;
+}
+
+.delay-5 {
+    animation-delay: 0.5s;
+}
+
+@keyframes fadeIn {
+    to {
+        opacity: 1;
+    }
+}
+
+/* Mobile Responsive */
+@media (max-width: 900px) {
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .dashboard-grid-secondary {
+        grid-template-columns: 1fr;
+    }
+
+    .welcome-card {
+        flex-direction: column;
+        text-align: center;
+        gap: 1.5rem;
+    }
+
+    .user-details {
+        flex-direction: column;
+        gap: 1rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .nav-content {
+        justify-content: space-between;
+    }
+
+    .dashboard-links {
+        display: none;
+        position: absolute;
+        top: 70px;
+        left: 0;
+        width: 100%;
+        flex-direction: column;
+        background: white;
+        padding: 2rem;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        gap: 1rem;
+    }
+
+    .dashboard-links.active {
+        display: flex;
+    }
+
+    .user-profile {
+        display: none;
+        /* Can be moved inside menu if needed */
+    }
+
+    .user-profile.active {
+        display: flex;
+        flex-direction: column;
+        margin-top: 1rem;
+        padding-left: 0;
+        border-left: none;
+    }
+
+    .mobile-menu-btn {
+        display: block;
+        background: none;
+        border: none;
+        font-size: 1.8rem;
+        color: var(--primary-blue);
+        cursor: pointer;
+    }
+}
