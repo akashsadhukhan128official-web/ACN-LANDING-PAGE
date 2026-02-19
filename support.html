@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ACN Broadband | Customer Support</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="dashboard.css">
+</head>
+
+<body>
+
+    <!-- Top Navbar -->
+    <nav class="dashboard-nav">
+        <div class="container nav-content">
+            <div class="logo">ACN Broadband</div>
+            <div class="nav-right">
+                <ul class="dashboard-links">
+                    <li><a href="dashboard.html">Dashboard</a></li>
+                    <li><a href="plans.html">More Plans</a></li>
+                    <li><a href="payments.html">Payments</a></li>
+                    <li><a href="support.html" class="active">Support</a></li>
+                </ul>
+                <div class="user-profile">
+                    <img src="https://ui-avatars.com/api/?name=Akash+Sadhukhan&background=F26522&color=fff"
+                        alt="Profile" class="avatar">
+                    <span class="logout-btn"><i class="ph ph-sign-out"></i> Logout</span>
+                </div>
+                <button class="mobile-menu-btn"><i class="ph ph-list"></i></button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container dashboard-container">
+
+        <!-- Header -->
+        <div class="page-header fade-in">
+            <h1>We’re Here to Help</h1>
+            <p>Raise a ticket or contact us instantly.</p>
+        </div>
+
+        <div class="dashboard-grid support-grid fade-in delay-1">
+
+            <!-- Left Column: Raise Ticket -->
+            <div class="support-left">
+                <div class="glass-card raise-ticket-card">
+                    <h2>Raise a Complaint</h2>
+                    <form id="ticketForm">
+                        <div class="form-group">
+                            <label>Issue Type</label>
+                            <div class="select-wrapper">
+                                <select class="glass-select" id="issueType" required>
+                                    <option value="" disabled selected>Select an issue...</option>
+                                    <option value="No Internet">No Internet Connectivity</option>
+                                    <option value="Slow Speed">Slow Internet Speed</option>
+                                    <option value="Billing Issue">Billing / Payment Issue</option>
+                                    <option value="Router Problem">Router / Hardware Problem</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                                <i class="ph ph-caret-down"></i>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Description</label>
+                            <textarea class="glass-textarea" id="issueDesc" rows="5"
+                                placeholder="Please describe your issue in detail..." required></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Upload Screenshot (Optional)</label>
+                            <label class="file-upload-box">
+                                <input type="file" id="issueFile" accept="image/*">
+                                <i class="ph ph-upload-simple"></i>
+                                <span>Click to upload image</span>
+                            </label>
+                        </div>
+
+                        <button type="submit" class="btn-primary width-full">Submit Ticket</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Right Column: Quick Contact & My Tickets -->
+            <div class="support-right">
+
+                <!-- Quick Contact Grid -->
+                <div class="contact-grid">
+                    <div class="glass-card contact-card">
+                        <div class="contact-icon phone"><i class="ph ph-phone-call"></i></div>
+                        <h3>24/7 Helpline</h3>
+                        <p>1800-123-4567</p>
+                    </div>
+                    <div class="glass-card contact-card">
+                        <div class="contact-icon whatsapp"><i class="ph ph-whatsapp-logo"></i></div>
+                        <h3>WhatsApp</h3>
+                        <p>Chat with us</p>
+                    </div>
+                    <div class="glass-card contact-card">
+                        <div class="contact-icon chat"><i class="ph ph-chat-circle-text"></i></div>
+                        <h3>Live Chat</h3>
+                        <p>Available Now</p>
+                    </div>
+                    <div class="glass-card contact-card">
+                        <div class="contact-icon email"><i class="ph ph-envelope-simple"></i></div>
+                        <h3>Email</h3>
+                        <p>support@acn.com</p>
+                    </div>
+                </div>
+
+                <!-- My Tickets -->
+                <div class="glass-card tickets-card">
+                    <h2>My Tickets</h2>
+                    <div class="table-responsive">
+                        <table class="glass-table ticket-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Issue</th>
+                                    <th>Date</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="ticketTableBody">
+                                <tr>
+                                    <td>#9021</td>
+                                    <td>Slow Speed</td>
+                                    <td>15 Aug 2026</td>
+                                    <td><span class="status-badge warning">In Progress</span></td>
+                                    <td><button class="view-btn">View</button></td>
+                                </tr>
+                                <tr>
+                                    <td>#8842</td>
+                                    <td>Billing Issue</td>
+                                    <td>10 Jul 2026</td>
+                                    <td><span class="status-badge success">Resolved</span></td>
+                                    <td><button class="view-btn">View</button></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Success Modal for Ticket -->
+    <div id="ticketSuccessModal" class="modal">
+        <div class="modal-content glass-modal text-center">
+            <div class="success-icon-anim">
+                <i class="ph ph-check-circle"></i>
+            </div>
+            <h2 class="text-success">Ticket Raised!</h2>
+            <p>Your Complaint ID: <span class="mono-font" id="newTicketId">#9022</span></p>
+            <p class="small-text">We will resolve this within 24 hours.</p>
+            <button class="btn-primary width-full" id="closeTicketModal">Overview</button>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="dashboard-footer">
+        <div class="container">
+            <p>&copy; 2026 ACN Broadband. All rights reserved. | <a href="#">Privacy Policy</a> | <a href="#">Terms</a>
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile Menu Toggle
+        document.querySelector('.mobile-menu-btn').addEventListener('click', () => {
+            document.querySelector('.dashboard-links').classList.toggle('active');
+        });
+
+        // Logout
+        document.querySelector('.logout-btn').addEventListener('click', () => {
+            window.location.href = 'index.html';
+        });
+
+        // Access File Input for filename display
+        const fileInput = document.getElementById('issueFile');
+        const fileLabelSpan = document.querySelector('.file-upload-box span');
+
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                fileLabelSpan.textContent = e.target.files[0].name;
+            } else {
+                fileLabelSpan.textContent = "Click to upload image";
+            }
+        });
+
+        // Ticket Submission Logic
+        const ticketForm = document.getElementById('ticketForm');
+        const ticketSuccessModal = document.getElementById('ticketSuccessModal');
+        const closeTicketModal = document.getElementById('closeTicketModal');
+        const ticketTableBody = document.getElementById('ticketTableBody');
+
+        ticketForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            // Get Values
+            const issueType = document.getElementById('issueType').value;
+            // Mock ID generation
+            const ticketId = '#' + Math.floor(Math.random() * 9000 + 1000);
+            document.getElementById('newTicketId').textContent = ticketId;
+
+            ticketSuccessModal.classList.add('show');
+
+            // Add to table (Mock)
+            const date = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+
+            const newRow = `
+                <tr class="fade-in">
+                    <td>${ticketId}</td>
+                    <td>${issueType}</td>
+                    <td>${date}</td>
+                    <td><span class="status-badge pending">Open</span></td>
+                    <td><button class="view-btn">View</button></td>
+                </tr>
+             `;
+
+            // Prepend new row
+            const firstRow = ticketTableBody.firstChild;
+            ticketTableBody.insertAdjacentHTML('afterbegin', newRow);
+
+            // Reset Form
+            ticketForm.reset();
+            fileLabelSpan.textContent = "Click to upload image";
+        });
+
+        closeTicketModal.addEventListener('click', () => {
+            ticketSuccessModal.classList.remove('show');
+        });
+
+        // Close Modals via Outside Click
+        window.addEventListener('click', (e) => {
+            if (e.target === ticketSuccessModal) {
+                ticketSuccessModal.classList.remove('show');
+            }
+        });
+
+    </script>
+</body>
+
+</html>

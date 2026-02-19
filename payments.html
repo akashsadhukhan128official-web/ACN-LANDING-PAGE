@@ -25,7 +25,7 @@
                     <li><a href="dashboard.html">Dashboard</a></li>
                     <li><a href="plans.html">More Plans</a></li>
                     <li><a href="payments.html" class="active">Payments</a></li>
-                    <li><a href="#">Support</a></li>
+                    <li><a href="support.html">Support</a></li>
                 </ul>
                 <div class="user-profile">
                     <img src="https://ui-avatars.com/api/?name=Akash+Sadhukhan&background=F26522&color=fff"
@@ -39,14 +39,7 @@
 
     <div class="container dashboard-container">
 
-        <!-- Late Fee Banner (Hidden by Default) -->
-        <div id="lateFeeBanner" class="alert-banner glass-card fade-in">
-            <i class="ph ph-warning-circle"></i>
-            <div class="alert-text">
-                Your payment is overdue! A late fee of <span>₹50</span> has been added.
-            </div>
-            <button class="close-alert"><i class="ph ph-x"></i></button>
-        </div>
+
 
         <div class="page-header fade-in">
             <h1>Payments & Billing</h1>
@@ -259,29 +252,7 @@
             window.location.href = 'index.html';
         });
 
-        // Late Fee Logic (Simulation)
-        const lateFeeBanner = document.getElementById('lateFeeBanner');
-        const displayAmount = document.getElementById('displayAmount');
-        const payAmount = document.getElementById('payAmount');
 
-        // Mock date check: Assume strictly for demo that today is past due date
-        const isOverdue = true;
-        if (isOverdue) {
-            lateFeeBanner.style.display = 'flex';
-            // Update amounts to reflect typical late fee if desired, but sticking to design request
-            // Adding 50 to base 824.82
-            const base = 824.82;
-            const lateFee = 50.00;
-            const total = (base + lateFee).toFixed(2);
-
-            displayAmount.textContent = '₹' + total;
-            payAmount.textContent = total;
-            document.querySelector('.alert-text span').textContent = '₹' + lateFee;
-        }
-
-        document.querySelector('.close-alert').addEventListener('click', () => {
-            lateFeeBanner.style.display = 'none';
-        });
 
 
         // Payment Flow
@@ -345,8 +316,7 @@
 
         closeSuccessBtn.addEventListener('click', () => {
             successModal.classList.remove('show');
-            // Hide late fee banner as paid
-            lateFeeBanner.style.display = 'none';
+
             // Update status
             document.querySelector('.account-status .status-badge').className = 'status-badge success';
             document.querySelector('.account-status .status-badge').textContent = 'Paid';
