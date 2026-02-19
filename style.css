@@ -791,6 +791,16 @@ h3 {
     color: var(--primary-blue);
 }
 
+.router-img {
+    width: 75%;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+    /* Attempt to blend white background if present, though user asked for removal */
+    mix-blend-mode: multiply;
+    filter: drop-shadow(0 5px 10px rgba(0, 0, 0, 0.1));
+}
+
 /* Plans Section */
 .plans-section {
     padding: 6rem 0;
