@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ACN Broadband | Explore Plans</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="dashboard.css">
+</head>
+
+<body>
+
+    <!-- Top Navbar -->
+    <nav class="dashboard-nav">
+        <div class="container nav-content">
+            <div class="logo">ACN Broadband</div>
+            <div class="nav-right">
+                <ul class="dashboard-links">
+                    <li><a href="dashboard.html">Dashboard</a></li>
+                    <li><a href="plans.html" class="active">More Plans</a></li>
+                    <li><a href="#">Payments</a></li>
+                    <li><a href="#">Support</a></li>
+                </ul>
+                <div class="user-profile">
+                    <img src="https://ui-avatars.com/api/?name=Akash+Sadhukhan&background=F26522&color=fff"
+                        alt="Profile" class="avatar">
+                    <span class="logout-btn"><i class="ph ph-sign-out"></i> Logout</span>
+                </div>
+                <button class="mobile-menu-btn"><i class="ph ph-list"></i></button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container dashboard-container">
+
+        <!-- Page Header -->
+        <div class="glass-card page-header fade-in">
+            <h1>Upgrade Your Experience</h1>
+            <p>Choose a better speed or add OTT entertainment to your plan.</p>
+        </div>
+
+        <!-- Broadband Plans Section -->
+        <div class="plans-section-header fade-in delay-1">
+            <h2>Broadband Plans</h2>
+            <button class="btn-secondary-outline glass-btn" id="compareBtn">Compare All Plans</button>
+        </div>
+
+        <div class="dashboard-grid fade-in delay-2">
+            <!-- 50 Mbps Plan -->
+            <div class="glass-card plan-card">
+                <div class="plan-header">
+                    <h3>ACN 50 Mbps</h3>
+                    <div class="price">₹499<span>/mo</span></div>
+                </div>
+                <ul class="plan-features-list">
+                    <li><i class="ph ph-check-circle"></i> 50 Mbps Speed</li>
+                    <li><i class="ph ph-check-circle"></i> Unlimited Data</li>
+                    <li><i class="ph ph-check-circle"></i> Free Installation</li>
+                    <li><i class="ph ph-check-circle"></i> 24/7 Support</li>
+                </ul>
+                <button class="btn-primary width-full select-plan-btn" data-plan="ACN 50 Mbps" data-price="499">Select
+                    Plan</button>
+            </div>
+
+            <!-- 100 Mbps Plan (Recommended) -->
+            <div class="glass-card plan-card recommended">
+                <div class="recommended-badge">Recommended</div>
+                <div class="plan-header">
+                    <h3>ACN 100 Mbps</h3>
+                    <div class="price">₹699<span>/mo</span></div>
+                </div>
+                <ul class="plan-features-list">
+                    <li><i class="ph ph-check-circle"></i> 100 Mbps Speed</li>
+                    <li><i class="ph ph-check-circle"></i> Unlimited Data</li>
+                    <li><i class="ph ph-check-circle"></i> Free Router</li>
+                    <li><i class="ph ph-check-circle"></i> 24/7 Support</li>
+                </ul>
+                <button class="btn-primary width-full select-plan-btn" data-plan="ACN 100 Mbps" data-price="699">Select
+                    Plan</button>
+            </div>
+
+            <!-- 200 Mbps Plan -->
+            <div class="glass-card plan-card">
+                <div class="plan-header">
+                    <h3>ACN 200 Mbps</h3>
+                    <div class="price">₹999<span>/mo</span></div>
+                </div>
+                <ul class="plan-features-list">
+                    <li><i class="ph ph-check-circle"></i> 200 Mbps Speed</li>
+                    <li><i class="ph ph-check-circle"></i> Unlimited Data</li>
+                    <li><i class="ph ph-check-circle"></i> Gaming Optimized</li>
+                    <li><i class="ph ph-check-circle"></i> Priority Support</li>
+                </ul>
+                <button class="btn-primary width-full select-plan-btn" data-plan="ACN 200 Mbps" data-price="999">Select
+                    Plan</button>
+            </div>
+        </div>
+
+        <!-- OTT Add-ons Section -->
+        <div class="plans-section-header fade-in delay-3">
+            <h2>OTT Add-ons</h2>
+        </div>
+
+        <div class="ott-grid fade-in delay-3">
+            <!-- Netflix -->
+            <div class="glass-card ott-card">
+                <div class="ott-logo netflix">N</div>
+                <h3>Netflix Basic</h3>
+                <div class="price">₹199<span>/mo</span></div>
+                <p>SD Quality, Mobile Only</p>
+                <button class="btn-primary width-full add-ott-btn" data-ott="Netflix Basic" data-price="199">Add to
+                    Plan</button>
+            </div>
+            <!-- Prime -->
+            <div class="glass-card ott-card">
+                <div class="ott-logo prime">P</div>
+                <h3>Amazon Prime</h3>
+                <div class="price">₹149<span>/mo</span></div>
+                <p>HD Quality, Free Delivery</p>
+                <button class="btn-primary width-full add-ott-btn" data-ott="Amazon Prime" data-price="149">Add to
+                    Plan</button>
+            </div>
+            <!-- Hotstar -->
+            <div class="glass-card ott-card">
+                <div class="ott-logo hotstar">H</div>
+                <h3>Disney+ Hotstar</h3>
+                <div class="price">₹149<span>/mo</span></div>
+                <p>Movies, Live Sports</p>
+                <button class="btn-primary width-full add-ott-btn" data-ott="Disney+ Hotstar" data-price="149">Add to
+                    Plan</button>
+            </div>
+            <!-- Zee5 -->
+            <div class="glass-card ott-card">
+                <div class="ott-logo zee5">Z</div>
+                <h3>Zee5 Premium</h3>
+                <div class="price">₹99<span>/mo</span></div>
+                <p>TV Shows, Movies</p>
+                <button class="btn-primary width-full add-ott-btn" data-ott="Zee5 Premium" data-price="99">Add to
+                    Plan</button>
+            </div>
+        </div>
+
+        <!-- Combo Plans Section -->
+        <div class="plans-section-header fade-in delay-4">
+            <h2>Best Value Combos</h2>
+        </div>
+
+        <div class="dashboard-grid fade-in delay-4">
+            <div class="glass-card plan-card combo-card">
+                <div class="combo-badge">Best Value</div>
+                <div class="plan-header">
+                    <h3>100 Mbps + OTT</h3>
+                    <div class="price">₹899<span>/mo</span></div>
+                </div>
+                <p class="combo-desc">High speed internet plus your favorite entertainment.</p>
+                <div class="combo-icons">
+                    <span class="icon-dot hotstar">H</span>
+                    <span class="icon-dot zee5">Z</span>
+                    <span class="icon-dot sonyliv">S</span>
+                </div>
+                <button class="btn-primary width-full select-plan-btn" data-plan="100 Mbps Combo"
+                    data-price="899">Select Combo</button>
+            </div>
+
+            <div class="glass-card plan-card combo-card">
+                <div class="plan-header">
+                    <h3>200 Mbps + Premium</h3>
+                    <div class="price">₹1299<span>/mo</span></div>
+                </div>
+                <p class="combo-desc">Super fast speed with premium OTT subscriptions.</p>
+                <div class="combo-icons">
+                    <span class="icon-dot netflix">N</span>
+                    <span class="icon-dot prime">P</span>
+                    <span class="icon-dot hotstar">H</span>
+                    <span class="icon-dot zee5">Z</span>
+                </div>
+                <button class="btn-primary width-full select-plan-btn" data-plan="200 Mbps Premium Combo"
+                    data-price="1299">Select Combo</button>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Footer -->
+    <footer class="dashboard-footer">
+        <div class="container">
+            <p>&copy; 2026 ACN Broadband. All rights reserved. | <a href="#">Privacy Policy</a> | <a href="#">Terms</a>
+            </p>
+        </div>
+    </footer>
+
+    <!-- Compare Modal -->
+    <div id="compareModal" class="modal">
+        <div class="modal-content glass-modal wide-modal">
+            <span class="close-btn" id="closeCompare">&times;</span>
+            <h2>Compare Plans</h2>
+            <div class="table-responsive">
+                <table class="compare-table">
+                    <thead>
+                        <tr>
+                            <th>Feature</th>
+                            <th>50 Mbps</th>
+                            <th>100 Mbps</th>
+                            <th>200 Mbps</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Speed</td>
+                            <td>50 Mbps</td>
+                            <td>100 Mbps</td>
+                            <td>200 Mbps</td>
+                        </tr>
+                        <tr>
+                            <td>Data</td>
+                            <td>Unlimited</td>
+                            <td>Unlimited</td>
+                            <td>Unlimited</td>
+                        </tr>
+                        <tr>
+                            <td>Router</td>
+                            <td>Chargeable</td>
+                            <td>Free Dual Band</td>
+                            <td>Free Gaming Router</td>
+                        </tr>
+                        <tr>
+                            <td>OTT Apps</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>Included in Combo</td>
+                        </tr>
+                        <tr>
+                            <td>Price</td>
+                            <td>₹499</td>
+                            <td>₹699</td>
+                            <td>₹999</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div id="confirmModal" class="modal">
+        <div class="modal-content glass-modal">
+            <span class="close-btn" id="closeConfirm">&times;</span>
+            <h2>Confirm Upgrade</h2>
+            <p>You are upgrading to <span id="newPlanName" class="highlight-text"></span>.</p>
+
+            <div class="price-comparison">
+                <div class="price-row">
+                    <span>Current Plan Price:</span>
+                    <span>₹699</span>
+                </div>
+                <div class="price-row new-price">
+                    <span>New Plan Price:</span>
+                    <span id="newPlanPrice"></span>
+                </div>
+                <div class="price-row difference">
+                    <span>Difference to Pay:</span>
+                    <span id="priceDiff"></span>
+                </div>
+            </div>
+
+            <p class="impact-note">The new speed will be active immediately. Prorated charges will apply next month.</p>
+
+            <button class="btn-primary width-full" id="confirmActionBtn">Confirm Upgrade</button>
+        </div>
+    </div>
+
+
+    <script>
+        // Mobile Menu Toggle for Dashboard
+        const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+        const dashboardLinks = document.querySelector('.dashboard-links');
+
+        if (mobileMenuBtn && dashboardLinks) {
+            mobileMenuBtn.addEventListener('click', () => {
+                dashboardLinks.classList.toggle('active');
+            });
+        }
+
+        // Logout Logic
+        document.querySelector('.logout-btn').addEventListener('click', () => {
+            window.location.href = 'index.html';
+        });
+
+        // Modal Logic
+        const compareBtn = document.getElementById('compareBtn');
+        const compareModal = document.getElementById('compareModal');
+        const closeCompare = document.getElementById('closeCompare');
+
+        if (compareBtn) {
+            compareBtn.addEventListener('click', () => {
+                compareModal.classList.add('show');
+                document.body.style.overflow = 'hidden';
+            });
+        }
+
+        if (closeCompare) {
+            closeCompare.addEventListener('click', () => {
+                compareModal.classList.remove('show');
+                document.body.style.overflow = '';
+            });
+        }
+
+        // Select Plan Logic & Confirm Modal
+        const confirmModal = document.getElementById('confirmModal');
+        const closeConfirm = document.getElementById('closeConfirm');
+        const selectButtons = document.querySelectorAll('.select-plan-btn, .add-ott-btn');
+        const newPlanNameEl = document.getElementById('newPlanName');
+        const newPlanPriceEl = document.getElementById('newPlanPrice');
+        const priceDiffEl = document.getElementById('priceDiff');
+
+        selectButtons.forEach(btn => {
+            btn.addEventListener('click', function () {
+                const planName = this.getAttribute('data-plan') || this.getAttribute('data-ott');
+                const price = parseInt(this.getAttribute('data-price'));
+                const currentPrice = 699; // Mock current price
+
+                newPlanNameEl.textContent = planName;
+                newPlanPriceEl.textContent = '₹' + price;
+
+                let diff = price - currentPrice;
+                if (this.classList.contains('add-ott-btn')) {
+                    // If adding OTT, difference is just the OTT price
+                    diff = price;
+                    priceDiffEl.textContent = '+ ₹' + diff;
+                } else {
+                    priceDiffEl.textContent = (diff > 0 ? '+ ₹' : '- ₹') + Math.abs(diff);
+                }
+
+                confirmModal.classList.add('show');
+                document.body.style.overflow = 'hidden';
+            });
+        });
+
+        if (closeConfirm) {
+            closeConfirm.addEventListener('click', () => {
+                confirmModal.classList.remove('show');
+                document.body.style.overflow = '';
+            });
+        }
+
+        // Close Modals via Outside Click
+        window.addEventListener('click', (e) => {
+            if (e.target === compareModal) {
+                compareModal.classList.remove('show');
+                document.body.style.overflow = '';
+            }
+            if (e.target === confirmModal) {
+                confirmModal.classList.remove('show');
+                document.body.style.overflow = '';
+            }
+        });
+
+        document.getElementById('confirmActionBtn').addEventListener('click', () => {
+            alert('Upgrade request submitted successfully!');
+            confirmModal.classList.remove('show');
+            document.body.style.overflow = '';
+        });
+
+    </script>
+</body>
+
+</html>

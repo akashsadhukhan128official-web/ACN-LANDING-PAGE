@@ -423,6 +423,379 @@ body {
     }
 }
 
+/* --- Plans Page Specific Styles --- */
+
+/* Page Header */
+.page-header {
+    text-align: center;
+    margin-bottom: 3rem;
+    padding: 2.5rem;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.8), rgba(240, 248, 255, 0.5));
+}
+
+.page-header h1 {
+    font-size: 2.2rem;
+    color: var(--primary-blue);
+    margin-bottom: 0.5rem;
+}
+
+.page-header p {
+    color: #666;
+    font-size: 1.1rem;
+}
+
+/* Section Headers */
+.plans-section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 3rem 0 1.5rem;
+}
+
+.plans-section-header h2 {
+    font-size: 1.8rem;
+    color: var(--primary-blue);
+}
+
+.glass-btn {
+    background: rgba(255, 255, 255, 0.5);
+    border: 1px solid var(--primary-orange);
+    color: var(--primary-orange);
+    padding: 8px 20px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s;
+}
+
+.glass-btn:hover {
+    background: var(--primary-orange);
+    color: white;
+    box-shadow: 0 4px 15px rgba(242, 101, 34, 0.3);
+}
+
+/* Plan Cards Enhancements */
+.recommended {
+    border: 2px solid rgba(242, 101, 34, 0.5);
+    transform: scale(1.02);
+    position: relative;
+    background: rgba(255, 255, 255, 0.75);
+}
+
+.recommended-badge {
+    position: absolute;
+    top: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--primary-orange);
+    color: white;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    box-shadow: 0 4px 10px rgba(242, 101, 34, 0.4);
+}
+
+.plan-header {
+    text-align: center;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.plan-header h3 {
+    color: var(--primary-blue);
+    margin-bottom: 0.5rem;
+}
+
+.plan-header .price {
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: var(--text-dark);
+}
+
+.plan-header .price span {
+    font-size: 1rem;
+    color: #888;
+    font-weight: 400;
+}
+
+.plan-features-list {
+    list-style: none;
+    margin-bottom: 2rem;
+}
+
+.plan-features-list li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 0.8rem;
+    color: #555;
+    font-size: 0.95rem;
+}
+
+.plan-features-list li i {
+    color: #27ae60;
+    font-size: 1.1rem;
+}
+
+/* OTT Grid */
+.ott-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+}
+
+.ott-card {
+    text-align: center;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.ott-logo {
+    width: 50px;
+    height: 50px;
+    border-radius: 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: 900;
+    font-size: 1.5rem;
+    color: white;
+    margin-bottom: 1rem;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.ott-logo.netflix {
+    background: #E50914;
+}
+
+.ott-logo.prime {
+    background: #00A8E1;
+}
+
+.ott-logo.hotstar {
+    background: #0c1c46;
+    background: linear-gradient(135deg, #0f1c4e, #140526);
+}
+
+.ott-logo.zee5 {
+    background: #6F2C91;
+}
+
+.ott-card h3 {
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+    color: var(--text-dark);
+}
+
+.ott-card .price {
+    color: var(--primary-blue);
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.ott-card p {
+    font-size: 0.8rem;
+    color: #888;
+    margin-bottom: 1rem;
+}
+
+/* Combo Cards */
+.combo-card {
+    position: relative;
+    overflow: hidden;
+}
+
+.combo-badge {
+    position: absolute;
+    top: 15px;
+    right: -30px;
+    background: #ffcc00;
+    color: #333;
+    padding: 5px 30px;
+    transform: rotate(45deg);
+    font-size: 0.7rem;
+    font-weight: 800;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.combo-desc {
+    text-align: center;
+    color: #666;
+    margin-bottom: 1.5rem;
+    font-size: 0.9rem;
+}
+
+.combo-icons {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 1.5rem;
+}
+
+.icon-dot {
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    color: white;
+    font-size: 0.7rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+}
+
+.icon-dot.netflix {
+    background: #E50914;
+}
+
+.icon-dot.prime {
+    background: #00A8E1;
+}
+
+.icon-dot.hotstar {
+    background: #1f3a8a;
+}
+
+.icon-dot.zee5 {
+    background: #6F2C91;
+}
+
+.icon-dot.sonyliv {
+    background: #f89e1b;
+}
+
+/* Modals */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 2000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.modal.show {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 1;
+}
+
+.glass-modal {
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(20px);
+    padding: 2rem;
+    border-radius: 20px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    width: 90%;
+    max-width: 400px;
+    position: relative;
+    border: 1px solid rgba(255, 255, 255, 0.6);
+}
+
+.wide-modal {
+    max-width: 700px;
+}
+
+.close-btn {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #888;
+    transition: color 0.3s;
+}
+
+.close-btn:hover {
+    color: var(--primary-orange);
+}
+
+/* Compare Table */
+.table-responsive {
+    overflow-x: auto;
+    margin-top: 1.5rem;
+}
+
+.compare-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 500px;
+}
+
+.compare-table th {
+    background: rgba(31, 78, 140, 0.1);
+    color: var(--primary-blue);
+    padding: 12px;
+    text-align: left;
+}
+
+.compare-table td {
+    padding: 12px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    color: #555;
+}
+
+.compare-table tr:last-child td {
+    border-bottom: none;
+    font-weight: 700;
+    color: var(--primary-orange);
+}
+
+/* Confirm Modal */
+.highlight-text {
+    color: var(--primary-blue);
+    font-weight: 700;
+}
+
+.price-comparison {
+    background: rgba(255, 255, 255, 0.5);
+    padding: 1rem;
+    border-radius: 10px;
+    margin: 1.5rem 0;
+}
+
+.price-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.price-row.new-price {
+    font-weight: 600;
+    color: var(--text-dark);
+}
+
+.price-row.difference {
+    margin-top: 0.5rem;
+    padding-top: 0.5rem;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    color: var(--primary-orange);
+    font-weight: 700;
+    font-size: 1rem;
+}
+
+.impact-note {
+    font-size: 0.8rem;
+    color: #888;
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+
 /* Mobile Responsive */
 @media (max-width: 900px) {
     .dashboard-grid {
