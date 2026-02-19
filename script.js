@@ -101,6 +101,92 @@ document.addEventListener('DOMContentLoaded', () => {
             e.preventDefault();
             // Simulate login delay or validation here if needed
             window.location.href = 'dashboard.html';
-        });
-    }
-});
+
+            // Speed Test Simulation Logic
+            const startTestBtn = document.getElementById('startTestBtn');
+            const speedDisplay = document.getElementById('speedDisplay');
+            const speedStatus = document.getElementById('speedStatus');
+            const needle = document.querySelector('.needle');
+            const pingResult = document.getElementById('pingResult');
+            const downloadResult = document.getElementById('downloadResult');
+            const uploadResult = document.getElementById('uploadResult');
+
+            if (startTestBtn) {
+                startTestBtn.addEventListener('click', () => {
+                    startTestBtn.disabled = true;
+                    startTestBtn.textContent = "Testing...";
+
+                    // Reset
+                    pingResult.textContent = '--';
+                    downloadResult.textContent = '--';
+                    uploadResult.textContent = '--';
+                    needle.style.transform = 'rotate(-90deg)'; // Starting position
+
+                    // Simulation Sequence
+                    runSpeedTestSequence();
+                });
+            }
+
+            function runSpeedTestSequence() {
+                // Phase 1: Ping (Quick)
+                speedStatus.textContent = "Checking Ping...";
+                setTimeout(() => {
+                    const ping = Math.floor(Math.random() * (25 - 5) + 5); // 5-25ms
+                    pingResult.textContent = ping;
+
+                    // Phase 2: Download
+                    speedStatus.textContent = "Testing Download...";
+                    animateNeedle(true);
+                }, 1000);
+            }
+
+            function animateNeedle(isDownload) {
+                let currentSpeed = 0;
+                const targetSpeed = isDownload ? Math.floor(Math.random() * (150 - 90) + 90) : Math.floor(Math.random() * (100 - 50) + 50); // DL: 90-150, UL: 50-100
+
+                // Animate Needle & Numbers
+                const interval = setInterval(() => {
+                    // Random fluctuation for "realism"
+                    const increment = Math.random() * 5 + 1;
+                    currentSpeed += increment;
+
+                    if (currentSpeed >= targetSpeed) {
+                        currentSpeed = targetSpeed;
+                        clearInterval(interval);
+
+                        // Phase Complete
+                        if (isDownload) {
+                            downloadResult.textContent = targetSpeed.toFixed(1);
+                            // Pause then Upload
+                            setTimeout(() => {
+                                needle.style.transform = 'rotate(-90deg)'; // Reset needle for Upload start
+                                setTimeout(() => {
+                                    speedStatus.textContent = "Testing Upload...";
+                                    animateNeedle(false);
+                                }, 500);
+                            }, 1000);
+                        } else {
+                            uploadResult.textContent = targetSpeed.toFixed(1);
+                            finishTest();
+                        }
+                    }
+
+                    // Update UI
+                    speedDisplay.textContent = currentSpeed.toFixed(1);
+
+                    // Map speed 0-160 to degrees -90 to 90
+                    // -90deg = 0 Mbps, 90deg = 160 Mbps (Max Gauge)
+                    const maxGaugeSpeed = 160;
+                    const degree = -90 + (currentSpeed / maxGaugeSpeed) * 180;
+                    needle.style.transform = `rotate(${degree}deg)`;
+
+                }, 50); // Update every 50ms
+            }
+
+            function finishTest() {
+                speedStatus.textContent = "Test Completed";
+                startTestBtn.textContent = "Test Again";
+                startTestBtn.disabled = false;
+                needle.style.transform = 'rotate(-90deg)'; // Reset needle
+                speedDisplay.textContent = "0.0";
+            }

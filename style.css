@@ -951,18 +951,32 @@ h3 {
     font-size: 1.2rem;
 }
 
-/* Contact Section */
+/* Contact Section & Speed Test */
 .contact-section {
     padding: 6rem 0;
 }
 
+.contact-grid-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    /* 2 Columns */
+    gap: 4rem;
+    align-items: start;
+}
+
+.section-title.width-full {
+    grid-column: 1 / -1;
+    /* Title spans full width */
+    margin-bottom: 2rem;
+}
+
+/* Left Column: Contact Form */
 .contact-form {
-    max-width: 500px;
-    margin: 0 auto;
     background: white;
     padding: 2.5rem;
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-soft);
+    border: 1px solid rgba(0, 0, 0, 0.05);
 }
 
 .form-group {
@@ -986,6 +1000,7 @@ h3 {
     font-family: var(--font-body);
     font-size: 1rem;
     transition: border-color 0.2s;
+    background: #fcfcfc;
 }
 
 .form-group input:focus,
@@ -993,11 +1008,13 @@ h3 {
 .form-group textarea:focus {
     outline: none;
     border-color: var(--primary-blue);
+    background: white;
 }
 
 .contact-actions {
     display: flex;
-    justify-content: center;
+    justify-content: flex-start;
+    /* Aligned left for 2-col layout */
     gap: 1rem;
     margin-top: 2rem;
 }
@@ -1014,18 +1031,12 @@ h3 {
     color: white;
     font-size: 1rem;
     transition: all 0.3s ease;
-    box-shadow:
-        inset 0 3px 10px rgba(255, 255, 255, 0.3),
-        inset 0 -3px 10px rgba(0, 0, 0, 0.1),
-        0 8px 20px rgba(0, 0, 0, 0.15);
-    background-size: 200% auto;
+    box-shadow: var(--shadow-soft);
 }
 
 .btn-action:hover {
     transform: translateY(-3px) scale(1.02);
-    box-shadow:
-        inset 0 3px 10px rgba(255, 255, 255, 0.4),
-        0 12px 25px rgba(0, 0, 0, 0.2);
+    box-shadow: var(--shadow-hover);
 }
 
 .btn-action.call {
@@ -1034,6 +1045,207 @@ h3 {
 
 .btn-action.whatsapp {
     background-image: linear-gradient(135deg, #25D366, #128C7E);
+}
+
+/* Right Column: Speed Test Card */
+.speed-test-card {
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(12px);
+    padding: 2.5rem;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-soft);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.speed-header h3 {
+    color: var(--primary-blue);
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.speed-header p {
+    color: #64748b;
+    font-size: 0.95rem;
+    margin-bottom: 2rem;
+}
+
+/* Gauge Visuals */
+.speed-meter-container {
+    position: relative;
+    width: 250px;
+    height: 140px;
+    /* Half circle height */
+    margin-bottom: 1.5rem;
+    overflow: hidden;
+}
+
+.gauge-body {
+    width: 250px;
+    height: 125px;
+    background: #e2e8f0;
+    border-top-left-radius: 125px;
+    border-top-right-radius: 125px;
+    position: relative;
+    overflow: hidden;
+}
+
+.gauge-fill {
+    position: absolute;
+    top: 50%;
+    /* Pivot point */
+    left: 10%;
+    /* Center */
+    width: 80%;
+    height: 20%;
+    /* Simplified visual for simulate: use CSS gradient or SVG ideally. 
+       Here we'll use a rotated element to simulate progress if needed, 
+       but for simulation the needle is key. */
+    background: linear-gradient(90deg, #22c55e, #eab308, #f97316, #ef4444);
+    opacity: 0.2;
+    /* Subtle track */
+}
+
+/* Needle Animation */
+.needle {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 4px;
+    height: 110px;
+    background: var(--primary-orange);
+    transform-origin: bottom center;
+    transform: rotate(-90deg);
+    /* Start at 0 */
+    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 4px;
+    z-index: 2;
+}
+
+.needle::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: -6px;
+    width: 16px;
+    height: 16px;
+    background: var(--text-dark);
+    border-radius: 50%;
+}
+
+.speed-value {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+    z-index: 3;
+}
+
+.speed-value span {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: var(--text-dark);
+    line-height: 1;
+    display: block;
+}
+
+.speed-value small {
+    font-size: 0.8rem;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.status-message {
+    margin-top: 10px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--primary-blue);
+    height: 20px;
+    /* Fixed height to prevent jump */
+}
+
+.speed-results {
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+    margin: 1.5rem 0;
+    border-top: 1px solid #e2e8f0;
+    padding-top: 1.5rem;
+}
+
+.result-item {
+    display: flex;
+    flex-direction: column;
+}
+
+.result-item .label {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    color: #94a3b8;
+    font-weight: 600;
+}
+
+.result-item .value {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--text-dark);
+}
+
+.result-item .unit {
+    font-size: 0.7rem;
+    color: #94a3b8;
+}
+
+.start-test-btn {
+    width: 80%;
+    box-shadow: 0 4px 15px rgba(242, 101, 34, 0.4);
+}
+
+.speed-footer {
+    margin-top: 1.5rem;
+    font-size: 0.75rem;
+    color: #94a3b8;
+}
+
+.ookla-brand {
+    font-weight: 700;
+    color: var(--text-dark);
+}
+
+/* Animations using keyframes for simulated needle shake */
+@keyframes needle-shake {
+    0% {
+        transform: rotate(45deg);
+    }
+
+    50% {
+        transform: rotate(50deg);
+    }
+
+    100% {
+        transform: rotate(42deg);
+    }
+}
+
+/* Mobile Responsive Update */
+@media (max-width: 900px) {
+    .contact-grid-container {
+        grid-template-columns: 1fr;
+        gap: 3rem;
+    }
+
+    .contact-actions {
+        justify-content: center;
+    }
+
+    .section-title.width-full {
+        margin-bottom: 2rem;
+    }
 }
 
 /* Footer */

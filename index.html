@@ -198,34 +198,85 @@
 
     <!-- Contact Section -->
     <section id="contact" class="contact-section">
-        <div class="container">
-            <h2 class="section-title">Get Connected</h2>
-            <form class="contact-form fade-in">
-                <div class="form-group">
-                    <label for="name">Name</label>
-                    <input type="text" id="name" placeholder="John Doe" required>
+        <div class="container contact-grid-container">
+            <h2 class="section-title width-full">Get Connected</h2>
+
+            <!-- Left Column: Contact Form -->
+            <div class="contact-left">
+                <form class="contact-form fade-in">
+                    <div class="form-group">
+                        <label for="name">Name</label>
+                        <input type="text" id="name" placeholder="John Doe" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">Phone Number</label>
+                        <input type="tel" id="phone" placeholder="+91 98765 43210" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="address">Address</label>
+                        <textarea id="address" placeholder="Your Installation Address" rows="3" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="plan-select">Select Plan</label>
+                        <select id="plan-select">
+                            <option value="basic">Basic Plan (₹499)</option>
+                            <option value="standard" selected>Standard Plan (₹699)</option>
+                            <option value="premium">Premium Plan (₹999)</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn-primary width-full">Book Your Connection Today</button>
+                </form>
+                <div class="contact-actions">
+                    <button class="btn-action call"><i class="ph ph-phone"></i> Call Now</button>
+                    <button class="btn-action whatsapp"><i class="ph ph-whatsapp-logo"></i> WhatsApp</button>
                 </div>
-                <div class="form-group">
-                    <label for="phone">Phone Number</label>
-                    <input type="tel" id="phone" placeholder="+91 98765 43210" required>
+            </div>
+
+            <!-- Right Column: Speed Test -->
+            <div class="contact-right">
+                <div class="glass-card speed-test-card fade-in">
+                    <div class="speed-header">
+                        <h3>Test Your Internet Speed</h3>
+                        <p>Check your real-time download and upload speed instantly.</p>
+                    </div>
+
+                    <div class="speed-meter-container">
+                        <div class="gauge-body">
+                            <div class="gauge-fill"></div>
+                            <div class="gauge-cover"></div>
+                            <div class="needle"></div>
+                        </div>
+                        <div class="speed-value">
+                            <span id="speedDisplay">0.0</span>
+                            <small>Mbps</small>
+                        </div>
+                        <div class="status-message" id="speedStatus">Ready to Test</div>
+                    </div>
+
+                    <div class="speed-results">
+                        <div class="result-item">
+                            <span class="label">Ping</span>
+                            <span class="value" id="pingResult">--</span>
+                            <span class="unit">ms</span>
+                        </div>
+                        <div class="result-item">
+                            <span class="label">Download</span>
+                            <span class="value" id="downloadResult">--</span>
+                            <span class="unit">Mbps</span>
+                        </div>
+                        <div class="result-item">
+                            <span class="label">Upload</span>
+                            <span class="value" id="uploadResult">--</span>
+                            <span class="unit">Mbps</span>
+                        </div>
+                    </div>
+
+                    <button id="startTestBtn" class="btn-primary start-test-btn">Start Speed Test</button>
+
+                    <div class="speed-footer">
+                        Powered by <span class="ookla-brand">Ookla</span>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label for="address">Address</label>
-                    <textarea id="address" placeholder="Your Installation Address" rows="3" required></textarea>
-                </div>
-                <div class="form-group">
-                    <label for="plan-select">Select Plan</label>
-                    <select id="plan-select">
-                        <option value="basic">Basic Plan (₹499)</option>
-                        <option value="standard" selected>Standard Plan (₹699)</option>
-                        <option value="premium">Premium Plan (₹999)</option>
-                    </select>
-                </div>
-                <button type="submit" class="btn-primary width-full">Book Your Connection Today</button>
-            </form>
-            <div class="contact-actions">
-                <button class="btn-action call"><i class="ph ph-phone"></i> Call Now</button>
-                <button class="btn-action whatsapp"><i class="ph ph-whatsapp-logo"></i> WhatsApp</button>
             </div>
         </div>
     </section>
