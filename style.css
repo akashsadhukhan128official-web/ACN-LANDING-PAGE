@@ -949,13 +949,16 @@ h3 {
 .cta-text {
     font-size: 1.2rem;
     margin-bottom: 1.5rem;
-    font-weight: 500;
+    font-weight: 700;
+    color: #FFFFFF;
+    text-shadow: none;
+    -webkit-font-smoothing: antialiased;
 }
 
 .cta-text .price {
     font-size: 1.5rem;
     font-weight: 800;
-    color: white;
+    color: #FFFFFF;
 }
 
 .cta-buttons {

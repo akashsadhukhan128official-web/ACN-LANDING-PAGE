@@ -337,7 +337,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const heroViewPlans = document.getElementById('heroViewPlans');
 
     if (heroGetStarted) {
-        heroGetStarted.addEventListener('click', () => {
+        heroGetStarted.addEventListener('click', (e) => {
+            e.preventDefault();
             const contactSection = document.getElementById('contact');
             if (contactSection) {
                 contactSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -346,7 +347,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (heroViewPlans) {
-        heroViewPlans.addEventListener('click', () => {
+        heroViewPlans.addEventListener('click', (e) => {
+            e.preventDefault();
             const plansSection = document.getElementById('plans');
             if (plansSection) {
                 plansSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
