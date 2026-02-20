@@ -357,7 +357,8 @@ h3 {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    max-width: 1400px;
+    max-width: 1600px;
+    /* Increased to allow dominant slider */
     width: 100%;
     gap: 4rem;
     position: relative;
@@ -517,18 +518,24 @@ h3 {
 
 /* Hero Slider Styles */
 .hero-slider-container {
-    flex: 1.2;
-    max-width: 720px;
-    /* 20% wider than 600px */
+    flex: 1.5;
+    /* More dominant */
+    max-width: 950px;
+    /* ~30% wider than 720px */
     position: relative;
-    aspect-ratio: 16/10;
+    aspect-ratio: 16/9;
+    /* Standard cinematic ratio */
     border-radius: 30px;
     overflow: hidden;
     box-shadow:
-        0 30px 60px rgba(0, 0, 0, 0.12),
-        0 0 0 1px rgba(255, 255, 255, 0.4);
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
+        0 40px 80px rgba(0, 0, 0, 0.15),
+        /* Deeper depth */
+        inset 0 0 0 1px rgba(255, 255, 255, 0.4),
+        /* Outer glass edge */
+        inset 0 15px 30px rgba(255, 255, 255, 0.1);
+    /* Subtle inner glass highlight */
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(12px);
 }
 
 .hero-slider {
