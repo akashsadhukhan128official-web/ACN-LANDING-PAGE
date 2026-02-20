@@ -331,4 +331,26 @@ document.addEventListener('DOMContentLoaded', () => {
     if (sliderItems.length > 0) {
         startAutoSlide();
     }
+
+    // Hero CTA Button Functionality
+    const heroGetStarted = document.getElementById('heroGetStarted');
+    const heroViewPlans = document.getElementById('heroViewPlans');
+
+    if (heroGetStarted) {
+        heroGetStarted.addEventListener('click', () => {
+            const contactSection = document.getElementById('contact');
+            if (contactSection) {
+                contactSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+    }
+
+    if (heroViewPlans) {
+        heroViewPlans.addEventListener('click', () => {
+            const plansSection = document.getElementById('plans');
+            if (plansSection) {
+                plansSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+    }
 });
