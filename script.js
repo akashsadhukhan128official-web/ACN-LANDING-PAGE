@@ -342,7 +342,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (btn.innerText.trim() === "Get Connection Now") {
             btn.addEventListener("click", function (e) {
                 e.preventDefault();
-                const target = document.getElementById("get-connected");
+                const target = document.getElementById("contact");
                 if (target) target.scrollIntoView({ behavior: "smooth" });
             });
         }
@@ -350,7 +350,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (btn.innerText.trim() === "View Plans") {
             btn.addEventListener("click", function (e) {
                 e.preventDefault();
-                const target = document.getElementById("choose-plan");
+                const target = document.getElementById("plans");
                 if (target) target.scrollIntoView({ behavior: "smooth" });
             });
         }
