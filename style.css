@@ -517,15 +517,16 @@ h3 {
 
 /* Hero Slider Styles */
 .hero-slider-container {
-    flex: 1;
-    max-width: 600px;
+    flex: 1.2;
+    max-width: 720px;
+    /* 20% wider than 600px */
     position: relative;
     aspect-ratio: 16/10;
     border-radius: 30px;
     overflow: hidden;
     box-shadow:
-        0 20px 50px rgba(0, 0, 0, 0.1),
-        0 0 0 1px rgba(255, 255, 255, 0.8);
+        0 30px 60px rgba(0, 0, 0, 0.12),
+        0 0 0 1px rgba(255, 255, 255, 0.4);
     background: rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(10px);
 }
@@ -543,8 +544,10 @@ h3 {
     width: 100%;
     height: 100%;
     opacity: 0;
-    transition: opacity 1.5s ease-in-out, transform 1.5s ease-in-out;
-    transform: translateX(50px);
+    transition: opacity 1.2s cubic-bezier(0.4, 0, 0.2, 1), transform 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+    transform: translateX(-50px);
+    /* Changed to Left -> Right start */
+    overflow: hidden;
 }
 
 .slider-item.active {
@@ -553,10 +556,87 @@ h3 {
     z-index: 2;
 }
 
+.slider-item.active img {
+    animation: sliderZoom 15s linear forwards;
+}
+
+@keyframes sliderZoom {
+    0% {
+        transform: scale(1) translateX(-4px);
+    }
+
+    100% {
+        transform: scale(1.04) translateX(4px);
+    }
+
+    /* Subtle zoom + parallax shift */
+}
+
 .slider-item img {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    transition: transform 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Slider Navigation Controls */
+.slider-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: var(--primary-blue);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 10;
+    transition: all 0.3s ease;
+    font-size: 1.25rem;
+}
+
+.slider-arrow:hover {
+    background: white;
+    box-shadow: 0 0 20px rgba(242, 101, 34, 0.3);
+    color: var(--primary-orange);
+}
+
+.slider-arrow.prev {
+    left: 20px;
+}
+
+.slider-arrow.next {
+    right: 20px;
+}
+
+.slider-dots {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 12px;
+    z-index: 10;
+}
+
+.dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.4);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.dot.active {
+    background: white;
+    transform: scale(1.3);
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
 }
 
 /* Mobile Responsive Update */

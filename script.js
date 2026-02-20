@@ -258,16 +258,77 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Hero Image Slider Logic
     const sliderItems = document.querySelectorAll('.slider-item');
-    let currentSlide = 0;
-    const slideInterval = 30000; // 30 seconds
+    const dots = document.querySelectorAll('.dot');
+    const prevBtn = document.querySelector('.slider-arrow.prev');
+    const nextBtn = document.querySelector('.slider-arrow.next');
 
-    function nextSlide() {
-        sliderItems[currentSlide].classList.remove('active');
-        currentSlide = (currentSlide + 1) % sliderItems.length;
-        sliderItems[currentSlide].classList.add('active');
+    let currentSlide = 0;
+    let slideInterval;
+    const INTERVAL_TIME = 15000; // 15 seconds
+
+    function updateSlider() {
+        // Update Slides
+        sliderItems.forEach((item, index) => {
+            if (index === currentSlide) {
+                item.classList.add('active');
+            } else {
+                item.classList.remove('active');
+            }
+        });
+
+        // Update Dots
+        dots.forEach((dot, index) => {
+            if (index === currentSlide) {
+                dot.classList.add('active');
+            } else {
+                dot.classList.remove('active');
+            }
+        });
     }
 
+    function nextSlide() {
+        currentSlide = (currentSlide + 1) % sliderItems.length;
+        updateSlider();
+    }
+
+    function prevSlide() {
+        currentSlide = (currentSlide - 1 + sliderItems.length) % sliderItems.length;
+        updateSlider();
+    }
+
+    function startAutoSlide() {
+        stopAutoSlide();
+        slideInterval = setInterval(nextSlide, INTERVAL_TIME);
+    }
+
+    function stopAutoSlide() {
+        if (slideInterval) clearInterval(slideInterval);
+    }
+
+    // Manual Controls
+    if (nextBtn) {
+        nextBtn.addEventListener('click', () => {
+            nextSlide();
+            startAutoSlide(); // Reset timer
+        });
+    }
+
+    if (prevBtn) {
+        prevBtn.addEventListener('click', () => {
+            prevSlide();
+            startAutoSlide(); // Reset timer
+        });
+    }
+
+    dots.forEach((dot, index) => {
+        dot.addEventListener('click', () => {
+            currentSlide = index;
+            updateSlider();
+            startAutoSlide(); // Reset timer
+        });
+    });
+
     if (sliderItems.length > 0) {
-        setInterval(nextSlide, slideInterval);
+        startAutoSlide();
     }
 });
