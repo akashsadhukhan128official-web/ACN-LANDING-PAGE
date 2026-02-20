@@ -344,14 +344,24 @@ h3 {
 .hero-section {
     min-height: 100vh;
     display: flex;
-    flex-direction: column;
     align-items: center;
     justify-content: center;
-    text-align: center;
-    padding: 2rem 1rem;
+    padding: 100px 5% 60px;
     position: relative;
-    background: radial-gradient(circle at top right, rgba(242, 101, 34, 0.1), transparent 40%),
-        radial-gradient(circle at bottom left, rgba(31, 78, 140, 0.1), transparent 40%);
+    overflow: hidden;
+    background: radial-gradient(circle at top right, rgba(242, 101, 34, 0.05), transparent 40%),
+        radial-gradient(circle at bottom left, rgba(31, 78, 140, 0.05), transparent 40%);
+}
+
+.hero-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 1400px;
+    width: 100%;
+    gap: 4rem;
+    position: relative;
+    z-index: 2;
 }
 
 .navbar {
@@ -457,8 +467,9 @@ h3 {
 }
 
 .hero-content {
-    max-width: 800px;
-    margin-top: 4rem;
+    flex: 1;
+    text-align: left;
+    max-width: 700px;
 }
 
 .hero-headline {
@@ -483,7 +494,7 @@ h3 {
 .hero-badges {
     display: flex;
     flex-wrap: wrap;
-    justify-content: center;
+    justify-content: flex-start;
     gap: 1rem;
     margin-bottom: 3rem;
 }
@@ -501,7 +512,74 @@ h3 {
     gap: 8px;
     backdrop-filter: blur(10px);
     border: 1px solid rgba(255, 255, 255, 0.5);
-    transition: transform 0.3s ease;
+    transition: all 0.3s ease;
+}
+
+/* Hero Slider Styles */
+.hero-slider-container {
+    flex: 1;
+    max-width: 600px;
+    position: relative;
+    aspect-ratio: 16/10;
+    border-radius: 30px;
+    overflow: hidden;
+    box-shadow:
+        0 20px 50px rgba(0, 0, 0, 0.1),
+        0 0 0 1px rgba(255, 255, 255, 0.8);
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+}
+
+.hero-slider {
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+.slider-item {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    transition: opacity 1.5s ease-in-out, transform 1.5s ease-in-out;
+    transform: translateX(50px);
+}
+
+.slider-item.active {
+    opacity: 1;
+    transform: translateX(0);
+    z-index: 2;
+}
+
+.slider-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Mobile Responsive Update */
+@media (max-width: 1024px) {
+    .hero-container {
+        flex-direction: column;
+        text-align: center;
+        gap: 3rem;
+    }
+
+    .hero-content {
+        text-align: center;
+        max-width: 100%;
+    }
+
+    .hero-badges {
+        justify-content: center;
+    }
+
+    .hero-slider-container {
+        width: 100%;
+        max-width: 800px;
+    }
 }
 
 .badge:hover {

@@ -255,4 +255,19 @@ document.addEventListener('DOMContentLoaded', () => {
             speedDisplay.textContent = "0.0";
         }, 2000);
     }
+
+    // Hero Image Slider Logic
+    const sliderItems = document.querySelectorAll('.slider-item');
+    let currentSlide = 0;
+    const slideInterval = 30000; // 30 seconds
+
+    function nextSlide() {
+        sliderItems[currentSlide].classList.remove('active');
+        currentSlide = (currentSlide + 1) % sliderItems.length;
+        sliderItems[currentSlide].classList.add('active');
+    }
+
+    if (sliderItems.length > 0) {
+        setInterval(nextSlide, slideInterval);
+    }
 });
