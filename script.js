@@ -1,5 +1,8 @@
 document.addEventListener('DOMContentLoaded', () => {
 
+    // Smooth scroll enable
+    document.documentElement.style.scrollBehavior = "smooth";
+
     // Intersection Observer for Fade-in Animations
     const observerOptions = {
         root: null,
@@ -333,26 +336,23 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Hero CTA Button Functionality
-    const heroGetStarted = document.getElementById('heroGetStarted');
-    const heroViewPlans = document.getElementById('heroViewPlans');
+    const buttons = document.querySelectorAll("button, a");
 
-    if (heroGetStarted) {
-        heroGetStarted.addEventListener('click', (e) => {
-            e.preventDefault();
-            const contactSection = document.getElementById('contact');
-            if (contactSection) {
-                contactSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }
-        });
-    }
+    buttons.forEach(btn => {
+        if (btn.innerText.trim() === "Get Connection Now") {
+            btn.addEventListener("click", function (e) {
+                e.preventDefault();
+                const target = document.getElementById("get-connected");
+                if (target) target.scrollIntoView({ behavior: "smooth" });
+            });
+        }
 
-    if (heroViewPlans) {
-        heroViewPlans.addEventListener('click', (e) => {
-            e.preventDefault();
-            const plansSection = document.getElementById('plans');
-            if (plansSection) {
-                plansSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }
-        });
-    }
+        if (btn.innerText.trim() === "View Plans") {
+            btn.addEventListener("click", function (e) {
+                e.preventDefault();
+                const target = document.getElementById("choose-plan");
+                if (target) target.scrollIntoView({ behavior: "smooth" });
+            });
+        }
+    });
 });
