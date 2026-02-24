@@ -1,4 +1,10 @@
+import { auth, db } from './firebase-config.js';
+import { signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js";
+import { collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
+
 document.addEventListener('DOMContentLoaded', () => {
+
+    // ... (rest of DOMContentLoaded logic)
 
     // Smooth scroll enable
     document.documentElement.style.scrollBehavior = "smooth";
@@ -100,10 +106,59 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Handle Login Submit -> Redirect to Dashboard
     if (loginForm) {
-        loginForm.addEventListener('submit', (e) => {
+        loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            // Simulate login delay or validation here if needed
-            window.location.href = 'dashboard.html';
+
+            const phone = document.getElementById('login-phone').value.trim();
+            const password = document.getElementById('login-password').value;
+            const errorDiv = document.getElementById('login-error');
+            const submitBtn = document.getElementById('loginSubmitBtn');
+
+            // Hide previous errors
+            errorDiv.style.display = 'none';
+            errorDiv.textContent = '';
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Logging in...';
+
+            try {
+                // 1. Phone to Email mapping
+                const email = `${phone}@acn.com`;
+
+                // 2. Firebase Auth
+                const userCredential = await signInWithEmailAndPassword(auth, email, password);
+                const user = userCredential.user;
+
+                // 3. Fetch Customer Data from Firestore
+                const q = query(collection(db, "customers"), where("phone", "==", phone));
+                const querySnapshot = await getDocs(q);
+
+                if (!querySnapshot.empty) {
+                    const userData = querySnapshot.docs[0].data();
+
+                    // 4. Store Session Data
+                    sessionStorage.setItem('userSession', JSON.stringify({
+                        uid: user.uid,
+                        phone: phone,
+                        name: userData.name,
+                        plan: userData.plan,
+                        status: userData.status,
+                        due: userData.due
+                    }));
+
+                    // 5. Redirect to Dashboard
+                    window.location.href = 'dashboard.html';
+                } else {
+                    throw new Error("Customer record not found.");
+                }
+
+            } catch (error) {
+                console.error("Login Error:", error);
+                errorDiv.textContent = "Invalid phone or password";
+                errorDiv.style.display = 'block';
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Login';
+            }
         });
     }
 

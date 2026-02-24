@@ -176,7 +176,9 @@
         </div>
     </footer>
 
-    <script>
+    <script type="module">
+        import { auth, db } from './firebase-config.js';
+
         // Mobile Menu Toggle for Dashboard
         const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
         const dashboardLinks = document.querySelector('.dashboard-links');
@@ -185,13 +187,37 @@
         if (mobileMenuBtn && dashboardLinks) {
             mobileMenuBtn.addEventListener('click', () => {
                 dashboardLinks.classList.toggle('active');
-                // Also toggle profile visibility on mobile if needed, or keep it separate
                 userProfile.classList.toggle('active');
             });
         }
 
+        // Check Session & Populate Data
+        const sessionData = sessionStorage.getItem('userSession');
+        if (!sessionData) {
+            window.location.href = 'index.html';
+        } else {
+            const user = JSON.parse(sessionData);
+
+            // Populate Welcome Section
+            document.querySelector('.welcome-text h1').textContent = `Welcome, ${user.name}`;
+            document.querySelector('.user-details .detail-item:nth-child(2) .value').textContent = `+91 ${user.phone}`;
+
+            // Populate Plan Section
+            document.querySelector('.plan-name').textContent = user.plan;
+            document.querySelector('.plan-status').textContent = user.status;
+            document.querySelector('.plan-status').className = `plan-status ${user.status.toLowerCase()}`;
+
+            // Populate Payment Section
+            document.querySelector('.amount').textContent = `₹${user.due.toFixed(2)}`;
+
+            // Update Avatar
+            const avatarImg = document.querySelector('.avatar');
+            avatarImg.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=F26522&color=fff`;
+        }
+
         // Logout Logic
-        document.querySelector('.logout-btn').addEventListener('click', () => {
+        document.querySelector('.logout-btn').addEventListener('click', async () => {
+            sessionStorage.removeItem('userSession');
             window.location.href = 'index.html';
         });
     </script>

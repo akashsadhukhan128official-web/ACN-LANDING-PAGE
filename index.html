@@ -361,24 +361,26 @@
             <h2>Customer Login</h2>
             <form class="login-form">
                 <div class="form-group">
-                    <label for="login-email">Email or Mobile</label>
-                    <input type="text" id="login-email" placeholder="Enter your email or mobile" required>
+                    <label for="login-phone">Mobile Number</label>
+                    <input type="tel" id="login-phone" placeholder="Enter your mobile number" required>
                 </div>
                 <div class="form-group">
                     <label for="login-password">Password</label>
                     <input type="password" id="login-password" placeholder="Enter your password" required>
                 </div>
+                <div id="login-error" style="color: #ff4d4d; font-size: 0.9rem; margin-bottom: 1rem; display: none;">
+                </div>
                 <div class="form-check">
                     <input type="checkbox" id="remember-me">
                     <label for="remember-me">Remember me</label>
                 </div>
-                <button type="submit" class="btn-primary width-full">Login</button>
+                <button type="submit" class="btn-primary width-full" id="loginSubmitBtn">Login</button>
                 <a href="#" class="forgot-password">Forgot Password?</a>
             </form>
         </div>
     </div>
 
-    <script src="script.js"></script>
+    <script type="module" src="script.js"></script>
 </body>
 
 </html>
