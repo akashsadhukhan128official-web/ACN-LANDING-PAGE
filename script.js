@@ -1,10 +1,8 @@
 import { auth, db } from './firebase-config.js';
-import { signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js";
-import { collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
+import { signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
+import { collection, query, where, getDocs, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
 
 document.addEventListener('DOMContentLoaded', () => {
-
-    // ... (rest of DOMContentLoaded logic)
 
     // Smooth scroll enable
     document.documentElement.style.scrollBehavior = "smooth";
@@ -123,17 +121,28 @@ document.addEventListener('DOMContentLoaded', () => {
             try {
                 // 1. Phone to Email mapping
                 const email = `${phone}@acn.com`;
+                console.log("Attempting login for:", email);
 
                 // 2. Firebase Auth
                 const userCredential = await signInWithEmailAndPassword(auth, email, password);
                 const user = userCredential.user;
+                console.log("Auth successful, UID:", user.uid);
 
                 // 3. Fetch Customer Data from Firestore
-                const q = query(collection(db, "customers"), where("phone", "==", phone));
-                const querySnapshot = await getDocs(q);
+                // Try matching as string first
+                let q = query(collection(db, "customers"), where("phone", "==", phone));
+                let querySnapshot = await getDocs(q);
+
+                // If empty, try matching as number (incase Firestore stores it as number)
+                if (querySnapshot.empty && !isNaN(phone)) {
+                    console.log("String match failed, trying numeric match...");
+                    q = query(collection(db, "customers"), where("phone", "==", Number(phone)));
+                    querySnapshot = await getDocs(q);
+                }
 
                 if (!querySnapshot.empty) {
                     const userData = querySnapshot.docs[0].data();
+                    console.log("Customer data found:", userData.name);
 
                     // 4. Store Session Data
                     sessionStorage.setItem('userSession', JSON.stringify({
@@ -142,18 +151,26 @@ document.addEventListener('DOMContentLoaded', () => {
                         name: userData.name,
                         plan: userData.plan,
                         status: userData.status,
-                        due: userData.due
+                        due: userData.due || 0
                     }));
 
                     // 5. Redirect to Dashboard
                     window.location.href = 'dashboard.html';
                 } else {
-                    throw new Error("Customer record not found.");
+                    console.error("No Firestore document found for phone:", phone);
+                    throw new Error("NOT_FOUND");
                 }
 
             } catch (error) {
-                console.error("Login Error:", error);
-                errorDiv.textContent = "Invalid phone or password";
+                console.error("Login Error:", error.code, error.message);
+
+                if (error.message === "NOT_FOUND") {
+                    errorDiv.textContent = "Details not found in our database.";
+                } else if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password' || error.code === 'auth/invalid-credential') {
+                    errorDiv.textContent = "Invalid phone or password";
+                } else {
+                    errorDiv.textContent = "Login failed. Check your connection.";
+                }
                 errorDiv.style.display = 'block';
             } finally {
                 submitBtn.disabled = false;
@@ -388,6 +405,45 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (sliderItems.length > 0) {
         startAutoSlide();
+    }
+
+    // Contact Form Submission to Firestore
+    const contactForm = document.querySelector('.contact-form');
+    if (contactForm) {
+        contactForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const submitBtn = contactForm.querySelector('button[type="submit"]');
+            const originalText = submitBtn.textContent;
+
+            const name = document.getElementById('name').value;
+            const phone = document.getElementById('phone').value;
+            const address = document.getElementById('address').value;
+            const plan = document.getElementById('plan-select').value;
+
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Submitting...';
+
+            try {
+                await addDoc(collection(db, "leads"), {
+                    name,
+                    phone,
+                    address,
+                    plan,
+                    createdAt: serverTimestamp(),
+                    status: 'new'
+                });
+
+                alert("Thank you! Your connection request has been received. Our team will contact you soon.");
+                contactForm.reset();
+            } catch (error) {
+                console.error("Error submitting lead:", error);
+                alert("Sorry, something went wrong. Please try again or call us directly.");
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = originalText;
+            }
+        });
     }
 
     // Hero CTA Button Functionality

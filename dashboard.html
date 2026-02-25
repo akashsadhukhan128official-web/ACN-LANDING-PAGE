@@ -178,6 +178,7 @@
 
     <script type="module">
         import { auth, db } from './firebase-config.js';
+        import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
 
         // Mobile Menu Toggle for Dashboard
         const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
@@ -191,13 +192,24 @@
             });
         }
 
-        // Check Session & Populate Data
-        const sessionData = sessionStorage.getItem('userSession');
-        if (!sessionData) {
-            window.location.href = 'index.html';
-        } else {
-            const user = JSON.parse(sessionData);
+        // Check Auth State & Populate Data
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                const sessionData = sessionStorage.getItem('userSession');
+                if (sessionData) {
+                    const userData = JSON.parse(sessionData);
+                    populateDashboard(userData);
+                } else {
+                    // If session lost but auth exists, we could re-fetch from Firestore here
+                    // For now, redirect to force fresh login if session is empty
+                    window.location.href = 'index.html';
+                }
+            } else {
+                window.location.href = 'index.html';
+            }
+        });
 
+        function populateDashboard(user) {
             // Populate Welcome Section
             document.querySelector('.welcome-text h1').textContent = `Welcome, ${user.name}`;
             document.querySelector('.user-details .detail-item:nth-child(2) .value').textContent = `+91 ${user.phone}`;
@@ -217,8 +229,13 @@
 
         // Logout Logic
         document.querySelector('.logout-btn').addEventListener('click', async () => {
-            sessionStorage.removeItem('userSession');
-            window.location.href = 'index.html';
+            try {
+                await signOut(auth);
+                sessionStorage.removeItem('userSession');
+                window.location.href = 'index.html';
+            } catch (error) {
+                console.error("Logout failed:", error);
+            }
         });
     </script>
 </body>
