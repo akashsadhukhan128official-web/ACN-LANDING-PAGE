@@ -9,13 +9,14 @@ const firebaseConfig = {
     measurementId: "G-P370MFW18S"
 };
 
-// Initialize Firebase
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
-import { getAuth } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
-import { getFirestore } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
+// Initialize Firebase (Compat)
+if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+}
 
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
+const auth = firebase.auth();
+const db = firebase.firestore();
 
+// Note: No export needed if using as simple scripts, 
+// but keeping it for structure if script.js remains a module
 export { auth, db };
