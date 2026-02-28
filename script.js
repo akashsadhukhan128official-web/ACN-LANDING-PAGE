@@ -132,32 +132,51 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.log("Auth successful, UID:", user.uid);
 
                 // 3. Fetch Customer Data from Firestore (Compat)
-                let querySnapshot = await db.collection("customers").where("phone", "==", phone).get();
+                let querySnapshot;
 
-                // If empty, try matching as number
-                if (querySnapshot.empty && !isNaN(phone)) {
-                    console.log("String match failed, trying numeric match...");
-                    querySnapshot = await db.collection("customers").where("phone", "==", Number(phone)).get();
+                if (phone.includes('@')) {
+                    // Try matching by email field first
+                    querySnapshot = await db.collection("customers").where("email", "==", phone).get();
+                    // Fallback to checking phone field just in case
+                    if (querySnapshot.empty) {
+                        querySnapshot = await db.collection("customers").where("phone", "==", phone).get();
+                    }
+                } else {
+                    // Try matching by phone field
+                    querySnapshot = await db.collection("customers").where("phone", "==", phone).get();
+                    // If empty, try matching as number
+                    if (querySnapshot.empty && !isNaN(phone)) {
+                        console.log("String match failed, trying numeric match...");
+                        querySnapshot = await db.collection("customers").where("phone", "==", Number(phone)).get();
+                    }
                 }
 
                 if (!querySnapshot.empty) {
                     const userData = querySnapshot.docs[0].data();
                     console.log("Customer data found:", userData.name);
 
-                    // 4. Store Session Data
+                    // Safely parse due amount
+                    let dueAmount = 0;
+                    if (userData.due !== undefined && userData.due !== null) {
+                        dueAmount = Number(userData.due);
+                        if (isNaN(dueAmount)) dueAmount = 0;
+                    }
+
+                    // 4. Store Session Data with Safe Fallbacks
                     sessionStorage.setItem('userSession', JSON.stringify({
                         uid: user.uid,
-                        phone: phone,
-                        name: userData.name,
-                        plan: userData.plan,
-                        status: userData.status,
-                        due: userData.due || 0
+                        phone: userData.phone || phone,
+                        email: userData.email || email,
+                        name: userData.name || 'Customer',
+                        plan: userData.plan || 'Standard Plan',
+                        status: userData.status || 'Active',
+                        due: dueAmount
                     }));
 
                     // 5. Redirect to Dashboard
                     window.location.href = 'dashboard.html';
                 } else {
-                    console.error("No Firestore document found for phone:", phone);
+                    console.error("No Firestore document found for input:", phone);
                     throw new Error("NOT_FOUND");
                 }
 
