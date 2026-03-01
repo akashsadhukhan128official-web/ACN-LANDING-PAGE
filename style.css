@@ -1683,3 +1683,58 @@ h3 {
         transform: translateX(-50%) translateY(0);
     }
 }
+
+/* Plan Details Modal Styles */
+.plan-details-content {
+    margin-top: 1.5rem;
+    text-align: left;
+}
+
+.modal-feature-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.modal-feature-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.modal-feature-list li:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.feature-icon {
+    font-size: 1.5rem;
+    color: var(--primary-orange);
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+.feature-text {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.feature-label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--primary-blue);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.feature-value {
+    font-size: 1rem;
+    color: #444;
+    line-height: 1.4;
+}

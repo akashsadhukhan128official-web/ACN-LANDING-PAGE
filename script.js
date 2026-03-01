@@ -464,6 +464,106 @@ document.addEventListener('DOMContentLoaded', () => {
         startAutoSlide();
     }
 
+    // Plan Details Modal Logic
+    const planDetailsModal = document.getElementById('planDetailsModal');
+    const closePlanModal = document.getElementById('closePlanModal');
+    const moreDetailsBtns = document.querySelectorAll('.more-details-btn');
+    const modalPlanName = document.getElementById('modalPlanName');
+    const modalPlanFeatures = document.getElementById('modalPlanFeatures');
+
+    const planData = {
+        'Basic': {
+            name: 'Basic Plan (₹499/mo)',
+            features: [
+                { icon: 'ph-speedometer', label: 'Speed', value: '50 Mbps' },
+                { icon: 'ph-database', label: 'Data', value: 'Unlimited Data' },
+                { icon: 'ph-wrench', label: 'Installation', value: 'Free Installation' },
+                { icon: 'ph-router', label: 'Router', value: 'Available on request' },
+                { icon: 'ph-television', label: 'OTT Apps', value: 'Not included' },
+                { icon: 'ph-headset', label: 'Support', value: 'Standard Support' },
+                { icon: 'ph-star', label: 'Benefits', value: 'Perfect for seamless daily browsing.' }
+            ]
+        },
+        'Standard': {
+            name: 'Standard Plan - Popular (₹699/mo)',
+            features: [
+                { icon: 'ph-speedometer', label: 'Speed', value: '100 Mbps' },
+                { icon: 'ph-database', label: 'Data', value: 'Unlimited Data' },
+                { icon: 'ph-wrench', label: 'Installation', value: 'Free Installation' },
+                { icon: 'ph-router', label: 'Router', value: 'Free 5G Dual Band Router' },
+                { icon: 'ph-television', label: 'OTT Apps', value: 'Prime Video, Hotstar, SonyLIV, Zee5 + 10 more' },
+                { icon: 'ph-headset', label: 'Support', value: 'Priority Support' },
+                { icon: 'ph-star', label: 'Benefits', value: 'Ideal for 4K streaming and WFH.' }
+            ]
+        },
+        'Premium': {
+            name: 'Premium Plan (₹999/mo)',
+            features: [
+                { icon: 'ph-speedometer', label: 'Speed', value: '200 Mbps' },
+                { icon: 'ph-database', label: 'Data', value: 'Unlimited Data' },
+                { icon: 'ph-wrench', label: 'Installation', value: 'Free Priority Installation' },
+                { icon: 'ph-router', label: 'Router', value: 'Free Premium Wi-Fi 6 Router' },
+                { icon: 'ph-television', label: 'OTT Apps', value: 'Netflix, Prime, Hotstar, SonyLIV + Live TV' },
+                { icon: 'ph-headset', label: 'Support', value: '24x7 VIP Support' },
+                { icon: 'ph-star', label: 'Benefits', value: 'Ultimate gaming and 8K streaming experience.' }
+            ]
+        }
+    };
+
+    if (planDetailsModal && closePlanModal) {
+        moreDetailsBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const planType = btn.getAttribute('data-plan');
+                const details = planData[planType];
+
+                if (details) {
+                    modalPlanName.textContent = details.name;
+
+                    // Clear previous features
+                    modalPlanFeatures.innerHTML = '';
+
+                    // Populate features
+                    details.features.forEach(feature => {
+                        const li = document.createElement('li');
+                        li.innerHTML = `
+                            <div class="feature-icon"><i class="ph ${feature.icon}"></i></div>
+                            <div class="feature-text">
+                                <span class="feature-label">${feature.label}:</span>
+                                <span class="feature-value">${feature.value}</span>
+                            </div>
+                        `;
+                        modalPlanFeatures.appendChild(li);
+                    });
+
+                    // Set contact form dropdown to match the plan
+                    const planSelect = document.getElementById('plan-select');
+                    if (planSelect) {
+                        Array.from(planSelect.options).forEach(opt => {
+                            if (opt.value.toLowerCase() === planType.toLowerCase()) {
+                                opt.selected = true;
+                            }
+                        });
+                    }
+
+                    planDetailsModal.classList.add('show');
+                    document.body.style.overflow = 'hidden';
+                }
+            });
+        });
+
+        closePlanModal.addEventListener('click', () => {
+            planDetailsModal.classList.remove('show');
+            document.body.style.overflow = '';
+        });
+
+        window.addEventListener('click', (e) => {
+            if (e.target === planDetailsModal) {
+                planDetailsModal.classList.remove('show');
+                document.body.style.overflow = '';
+            }
+        });
+    }
+
     // Hero CTA Button Functionality
     const buttons = document.querySelectorAll("button, a");
 

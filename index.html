@@ -144,7 +144,7 @@
                         <li><i class="ph ph-check-circle"></i> Unlimited Data</li>
                         <li><i class="ph ph-check-circle"></i> Free Installation</li>
                     </ul>
-                    <button class="btn-outline">Choose Basic</button>
+                    <button class="btn-outline more-details-btn" data-plan="Basic">More Details</button>
                 </div>
 
                 <!-- Standard Plan (Popular) -->
@@ -160,7 +160,7 @@
                         <li><i class="ph ph-check-circle"></i> Free Router</li>
                         <li><i class="ph ph-check-circle"></i> OTT Ready</li>
                     </ul>
-                    <button class="btn-primary">Choose Standard</button>
+                    <button class="btn-primary more-details-btn" data-plan="Standard">More Details</button>
                 </div>
 
                 <!-- Premium Plan -->
@@ -175,7 +175,7 @@
                         <li><i class="ph ph-check-circle"></i> Gaming Optimized</li>
                         <li><i class="ph ph-check-circle"></i> Priority Support</li>
                     </ul>
-                    <button class="btn-outline">Choose Premium</button>
+                    <button class="btn-outline more-details-btn" data-plan="Premium">More Details</button>
                 </div>
             </div>
         </div>
@@ -359,6 +359,24 @@
             <p>&copy; 2024 ACN Broadband. All rights reserved.</p>
         </div>
     </footer>
+
+    <!-- Plan Details Modal -->
+    <div id="planDetailsModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" id="closePlanModal">&times;</span>
+            <h2 id="modalPlanName">Plan Name</h2>
+            <div class="plan-details-content">
+                <ul class="modal-feature-list" id="modalPlanFeatures">
+                    <!-- Features injected via JS -->
+                </ul>
+                <div class="modal-action" style="margin-top: 2rem;">
+                    <button class="btn-primary width-full"
+                        onclick="document.getElementById('planDetailsModal').classList.remove('show'); document.getElementById('get-connected').scrollIntoView({behavior: 'smooth'});">Get
+                        This Plan</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Login Modal -->
     <div id="loginModal" class="modal">
