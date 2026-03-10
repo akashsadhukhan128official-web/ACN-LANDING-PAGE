@@ -440,22 +440,20 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Hero CTA Button Functionality
-    const buttons = document.querySelectorAll("button, a");
+    const heroGetStartedBtn = document.getElementById('heroGetStarted');
+    if (heroGetStartedBtn) {
+        heroGetStartedBtn.addEventListener("click", function (e) {
+            e.preventDefault();
+            const target = document.getElementById("get-connected");
+            if (target) target.scrollIntoView({ behavior: "smooth" });
+        });
+    }
 
-    buttons.forEach(btn => {
-        if (btn.innerText.trim() === "Get Connection Now") {
-            btn.addEventListener("click", function (e) {
-                e.preventDefault();
-                const target = document.getElementById("get-connected");
-                if (target) target.scrollIntoView({ behavior: "smooth" });
-            });
-        }
-
-        if (btn.innerText.trim() === "View Plans") {
-            btn.addEventListener("click", function (e) {
-                e.preventDefault();
-                window.location.href = 'plans.html';
-            });
-        }
-    });
+    const heroViewPlansBtn = document.getElementById('heroViewPlans');
+    if (heroViewPlansBtn) {
+        heroViewPlansBtn.addEventListener("click", function (e) {
+            e.preventDefault();
+            window.location.href = 'plans.html';
+        });
+    }
 });
