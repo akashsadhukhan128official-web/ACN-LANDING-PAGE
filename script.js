@@ -249,8 +249,17 @@ document.addEventListener('DOMContentLoaded', () => {
     const TEST_FILE_URL = 'https://upload.wikimedia.org/wikipedia/commons/2/2d/Snake_River_%285mb%29.jpg'; // ~5MB
 
     if (startTestBtn) {
-        startTestBtn.addEventListener('click', () => {
-            window.open('https://www.speedtest.net/', '_blank');
+        startTestBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            // On some mobile browsers, window.open is blocked if not directly 
+            // tied to a synchronous user action, or it fails silently inside certain wrappers.
+            // Using a direct assignment or a simulated link click is safer for mobile.
+            const url = 'https://www.speedtest.net/';
+            const newWindow = window.open(url, '_blank');
+            if(!newWindow || newWindow.closed || typeof newWindow.closed == 'undefined') {
+                 // Popup blocked or failed (common on mobile), so fallback to redirecting current tab
+                 window.location.href = url;
+            }
         });
     }
 

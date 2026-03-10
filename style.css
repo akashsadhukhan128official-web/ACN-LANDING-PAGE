@@ -1492,6 +1492,9 @@ h3 {
 .start-test-btn {
     width: 80%;
     box-shadow: 0 4px 15px rgba(242, 101, 34, 0.4);
+    position: relative;
+    z-index: 10;
+    pointer-events: auto;
 }
 
 .speed-footer {
