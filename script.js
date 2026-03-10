@@ -437,7 +437,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (btn.innerText.trim() === "Get Connection Now") {
             btn.addEventListener("click", function (e) {
                 e.preventDefault();
-                const target = document.getElementById("contact");
+                const target = document.getElementById("get-connected");
                 if (target) target.scrollIntoView({ behavior: "smooth" });
             });
         }
@@ -445,7 +445,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (btn.innerText.trim() === "View Plans") {
             btn.addEventListener("click", function (e) {
                 e.preventDefault();
-                const target = document.getElementById("plans");
+                const target = document.getElementById("choose-plan");
                 if (target) target.scrollIntoView({ behavior: "smooth" });
             });
         }
