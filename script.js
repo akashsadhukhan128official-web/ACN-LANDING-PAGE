@@ -454,8 +454,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (btn.innerText.trim() === "View Plans") {
             btn.addEventListener("click", function (e) {
                 e.preventDefault();
-                const target = document.getElementById("choose-plan");
-                if (target) target.scrollIntoView({ behavior: "smooth" });
+                window.location.href = 'plans.html';
             });
         }
     });
