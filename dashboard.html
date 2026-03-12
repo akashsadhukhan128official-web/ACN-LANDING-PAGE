@@ -175,6 +175,20 @@
 
     </div>
 
+    <!-- QR Payment Modal -->
+    <div id="qrModal" class="modal">
+        <div class="modal-content" style="text-align: center; max-width: 400px;">
+            <span class="close-btn" id="closeQrModal">&times;</span>
+            <h2 style="margin-bottom: 0.5rem; color: var(--primary-blue);">Scan to Pay</h2>
+            <p style="color: #64748b; margin-bottom: 1.5rem;">Use any UPI App to scan the QR code below</p>
+            <div style="background: white; padding: 1.5rem; border-radius: 12px; display: inline-block; box-shadow: var(--shadow-soft); margin-bottom: 1.5rem;">
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi://pay?pa=acnbroadband@upi&pn=ACNBroadband" alt="Payment QR Code" style="width: 200px; height: 200px;">
+            </div>
+            <p style="font-weight: 600; color: var(--text-dark); margin-bottom: 0.5rem;">UPI ID: acnbroadband@upi</p>
+            <button class="btn-secondary-outline width-full" id="doneQrBtn">Done</button>
+        </div>
+    </div>
+
     <!-- Footer -->
     <footer class="dashboard-footer">
         <div class="container">
@@ -242,6 +256,33 @@
             } catch (error) {
                 console.error("Logout failed:", error);
             }
+        });
+
+        // QR Payment Modal Logic
+        const payBtn = document.querySelector('.pay-btn');
+        const qrModal = document.getElementById('qrModal');
+        const closeQrModal = document.getElementById('closeQrModal');
+        const doneQrBtn = document.getElementById('doneQrBtn');
+
+        if (payBtn && qrModal) {
+            payBtn.addEventListener('click', () => {
+                qrModal.classList.add('show');
+                document.body.style.overflow = 'hidden';
+            });
+        }
+
+        const closeQr = () => {
+            if (qrModal) {
+                qrModal.classList.remove('show');
+                document.body.style.overflow = '';
+            }
+        };
+
+        if (closeQrModal) closeQrModal.addEventListener('click', closeQr);
+        if (doneQrBtn) doneQrBtn.addEventListener('click', closeQr);
+        
+        window.addEventListener('click', (e) => {
+            if (e.target === qrModal) closeQr();
         });
     </script>
 </body>
