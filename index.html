@@ -384,7 +384,7 @@
     <!-- Login Modal -->
     <div id="loginModal" class="modal">
         <div class="modal-content">
-            <span class="close-btn">&times;</span>
+            <span class="close-btn" id="closeLoginModal">&times;</span>
             <h2>Customer Login</h2>
             <form class="login-form">
                 <div class="form-group">
@@ -401,8 +401,46 @@
                     <input type="checkbox" id="remember-me">
                     <label for="remember-me">Remember me</label>
                 </div>
-                <button type="submit" class="btn-primary width-full" id="loginSubmitBtn">Login</button>
-                <a href="#" class="forgot-password">Forgot Password?</a>
+                <button type="submit" class="btn-primary width-full" id="loginSubmitBtn" style="margin-bottom: 1rem;">Login</button>
+                <div style="display: flex; justify-content: space-between; font-size: 0.9rem;">
+                    <a href="#" class="forgot-password" id="forgotPasswordBtn">Forgot Password?</a>
+                    <a href="#" class="forgot-password" id="openSignUpBtn" style="color: var(--primary-orange); font-weight: 600;">Create Account</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Sign Up Modal -->
+    <div id="signUpModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" id="closeSignUpModal">&times;</span>
+            <h2>Create Account</h2>
+            <form class="login-form" id="signUpForm">
+                <div class="form-group">
+                    <label for="signup-name">Full Name</label>
+                    <input type="text" id="signup-name" placeholder="Enter your full name" required>
+                </div>
+                <div class="form-group">
+                    <label for="signup-email">Email Address</label>
+                    <input type="email" id="signup-email" placeholder="Enter your email" required>
+                </div>
+                <div class="form-group">
+                    <label for="signup-phone">Phone Number</label>
+                    <input type="tel" id="signup-phone" placeholder="Enter your mobile number" required>
+                </div>
+                <div class="form-group">
+                    <label for="signup-address">Full Address</label>
+                    <textarea id="signup-address" placeholder="Enter your installation address" required style="resize: vertical;"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="signup-password">Password</label>
+                    <input type="password" id="signup-password" placeholder="Create a password" required>
+                </div>
+                <div id="signup-error" style="color: #ff4d4d; font-size: 0.9rem; margin-bottom: 1rem; display: none;"></div>
+                <button type="submit" class="btn-primary width-full" id="signUpSubmitBtn" style="margin-bottom: 1rem;">Sign Up</button>
+                <div style="text-align: center; font-size: 0.9rem;">
+                    Already have an account? <a href="#" class="forgot-password" id="backToLoginBtn" style="color: var(--primary-orange); font-weight: 600;">Login here</a>
+                </div>
             </form>
         </div>
     </div>

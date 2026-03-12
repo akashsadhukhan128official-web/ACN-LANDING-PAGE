@@ -59,49 +59,130 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Mobile Login Link Trigger
-    const mobileLoginLink = document.getElementById('mobileLoginLink');
-    if (mobileLoginLink) {
-        mobileLoginLink.addEventListener('click', (e) => {
-            e.preventDefault();
-            const loginModal = document.getElementById('loginModal');
-            if (loginModal) {
-                loginModal.classList.add('show');
-                document.body.style.overflow = 'hidden';
-            }
-        });
-    }
-
-    // Login Modal Logic
-    const loginBtn = document.getElementById('loginBtn');
+    // --- Modal Toggling Logic ---
     const loginModal = document.getElementById('loginModal');
-    const closeBtn = document.querySelector('.close-btn');
-    const loginForm = document.querySelector('.login-form');
+    const signUpModal = document.getElementById('signUpModal');
 
-    if (loginBtn && loginModal && closeBtn) {
-        // Open Modal
-        loginBtn.addEventListener('click', () => {
-            loginModal.classList.add('show');
-            document.body.style.overflow = 'hidden'; // Prevent background scrolling
-        });
+    // Open Login Modal buttons (Header & Mobile)
+    const loginBtn = document.getElementById('loginBtn');
+    const mobileLoginLink = document.getElementById('mobileLoginLink');
 
-        // Close Modal via X button
-        closeBtn.addEventListener('click', () => {
+    const openLogin = (e) => {
+        if (e) e.preventDefault();
+        if (signUpModal) signUpModal.classList.remove('show');
+        if (loginModal) loginModal.classList.add('show');
+        document.body.style.overflow = 'hidden';
+    };
+
+    if (loginBtn) loginBtn.addEventListener('click', openLogin);
+    if (mobileLoginLink) mobileLoginLink.addEventListener('click', openLogin);
+
+    // Close Modal via X buttons
+    const closeLoginModalBtn = document.getElementById('closeLoginModal');
+    const closeSignUpModalBtn = document.getElementById('closeSignUpModal');
+
+    if (closeLoginModalBtn) closeLoginModalBtn.addEventListener('click', () => {
+        loginModal.classList.remove('show');
+        document.body.style.overflow = '';
+    });
+    if (closeSignUpModalBtn) closeSignUpModalBtn.addEventListener('click', () => {
+        signUpModal.classList.remove('show');
+        document.body.style.overflow = '';
+    });
+
+    // Close Models via Outside Click
+    window.addEventListener('click', (e) => {
+        if (e.target === loginModal) {
             loginModal.classList.remove('show');
             document.body.style.overflow = '';
-        });
+        }
+        if (e.target === signUpModal) {
+            signUpModal.classList.remove('show');
+            document.body.style.overflow = '';
+        }
+    });
 
-        // Close Modal via Outside Click
-        window.addEventListener('click', (e) => {
-            if (e.target === loginModal) {
-                loginModal.classList.remove('show');
-                document.body.style.overflow = '';
+    // Switch between Login and Sign Up Modals
+    const openSignUpBtn = document.getElementById('openSignUpBtn');
+    const backToLoginBtn = document.getElementById('backToLoginBtn');
+
+    if (openSignUpBtn) openSignUpBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        if (loginModal) loginModal.classList.remove('show');
+        if (signUpModal) signUpModal.classList.add('show');
+    });
+
+    if (backToLoginBtn) backToLoginBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        if (signUpModal) signUpModal.classList.remove('show');
+        if (loginModal) loginModal.classList.add('show');
+    });
+
+
+    // --- Handle Sign Up Logic ---
+    const signUpForm = document.getElementById('signUpForm');
+    if (signUpForm) {
+        signUpForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const submitBtn = document.getElementById('signUpSubmitBtn');
+            const errorDiv = document.getElementById('signup-error');
+            
+            const name = document.getElementById('signup-name').value.trim();
+            const email = document.getElementById('signup-email').value.trim();
+            const phone = document.getElementById('signup-phone').value.trim();
+            const address = document.getElementById('signup-address').value.trim();
+            const password = document.getElementById('signup-password').value;
+
+            errorDiv.style.display = 'none';
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Creating Account...';
+
+            try {
+                // 1. Create User in Firebase Auth
+                const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+                const user = userCredential.user;
+
+                // 2. Save Additional Info to Firestore
+                await db.collection('customers').doc(user.uid).set({
+                    name: name,
+                    email: email,
+                    phone: phone,
+                    address: address,
+                    plan: 'Standard Plan', // Default plan for new signups
+                    status: 'Active',
+                    due: 0,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+
+                // 3. Store Session Data
+                sessionStorage.setItem('userSession', JSON.stringify({
+                    uid: user.uid,
+                    phone: phone,
+                    email: email,
+                    name: name,
+                    plan: 'Standard Plan',
+                    status: 'Active',
+                    due: 0
+                }));
+
+                // 4. Redirect to Dashboard
+                window.location.href = 'dashboard.html';
+
+            } catch (error) {
+                console.error("Sign Up Error:", error);
+                errorDiv.textContent = error.message || "Failed to create account.";
+                errorDiv.style.display = 'block';
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Sign Up';
             }
         });
     }
 
-    // Handle Login Submit -> Redirect to Dashboard
-    if (loginForm) {
+    // --- Handle Login Submit -> Redirect to Dashboard ---
+    const loginForm = document.querySelector('.login-form'); // First form is login
+    if (loginForm && !loginForm.id) { // Ensure we target the login form, not signup
         loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
 
@@ -176,8 +257,16 @@ document.addEventListener('DOMContentLoaded', () => {
                     // 5. Redirect to Dashboard
                     window.location.href = 'dashboard.html';
                 } else {
-                    console.error("No Firestore document found for input:", phone);
-                    throw new Error("NOT_FOUND");
+                    // If no firestore document, still log them in using basic Auth details directly (Fallback for newly created accounts lacking Firestore docs in some edges cases)
+                    sessionStorage.setItem('userSession', JSON.stringify({
+                        uid: user.uid,
+                        email: email,
+                        name: 'Customer',
+                        plan: 'Standard Plan',
+                        status: 'Active',
+                        due: 0
+                    }));
+                    window.location.href = 'dashboard.html';
                 }
 
             } catch (error) {
@@ -192,6 +281,41 @@ document.addEventListener('DOMContentLoaded', () => {
             } finally {
                 submitBtn.disabled = false;
                 submitBtn.textContent = 'Login';
+            }
+        });
+    }
+
+    // --- Forgot Password Logic ---
+    const forgotPasswordBtn = document.getElementById('forgotPasswordBtn');
+    if (forgotPasswordBtn) {
+        forgotPasswordBtn.addEventListener('click', async (e) => {
+            e.preventDefault();
+            const phoneInput = document.getElementById('login-phone').value.trim();
+            const errorDiv = document.getElementById('login-error');
+            
+            if (!phoneInput) {
+                errorDiv.textContent = "Please enter your registered email address above.";
+                errorDiv.style.display = 'block';
+                return;
+            }
+
+            let email = phoneInput;
+            if (!email.includes('@')) {
+                 email = `${phoneInput}@acn.com`; // Fallback Mapping for phone numbers
+            }
+
+            try {
+                forgotPasswordBtn.textContent = "Sending...";
+                await auth.sendPasswordResetEmail(email);
+                errorDiv.style.color = 'green';
+                errorDiv.textContent = `Password reset link sent to ${email}`;
+                errorDiv.style.display = 'block';
+            } catch (error) {
+                errorDiv.style.color = '#ff4d4d';
+                errorDiv.textContent = error.message;
+                errorDiv.style.display = 'block';
+            } finally {
+                setTimeout(() => { forgotPasswordBtn.textContent = "Forgot Password?"; }, 2000);
             }
         });
     }
