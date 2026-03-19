@@ -415,13 +415,11 @@ h3 {
 .hero-container {
     display: flex;
     align-items: center;
-    justify-content: space-between;
     max-width: 1600px;
-    /* Increased to allow dominant slider */
     width: 100%;
-    gap: 4rem;
+    min-height: calc(100vh - 160px);
     position: relative;
-    z-index: 2;
+    z-index: 10;
 }
 
 .navbar {
@@ -533,22 +531,25 @@ h3 {
 }
 
 .hero-headline {
-    font-size: 3.5rem;
+    font-size: 4rem;
     line-height: 1.1;
     margin-bottom: 1rem;
-    color: var(--primary-blue);
+    color: #ffffff;
+    text-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
 }
 
 .highlight-text {
     color: var(--primary-orange);
     display: block;
+    text-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
 }
 
 .hero-subheadline {
-    font-size: 1.25rem;
+    font-size: 1.35rem;
     margin-bottom: 2rem;
-    color: #555;
-    font-weight: 400;
+    color: rgba(255, 255, 255, 0.95);
+    font-weight: 500;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
 }
 
 .hero-badges {
@@ -577,24 +578,24 @@ h3 {
 
 /* Hero Slider Styles */
 .hero-slider-container {
-    flex: 1.5;
-    /* More dominant */
-    max-width: 950px;
-    /* ~30% wider than 720px */
-    position: relative;
-    aspect-ratio: 16/9;
-    /* Standard cinematic ratio */
-    border-radius: 30px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
     overflow: hidden;
-    box-shadow:
-        0 40px 80px rgba(0, 0, 0, 0.15),
-        /* Deeper depth */
-        inset 0 0 0 1px rgba(255, 255, 255, 0.4),
-        /* Outer glass edge */
-        inset 0 15px 30px rgba(255, 255, 255, 0.1);
-    /* Subtle inner glass highlight */
-    background: rgba(255, 255, 255, 0.05);
-    backdrop-filter: blur(12px);
+    z-index: 1;
+}
+
+.slider-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to right, rgba(0, 0, 0, 0.85) 0%, rgba(0, 0, 0, 0.5) 50%, rgba(0, 0, 0, 0.1) 100%);
+    z-index: 5;
+    pointer-events: none;
 }
 
 .hero-slider {
@@ -716,8 +717,9 @@ h3 {
 @media (max-width: 1024px) {
     .hero-container {
         flex-direction: column;
+        justify-content: center;
         text-align: center;
-        gap: 3rem;
+        padding-top: 4rem; /* Additional breathing room below fixed nav */
     }
 
     .hero-content {
@@ -729,9 +731,8 @@ h3 {
         justify-content: center;
     }
 
-    .hero-slider-container {
-        width: 100%;
-        max-width: 800px;
+    .slider-overlay {
+        background: linear-gradient(to bottom, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.7) 60%, rgba(0, 0, 0, 0.2) 100%);
     }
 }
 
