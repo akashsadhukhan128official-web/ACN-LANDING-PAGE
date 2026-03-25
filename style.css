@@ -453,16 +453,16 @@ h3 {
     width: 90%;
     z-index: 1000;
 
-    /* Liquid Glass Style */
-    background: rgba(255, 255, 255, 0.25);
+
+    /* Dark Glassmorphism Style */
+    background: rgba(0, 0, 0, 0.6);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     border: 1px solid rgba(255, 255, 255, 0.3);
     border-radius: 50px;
-    box-shadow:
-        0 4px 30px rgba(0, 0, 0, 0.1),
-        inset 0 0 20px rgba(255, 255, 255, 0.5);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
 }
+
 
 .nav-actions {
     display: flex;
@@ -473,8 +473,8 @@ h3 {
 .logo {
     font-size: 1.5rem;
     font-weight: 800;
-    color: var(--primary-blue);
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    color: #ffffff;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .nav-links {
@@ -489,7 +489,7 @@ h3 {
 
 .nav-links a {
     text-decoration: none;
-    color: var(--primary-blue);
+    color: #ffffff;
     font-weight: 600;
     padding: 8px 20px;
     border-radius: 30px;
@@ -515,7 +515,7 @@ h3 {
 
 .nav-socials a {
     text-decoration: none;
-    color: var(--primary-blue);
+    color: #ffffff;
     display: flex;
     align-items: center;
     justify-content: center;
