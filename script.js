@@ -5,20 +5,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // Smooth scroll enable
     document.documentElement.style.scrollBehavior = "smooth";
 
-    // Mobile Navbar Scroll Behavior
-    const navbar = document.querySelector('.navbar');
-    if (navbar) {
-        window.addEventListener('scroll', function () {
-            if (window.innerWidth <= 1024) {
-                if (window.scrollY > 50) {
-                    navbar.classList.add('navbar-scrolled');
-                } else {
-                    navbar.classList.remove('navbar-scrolled');
-                }
-            }
-        });
-    }
-
     // Intersection Observer for Fade-in Animations
     const observerOptions = {
         root: null,
