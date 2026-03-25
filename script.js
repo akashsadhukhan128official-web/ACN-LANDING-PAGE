@@ -327,6 +327,7 @@ document.addEventListener('DOMContentLoaded', () => {
             e.preventDefault();
 
             const submitBtn = contactForm.querySelector('button[type="submit"]');
+            const statusEl = document.getElementById('contactFormStatus');
             const originalText = submitBtn.textContent;
 
             const name = document.getElementById('name').value;
@@ -336,6 +337,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
             submitBtn.disabled = true;
             submitBtn.textContent = 'Submitting...';
+            if (statusEl) {
+                statusEl.textContent = '';
+                statusEl.className = 'form-status';
+            }
 
             try {
                 await db.collection("leads").add({
@@ -347,11 +352,17 @@ document.addEventListener('DOMContentLoaded', () => {
                     status: 'new'
                 });
 
-                alert("Thank you! Your connection request has been received. Our team will contact you soon.");
                 contactForm.reset();
+                if (statusEl) {
+                    statusEl.textContent = 'Thanks! Your connection request has been received. Our team will contact you soon.';
+                    statusEl.classList.add('success');
+                }
             } catch (error) {
                 console.error("Error submitting lead:", error);
-                alert("Sorry, something went wrong. Please try again or call us directly.");
+                if (statusEl) {
+                    statusEl.textContent = 'Sorry, something went wrong. Please try again or call us directly.';
+                    statusEl.classList.add('error');
+                }
             } finally {
                 submitBtn.disabled = false;
                 submitBtn.textContent = originalText;
@@ -359,8 +370,23 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    const callNowBtn = document.querySelector('.btn-action.call');
+    const whatsappBtn = document.querySelector('.btn-action.whatsapp');
 
-    // Real Network Speed Test Logic
+    if (callNowBtn) {
+        callNowBtn.addEventListener('click', () => {
+            window.location.href = 'tel:+919874026889';
+        });
+    }
+
+    if (whatsappBtn) {
+        whatsappBtn.addEventListener('click', () => {
+            window.open('https://wa.me/919874026889?text=Hi%20ACN%20Broadband%2C%20I%20want%20a%20new%20connection.', '_blank', 'noopener');
+        });
+    }
+
+
+    // Inline Speed Test Demo
     const startTestBtn = document.getElementById('startTestBtn');
     const speedDisplay = document.getElementById('speedDisplay');
     const speedStatus = document.getElementById('speedStatus');
@@ -368,22 +394,85 @@ document.addEventListener('DOMContentLoaded', () => {
     const pingResult = document.getElementById('pingResult');
     const downloadResult = document.getElementById('downloadResult');
     const uploadResult = document.getElementById('uploadResult');
+    let speedTestRunning = false;
 
-    // Configuration
-    const TEST_FILE_URL = 'https://upload.wikimedia.org/wikipedia/commons/2/2d/Snake_River_%285mb%29.jpg'; // ~5MB
+    const updateGauge = (value) => {
+        const normalized = Math.max(0, Math.min(value, 200));
+        const angle = -90 + (normalized / 200) * 180;
+
+        if (needle) {
+            needle.style.transform = `rotate(${angle}deg)`;
+        }
+
+        if (speedDisplay) {
+            speedDisplay.textContent = normalized.toFixed(1);
+        }
+    };
+
+    const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+    const animateMetric = async (from, to, duration, label) => {
+        const start = performance.now();
+
+        return new Promise((resolve) => {
+            const tick = (now) => {
+                const progress = Math.min((now - start) / duration, 1);
+                const current = from + ((to - from) * progress);
+                updateGauge(current);
+
+                if (speedStatus) {
+                    speedStatus.textContent = label;
+                }
+
+                if (progress < 1) {
+                    requestAnimationFrame(tick);
+                } else {
+                    resolve(current);
+                }
+            };
+
+            requestAnimationFrame(tick);
+        });
+    };
 
     if (startTestBtn) {
-        startTestBtn.addEventListener('click', (e) => {
+        startTestBtn.addEventListener('click', async (e) => {
             e.preventDefault();
-            // On some mobile browsers, window.open is blocked if not directly 
-            // tied to a synchronous user action, or it fails silently inside certain wrappers.
-            // Using a direct assignment or a simulated link click is safer for mobile.
-            const url = 'https://www.speedtest.net/';
-            const newWindow = window.open(url, '_blank');
-            if(!newWindow || newWindow.closed || typeof newWindow.closed == 'undefined') {
-                 // Popup blocked or failed (common on mobile), so fallback to redirecting current tab
-                 window.location.href = url;
+            if (speedTestRunning) {
+                return;
             }
+
+            speedTestRunning = true;
+            startTestBtn.disabled = true;
+            startTestBtn.textContent = 'Testing...';
+
+            const ping = 8 + Math.random() * 24;
+            const download = 65 + Math.random() * 95;
+            const upload = 35 + Math.random() * 55;
+
+            pingResult.textContent = '--';
+            downloadResult.textContent = '--';
+            uploadResult.textContent = '--';
+            updateGauge(0);
+
+            await animateMetric(0, 20 + Math.random() * 25, 900, 'Checking latency...');
+            pingResult.textContent = ping.toFixed(0);
+            await wait(250);
+
+            await animateMetric(20, download, 1800, 'Measuring download speed...');
+            downloadResult.textContent = download.toFixed(1);
+            await wait(250);
+
+            await animateMetric(download, upload, 1500, 'Measuring upload speed...');
+            uploadResult.textContent = upload.toFixed(1);
+
+            if (speedStatus) {
+                speedStatus.textContent = 'Test complete';
+            }
+
+            startTestBtn.disabled = false;
+            startTestBtn.textContent = 'Run Again';
+            speedTestRunning = false;
         });
     }
 

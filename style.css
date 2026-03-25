@@ -299,6 +299,23 @@ h3 {
     transition: 0.5s;
 }
 
+.btn-secondary {
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    color: white;
+    padding: 10px 22px;
+    border-radius: 50px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(8px);
+}
+
+.btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.32);
+    transform: translateY(-2px);
+}
+
 .btn-secondary-outline {
     background: rgba(31, 78, 140, 0.1);
     border: 1px solid rgba(31, 78, 140, 0.5);
@@ -733,6 +750,10 @@ h3 {
 
     .slider-overlay {
         background: linear-gradient(to bottom, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.7) 60%, rgba(0, 0, 0, 0.2) 100%);
+    }
+
+    .slider-arrow {
+        display: none; /* Hide arrows on mobile to prevent overlapping text */
     }
 }
 
@@ -1300,6 +1321,21 @@ h3 {
     background: white;
 }
 
+.form-status {
+    min-height: 1.25rem;
+    margin-top: 1rem;
+    font-size: 0.95rem;
+    font-weight: 500;
+}
+
+.form-status.success {
+    color: #15803d;
+}
+
+.form-status.error {
+    color: #b91c1c;
+}
+
 .contact-actions {
     display: flex;
     justify-content: flex-start;
@@ -1603,10 +1639,18 @@ h3 {
     .navbar {
         justify-content: space-between;
         padding: 0.8rem 1.5rem;
+        background: transparent; /* Remove muddy gray pill effect */
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+        border: none;
+        box-shadow: none;
+        width: 100%;
+        top: 0;
     }
 
     .hero-headline {
-        font-size: 2.5rem;
+        font-size: 2.2rem;
+        line-height: 1.2;
     }
 
     .mobile-menu-btn {
