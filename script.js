@@ -436,43 +436,9 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     if (startTestBtn) {
-        startTestBtn.addEventListener('click', async (e) => {
+        startTestBtn.addEventListener('click', function (e) {
             e.preventDefault();
-            if (speedTestRunning) {
-                return;
-            }
-
-            speedTestRunning = true;
-            startTestBtn.disabled = true;
-            startTestBtn.textContent = 'Testing...';
-
-            const ping = 8 + Math.random() * 24;
-            const download = 65 + Math.random() * 95;
-            const upload = 35 + Math.random() * 55;
-
-            pingResult.textContent = '--';
-            downloadResult.textContent = '--';
-            uploadResult.textContent = '--';
-            updateGauge(0);
-
-            await animateMetric(0, 20 + Math.random() * 25, 900, 'Checking latency...');
-            pingResult.textContent = ping.toFixed(0);
-            await wait(250);
-
-            await animateMetric(20, download, 1800, 'Measuring download speed...');
-            downloadResult.textContent = download.toFixed(1);
-            await wait(250);
-
-            await animateMetric(download, upload, 1500, 'Measuring upload speed...');
-            uploadResult.textContent = upload.toFixed(1);
-
-            if (speedStatus) {
-                speedStatus.textContent = 'Test complete';
-            }
-
-            startTestBtn.disabled = false;
-            startTestBtn.textContent = 'Run Again';
-            speedTestRunning = false;
+            window.open('https://www.speedtest.net', '_blank');
         });
     }
 
