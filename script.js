@@ -529,12 +529,18 @@ document.addEventListener('DOMContentLoaded', () => {
         'Basic': {
             name: 'Basic Plan (₹499/mo)',
             features: [
-                { icon: 'ph-speedometer', label: 'Speed', value: '50 Mbps' },
+                { icon: 'ph-speedometer', label: 'Speed', value: '70 Mbps' },
                 { icon: 'ph-database', label: 'Data', value: 'Unlimited Data' },
                 { icon: 'ph-wrench', label: 'Installation', value: 'Free Installation' },
                 { icon: 'ph-router', label: 'Router', value: 'Available on request' },
-                { icon: 'ph-television', label: 'OTT Apps', value: 'Not included' },
-                { icon: 'ph-headset', label: 'Support', value: 'Standard Support' },
+                { icon: 'ph-television', label: 'OTT Apps', value: `<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:4px;">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/9a/Zee5_logo.svg/512px-Zee5_logo.svg.png" alt="Zee5" style="width:32px;height:32px;border-radius:50%;object-fit:cover;border:1.5px solid #eee;background:#fff;">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/85/Hoichoi_logo.png/240px-Hoichoi_logo.png" alt="Hoichoi" style="width:32px;height:32px;border-radius:50%;object-fit:cover;border:1.5px solid #eee;background:#fff;">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/Jio_Hotstar_logo.svg/512px-Jio_Hotstar_logo.svg.png" alt="JioHotstar" style="width:32px;height:32px;border-radius:50%;object-fit:cover;border:1.5px solid #eee;background:#fff;">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/SonyLIV_logo.svg/512px-SonyLIV_logo.svg.png" alt="SonyLiv" style="width:32px;height:32px;border-radius:50%;object-fit:cover;border:1.5px solid #eee;background:#fff;">
+                    <div style="width:32px;height:32px;border-radius:50%;background:#1a3c6e;color:#fff;font-size:1rem;font-weight:700;display:flex;align-items:center;justify-content:center;">+</div>
+                </div>` },
+                { icon: 'ph-headset', label: 'Support', value: '24×7 Support' },
                 { icon: 'ph-star', label: 'Benefits', value: 'Perfect for seamless daily browsing.' }
             ]
         },
