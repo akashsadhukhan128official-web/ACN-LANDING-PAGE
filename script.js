@@ -545,13 +545,13 @@ document.addEventListener('DOMContentLoaded', () => {
             ]
         },
         'Standard': {
-            name: 'Standard Plan - Popular (₹699/mo)',
+            name: 'Standard Plan - Popular (₹599/mo)',
             features: [
                 { icon: 'ph-speedometer', label: 'Speed', value: '100 Mbps' },
                 { icon: 'ph-database', label: 'Data', value: 'Unlimited Data' },
                 { icon: 'ph-wrench', label: 'Installation', value: 'Free Installation' },
-                { icon: 'ph-router', label: 'Router', value: 'Free 5G Dual Band Router' },
-                { icon: 'ph-television', label: 'OTT Apps', value: 'Prime Video, Hotstar, SonyLIV, Zee5 + 10 more' },
+                { icon: 'ph-router', label: 'Router', value: 'Chargeable' },
+                { icon: 'ph-television', label: 'OTT Apps', value: 'Prime Video, Hotstar, SonyLIV, Zee5 + 19 more (23+ Total)' },
                 { icon: 'ph-headset', label: 'Support', value: 'Priority Support' },
                 { icon: 'ph-star', label: 'Benefits', value: 'Ideal for 4K streaming and WFH.' }
             ]
