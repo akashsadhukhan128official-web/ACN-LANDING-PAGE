@@ -1326,28 +1326,6 @@ h3 {
 
 .plan-header, .plan-features { display: none; }
 /* Combo Section */
-
-/* Plans Sub-sections (two-section layout) */
-.plans-sub-section {
-    margin-bottom: 4rem;
-}
-
-.plans-welcome .section-title {
-    color: #1e3a8a;
-}
-
-.best-offer-tag {
-    display: inline-block;
-    background: linear-gradient(135deg, #ff6a00, #ff8c00);
-    color: white;
-    font-size: 0.75rem;
-    font-weight: 800;
-    letter-spacing: 2px;
-    padding: 4px 14px;
-    border-radius: 20px;
-    margin-bottom: 0.75rem;
-    text-transform: uppercase;
-}
 .combo-section {
     padding: 6rem 0;
     background: linear-gradient(135deg, var(--primary-blue), #2a6bcc);
