@@ -527,7 +527,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const planData = {
         'Basic': {
-            name: 'Basic Plan (₹499/mo)',
+            name: 'Basic Plan (₹499*/mo)',
             features: [
                 { icon: 'ph-speedometer', label: 'Speed', value: '70 Mbps' },
                 { icon: 'ph-database', label: 'Data', value: 'Unlimited Data' },
@@ -545,7 +545,7 @@ document.addEventListener('DOMContentLoaded', () => {
             ]
         },
         'Standard': {
-            name: 'Standard Plan - Popular (₹599/mo)',
+            name: 'Standard Plan - Popular (₹599*/mo)',
             features: [
                 { icon: 'ph-speedometer', label: 'Speed', value: '100 Mbps' },
                 { icon: 'ph-database', label: 'Data', value: 'Unlimited Data' },
@@ -557,7 +557,7 @@ document.addEventListener('DOMContentLoaded', () => {
             ]
         },
         'Premium': {
-            name: 'Premium Plan (₹999/mo)',
+            name: 'Premium Plan (₹999*/mo)',
             features: [
                 { icon: 'ph-speedometer', label: 'Speed', value: '200 Mbps' },
                 { icon: 'ph-database', label: 'Data', value: 'Unlimited Data' },
@@ -569,7 +569,7 @@ document.addEventListener('DOMContentLoaded', () => {
             ]
         },
         'Basic WiFi': {
-            name: 'Basic WiFi (₹339/mo)',
+            name: 'Basic WiFi (₹339*/mo)',
             features: [
                 { icon: 'ph-speedometer', label: 'Speed', value: '70 Mbps' },
                 { icon: 'ph-database', label: 'Data', value: 'Unlimited Data' },
@@ -581,7 +581,7 @@ document.addEventListener('DOMContentLoaded', () => {
             ]
         },
         'Standard WiFi': {
-            name: 'Standard WiFi (₹424/mo)',
+            name: 'Standard WiFi (₹424*/mo)',
             features: [
                 { icon: 'ph-speedometer', label: 'Speed', value: '100 Mbps' },
                 { icon: 'ph-database', label: 'Data', value: 'Unlimited Data' },
