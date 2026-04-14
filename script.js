@@ -569,7 +569,7 @@ document.addEventListener('DOMContentLoaded', () => {
             ]
         },
         'Basic WiFi': {
-            name: 'Basic WiFi (₹399/mo)',
+            name: 'Basic WiFi (₹339/mo)',
             features: [
                 { icon: 'ph-speedometer', label: 'Speed', value: '70 Mbps' },
                 { icon: 'ph-database', label: 'Data', value: 'Unlimited Data' },
@@ -581,7 +581,7 @@ document.addEventListener('DOMContentLoaded', () => {
             ]
         },
         'Standard WiFi': {
-            name: 'Standard WiFi (₹499/mo)',
+            name: 'Standard WiFi (₹424/mo)',
             features: [
                 { icon: 'ph-speedometer', label: 'Speed', value: '100 Mbps' },
                 { icon: 'ph-database', label: 'Data', value: 'Unlimited Data' },
@@ -589,7 +589,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 { icon: 'ph-router', label: 'Router', value: 'Free 5G Dual Band Router' },
                 { icon: 'ph-television', label: 'OTT Apps', value: 'Not Included' },
                 { icon: 'ph-headset', label: 'Support', value: 'Priority Support' },
-                { icon: 'ph-star', label: 'Benefits', value: 'Office Gaming and many more.' }
+                { icon: 'ph-star', label: 'Benefits', value: 'Office, Gaming and many more.' }
             ]
         }
     };
