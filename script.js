@@ -567,6 +567,30 @@ document.addEventListener('DOMContentLoaded', () => {
                 { icon: 'ph-headset', label: 'Support', value: '24x7 VIP Support' },
                 { icon: 'ph-star', label: 'Benefits', value: 'Ultimate gaming and 8K streaming experience.' }
             ]
+        },
+        'Basic WiFi': {
+            name: 'Basic WiFi (₹399/mo)',
+            features: [
+                { icon: 'ph-speedometer', label: 'Speed', value: '70 Mbps' },
+                { icon: 'ph-database', label: 'Data', value: 'Unlimited Data' },
+                { icon: 'ph-wrench', label: 'Installation', value: 'Free Installation' },
+                { icon: 'ph-router', label: 'Router', value: 'Free Dual Band Router' },
+                { icon: 'ph-television', label: 'OTT Apps', value: 'Not Included' },
+                { icon: 'ph-headset', label: 'Support', value: '24×7 Support' },
+                { icon: 'ph-star', label: 'Benefits', value: 'Home Perfect.' }
+            ]
+        },
+        'Standard WiFi': {
+            name: 'Standard WiFi (₹499/mo)',
+            features: [
+                { icon: 'ph-speedometer', label: 'Speed', value: '100 Mbps' },
+                { icon: 'ph-database', label: 'Data', value: 'Unlimited Data' },
+                { icon: 'ph-wrench', label: 'Installation', value: 'Free Installation' },
+                { icon: 'ph-router', label: 'Router', value: 'Free 5G Dual Band Router' },
+                { icon: 'ph-television', label: 'OTT Apps', value: 'Not Included' },
+                { icon: 'ph-headset', label: 'Support', value: 'Priority Support' },
+                { icon: 'ph-star', label: 'Benefits', value: 'Office Gaming and many more.' }
+            ]
         }
     };
 
