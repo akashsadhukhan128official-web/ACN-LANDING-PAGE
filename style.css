@@ -1865,14 +1865,20 @@ h3 {
     }
 }
 
-@media (max-width: 480px) {
-    .ott-logo-box {
-        width: 66px;
-        height: 66px;
-        border-radius: 14px;
-    }
+/* OTT Brand Colors */
+.ott-netflix   { background: #000; }
+.ott-prime     { background: #1a98ff; }
+.ott-zee5      { background: #1a1a1a; }
+.ott-hotstar   { background: linear-gradient(135deg, #7b2ff7, #3b0f8c); }
+.ott-hoichoi   { background: #e41f26; }
+.ott-sony      { background: #111; }
+.ott-discovery { background: #002b5c; }
 
-    .ott-logos-row {
-        gap: 0.65rem;
-    }
+.ott-text {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-heading);
+    user-select: none;
 }
