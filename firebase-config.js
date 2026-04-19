@@ -1,12 +1,13 @@
 // Firebase Configuration
 const firebaseConfig = {
-    apiKey: "AIzaSyCYbs9e0aiN7UpD65R2eOLLK7AMhg0aazQ",
-    authDomain: "acn-landing-page-8eac8.firebaseapp.com",
-    projectId: "acn-landing-page-8eac8",
-    storageBucket: "acn-landing-page-8eac8.firebasestorage.app",
-    messagingSenderId: "833555392942",
-    appId: "1:833555392942:web:215c1e04181dbee4fb803f",
-    measurementId: "G-P370MFW18S"
+    apiKey: "AIzaSyD63IDahWPEXwCHV5VZTHensiJc0GKJvK4",
+    authDomain: "landing-final-acn.firebaseapp.com",
+    databaseURL: "https://landing-final-acn-default-rtdb.firebaseio.com",
+    projectId: "landing-final-acn",
+    storageBucket: "landing-final-acn.firebasestorage.app",
+    messagingSenderId: "951269356945",
+    appId: "1:951269356945:web:0cb9c11201ef0053635630",
+    measurementId: "G-MQWFD8RC4C"
 };
 
 // Initialize Firebase (Compat)
