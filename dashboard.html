@@ -36,7 +36,7 @@
                     <li><a href="support.html">Support</a></li>
                 </ul>
                 <div class="user-profile">
-                    <img src="https://ui-avatars.com/api/?name=Akash+Sadhukhan&background=F26522&color=fff"
+                    <img src="https://ui-avatars.com/api/?name=User&background=F26522&color=fff"
                         alt="Profile" class="avatar">
                     <span class="logout-btn"><i class="ph ph-sign-out"></i> Logout</span>
                 </div>
@@ -50,21 +50,21 @@
         <!-- Welcome Section -->
         <div class="glass-card welcome-card fade-in">
             <div class="welcome-text">
-                <h1>Welcome, Akash Sadhukhan</h1>
+                <h1>Welcome, Customer</h1>
                 <p>Manage your internet connection with ease.</p>
             </div>
             <div class="user-details">
                 <div class="detail-item">
                     <span class="label">Customer ID</span>
-                    <span class="value">ACN882910</span>
+                    <span class="value">--</span>
                 </div>
                 <div class="detail-item">
                     <span class="label">Mobile</span>
-                    <span class="value">+91 98765 43210</span>
+                    <span class="value">--</span>
                 </div>
                 <div class="detail-item">
                     <span class="label">Address</span>
-                    <span class="value">Sector 5, Salt Lake, Kolkata</span>
+                    <span class="value">--</span>
                 </div>
             </div>
         </div>
@@ -74,20 +74,20 @@
             <div class="glass-card plan-card fade-in delay-1">
                 <h2>My Current Plan</h2>
                 <div class="plan-info">
-                    <h3 class="plan-name">ACN 100 Mbps Unlimited</h3>
+                    <h3 class="plan-name">Loading...</h3>
                     <div class="plan-stat">
                         <i class="ph ph-lightning"></i>
-                        <span>100 Mbps Speed</span>
+                        <span>Speed Loading...</span>
                     </div>
                     <div class="plan-stat">
                         <i class="ph ph-currency-inr"></i>
-                        <span>₹599 / month</span>
+                        <span>Price Loading...</span>
                     </div>
                     <div class="plan-validity">
                         <span class="label">Valid Till:</span>
-                        <span class="value">28th Aug 2026</span>
+                        <span class="value">--</span>
                     </div>
-                    <div class="plan-status active">Active</div>
+                    <div class="plan-status active">...</div>
                 </div>
                 <button class="btn-primary upgrade-btn">Upgrade Plan</button>
             </div>
@@ -96,7 +96,6 @@
             <div class="glass-card usage-card fade-in delay-2">
                 <h2>Data Usage</h2>
                 <div class="usage-chart">
-                    <!-- Simple CSS/SVG Circular Progress Simulation -->
                     <div class="progress-circle" style="--p:45; --c:#F26522;">
                         <div class="progress-inner">
                             <span class="usage-val">320GB</span>
@@ -113,15 +112,15 @@
                 <div class="payment-details">
                     <div class="payment-row">
                         <span>Due Amount</span>
-                        <span class="amount">₹599.00</span>
+                        <span class="amount">₹0.00</span>
                     </div>
                     <div class="payment-row">
                         <span>Last Paid</span>
-                        <span>28th July 2026</span>
+                        <span>--</span>
                     </div>
                     <div class="payment-row">
                         <span>Next Due</span>
-                        <span>28th Aug 2026</span>
+                        <span>--</span>
                     </div>
                 </div>
                 <button class="btn-primary width-full pay-btn">Pay Now</button>
@@ -135,7 +134,6 @@
 
         <!-- Quick Actions & Support Grid -->
         <div class="dashboard-grid-secondary">
-            <!-- Quick Actions -->
             <div class="glass-card actions-card fade-in delay-4">
                 <h2>Quick Actions</h2>
                 <div class="actions-grid">
@@ -158,7 +156,6 @@
                 </div>
             </div>
 
-            <!-- Support Section -->
             <div class="glass-card support-card fade-in delay-5">
                 <h2>24/7 Support</h2>
                 <div class="support-content">
@@ -214,17 +211,39 @@
             });
         }
 
-        // Check Auth State & Populate Data (Compat)
-        auth.onAuthStateChanged((user) => {
+        // Check Auth State & Populate Data
+        auth.onAuthStateChanged(async (user) => {
             if (user) {
                 const sessionData = sessionStorage.getItem('userSession');
                 if (sessionData) {
                     const userData = JSON.parse(sessionData);
                     populateDashboard(userData);
                 } else {
-                    // If session lost but auth exists, we could re-fetch from Firestore here
-                    // For now, redirect to force fresh login if session is empty
-                    window.location.href = 'index.html';
+                    // Fallback: Fetch from Firestore
+                    try {
+                        const doc = await db.collection('customers').doc(user.uid).get();
+                        if (doc.exists) {
+                            const userData = doc.data();
+                            userData.uid = user.uid;
+                            sessionStorage.setItem('userSession', JSON.stringify(userData));
+                            populateDashboard(userData);
+                        } else {
+                            const fallbackData = {
+                                uid: user.uid,
+                                name: user.displayName || 'Customer',
+                                email: user.email || '',
+                                phone: '',
+                                address: '',
+                                plan: 'Standard Plan',
+                                status: 'Active',
+                                due: 0
+                            };
+                            populateDashboard(fallbackData);
+                        }
+                    } catch (error) {
+                        console.error("Error fetching user data:", error);
+                        window.location.href = 'index.html';
+                    }
                 }
             } else {
                 window.location.href = 'index.html';
@@ -232,24 +251,52 @@
         });
 
         function populateDashboard(user) {
-            // Populate Welcome Section
-            document.querySelector('.welcome-text h1').textContent = `Welcome, ${user.name}`;
-            document.querySelector('.user-details .detail-item:nth-child(2) .value').textContent = `+91 ${user.phone}`;
+            const customerId = user.uid ? `ACN-${user.uid.substring(0, 6).toUpperCase()}` : 'ACN-NEW';
+            
+            // Populate Welcome
+            document.querySelector('.welcome-text h1').textContent = `Welcome, ${user.name || 'Customer'}`;
+            
+            // Populate User Details List
+            const values = document.querySelectorAll('.user-details .value');
+            if (values.length >= 3) {
+                values[0].textContent = customerId;
+                values[1].textContent = user.phone ? `+91 ${user.phone}` : 'Not Linked';
+                values[2].textContent = user.address || 'Address Not Found';
+            }
 
-            // Populate Plan Section
-            document.querySelector('.plan-name').textContent = user.plan;
-            document.querySelector('.plan-status').textContent = user.status;
-            document.querySelector('.plan-status').className = `plan-status ${user.status.toLowerCase()}`;
+            // Populate Plan Details
+            document.querySelector('.plan-name').textContent = user.plan || 'Standard 100 Mbps';
+            document.querySelector('.plan-status').textContent = user.status || 'Active';
+            document.querySelector('.plan-status').className = `plan-status ${(user.status || 'active').toLowerCase()}`;
 
-            // Populate Payment Section
-            document.querySelector('.amount').textContent = `₹${user.due.toFixed(2)}`;
+            // Correct Speeds/Prices based on Plan
+            if (user.plan && user.plan.includes('200')) {
+                document.querySelector('.plan-stat span').textContent = '200 Mbps Speed';
+                document.querySelector('.plan-stat:nth-of-type(2) span').textContent = '₹999 / month';
+            } else if (user.plan && user.plan.includes('70')) {
+                document.querySelector('.plan-stat span').textContent = '70 Mbps Speed';
+                document.querySelector('.plan-stat:nth-of-type(2) span').textContent = '₹499 / month';
+            } else {
+                 document.querySelector('.plan-stat span').textContent = '100 Mbps Speed';
+                 document.querySelector('.plan-stat:nth-of-type(2) span').textContent = '₹599 / month';
+            }
 
-            // Update Avatar
-            const avatarImg = document.querySelector('.avatar');
-            avatarImg.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=F26522&color=fff`;
+            // Populate Dues
+            const amountEl = document.querySelector('.payment-card .amount');
+            if (amountEl) {
+                const due = (user.due !== undefined) ? Number(user.due) : 0;
+                amountEl.textContent = `₹${due.toFixed(2)}`;
+            }
+
+            // Update Avatars
+            const avatar = document.querySelector('.avatar');
+            if (avatar) {
+                const name = user.name || 'Customer';
+                avatar.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=F26522&color=fff`;
+            }
         }
 
-        // Logout Logic (Compat)
+        // Logout Logic
         document.querySelector('.logout-btn').addEventListener('click', async () => {
             try {
                 await auth.signOut();
@@ -260,7 +307,7 @@
             }
         });
 
-        // QR Payment Modal Logic
+        // QR Modal Logic
         const payBtn = document.querySelector('.pay-btn');
         const qrModal = document.getElementById('qrModal');
         const closeQrModal = document.getElementById('closeQrModal');

@@ -161,6 +161,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     phone: phone,
                     email: email,
                     name: name,
+                    address: address,
                     plan: 'Standard Plan',
                     status: 'Active',
                     due: 0
@@ -249,6 +250,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         phone: userData.phone || phone,
                         email: userData.email || email,
                         name: userData.name || 'Customer',
+                        address: userData.address || '',
                         plan: userData.plan || 'Standard Plan',
                         status: userData.status || 'Active',
                         due: dueAmount
