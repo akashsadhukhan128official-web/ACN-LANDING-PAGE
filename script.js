@@ -1,4 +1,4 @@
-import { auth, db } from './firebase-config.js';
+import firebase, { auth, db } from './firebase-config.js';
 
 document.addEventListener('DOMContentLoaded', () => {
 
