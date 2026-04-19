@@ -1,7 +1,7 @@
 $ErrorActionPreference = 'Stop'
 
 $root = Split-Path -Parent $MyInvocation.MyCommand.Path
-$port = 5500
+$port = 5501
 
 $mimeTypes = @{
     '.css'  = 'text/css; charset=utf-8'
