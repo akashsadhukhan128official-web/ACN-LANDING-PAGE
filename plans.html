@@ -387,7 +387,7 @@
 
             try {
                 // Email Notification logic
-                await fetch("https://formsubmit.co/ajax/akashsadhukhan128@gmail.com", {
+                const emailResponse = await fetch("https://formsubmit.co/ajax/akashsadhukhan128@gmail.com", {
                     method: "POST",
                     headers: { 
                         "Content-Type": "application/json",
@@ -400,16 +400,23 @@
                         Customer_Email: userData ? userData.email : "Unknown",
                         Upgrade_To: newPlan,
                         New_Price: newPrice,
+                        _captcha: "false",
                         Source: "Dashboard Upgrade Flow"
                     })
                 });
 
-                alert('Upgrade request submitted successfully! Our team will contact you for confirmation.');
+                if (emailResponse.ok) {
+                    alert('Upgrade request submitted successfully! Our team will contact you for confirmation.');
+                } else {
+                    console.warn("Email service error:", await emailResponse.text());
+                    alert('Request sent. If you do not hear from us in 24 hours, please call +91 98740 26889.');
+                }
+                
                 confirmModal.classList.remove('show');
                 document.body.style.overflow = '';
             } catch (error) {
                 console.error("Upgrade notification failed:", error);
-                alert('Request recorded. If you do not hear from us in 24 hours, please call support.');
+                alert('Connection issue. Your request may not have been sent. Please call us at +91 98740 26889.');
             } finally {
                 btn.disabled = false;
                 btn.textContent = originalText;

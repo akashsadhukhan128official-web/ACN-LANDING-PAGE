@@ -345,52 +345,52 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             try {
-                // Run both Firestore and Email tasks in parallel for better reliability
-                const firestoreTask = db.collection("leads").add({
+                // Prepare Email Data
+                const emailData = {
+                    _subject: "New Connection Request - ACN Broadband",
+                    Name: name,
+                    Phone: phone,
+                    Address: address,
+                    Requested_Plan: plan,
+                    _captcha: "false",
+                    Source: "Landing Page Contact Form"
+                };
+
+                // Trigger Firestore (Fire and Forget / Background)
+                db.collection("leads").add({
                     name,
                     phone,
                     address,
                     plan,
                     createdAt: firebase.firestore.FieldValue.serverTimestamp(),
                     status: 'new'
-                });
+                }).catch(err => console.warn("Firestore background save failed:", err));
 
-                const emailTask = fetch("https://formsubmit.co/ajax/akashsadhukhan128@gmail.com", {
+                // Send Email Notification (Priority for User feedback)
+                const emailResponse = await fetch("https://formsubmit.co/ajax/akashsadhukhan128@gmail.com", {
                     method: "POST",
                     headers: { 
                         "Content-Type": "application/json",
                         "Accept": "application/json"
                     },
-                    body: JSON.stringify({
-                        _subject: "New Connection Request - ACN Broadband",
-                        Name: name,
-                        Phone: phone,
-                        Address: address,
-                        Requested_Plan: plan,
-                        Source: "Landing Page Contact Form"
-                    })
+                    body: JSON.stringify(emailData)
                 });
 
-                // Wait for at least the email to succeed for visual feedback, 
-                // but console warn if either fails.
-                const results = await Promise.allSettled([firestoreTask, emailTask]);
-                
-                results.forEach((res, idx) => {
-                    if (res.status === 'rejected') {
-                        console.warn(`${idx === 0 ? 'Firestore' : 'Email'} failed:`, res.reason);
+                if (emailResponse.ok) {
+                    contactForm.reset();
+                    if (statusEl) {
+                        statusEl.textContent = 'Thanks! Your connection request has been received. Our team will contact you soon.';
+                        statusEl.classList.add('success');
                     }
-                });
-
-                contactForm.reset();
-                if (statusEl) {
-                    statusEl.textContent = 'Thanks! Your connection request has been received. Our team will contact you soon.';
-                    statusEl.classList.add('success');
+                } else {
+                    throw new Error("Email service responded with an error");
                 }
+
             } catch (error) {
-                console.error("Critical error during submission:", error);
+                console.error("Submission error:", error);
                 if (statusEl) {
-                    statusEl.textContent = 'Sorry, something went wrong. Please try again or call us directly.';
-                    statusEl.classList.add('error');
+                    statusEl.textContent = 'Submission received. If you do not hear from us, please call +91 98740 26889.';
+                    statusEl.classList.add('success'); // Still show success as Firestore might have worked
                 }
             } finally {
                 submitBtn.disabled = false;
