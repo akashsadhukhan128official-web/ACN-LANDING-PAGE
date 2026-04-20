@@ -364,10 +364,56 @@
             }
         });
 
-        document.getElementById('confirmActionBtn').addEventListener('click', () => {
-            alert('Upgrade request submitted successfully!');
-            confirmModal.classList.remove('show');
-            document.body.style.overflow = '';
+        // Load User Data from Session
+        const sessionData = sessionStorage.getItem('userSession');
+        let userData = sessionData ? JSON.parse(sessionData) : null;
+        
+        // Populate Nav Avatar if user is logged in
+        if (userData) {
+            const navAvatar = document.querySelector('.avatar');
+            if (navAvatar) {
+                navAvatar.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(userData.name)}&background=F26522&color=fff`;
+            }
+        }
+
+        document.getElementById('confirmActionBtn').addEventListener('click', async () => {
+            const btn = document.getElementById('confirmActionBtn');
+            const originalText = btn.textContent;
+            const newPlan = document.getElementById('newPlanName').textContent;
+            const newPrice = document.getElementById('newPlanPrice').textContent;
+
+            btn.disabled = true;
+            btn.textContent = 'Submitting...';
+
+            try {
+                // Email Notification logic
+                await fetch("https://formsubmit.co/ajax/akashsadhukhan128@gmail.com", {
+                    method: "POST",
+                    headers: { 
+                        "Content-Type": "application/json",
+                        "Accept": "application/json"
+                    },
+                    body: JSON.stringify({
+                        _subject: `Plan Upgrade Request: ${newPlan}`,
+                        Customer_Name: userData ? userData.name : "Unknown",
+                        Customer_Phone: userData ? userData.phone : "Unknown",
+                        Customer_Email: userData ? userData.email : "Unknown",
+                        Upgrade_To: newPlan,
+                        New_Price: newPrice,
+                        Source: "Dashboard Upgrade Flow"
+                    })
+                });
+
+                alert('Upgrade request submitted successfully! Our team will contact you for confirmation.');
+                confirmModal.classList.remove('show');
+                document.body.style.overflow = '';
+            } catch (error) {
+                console.error("Upgrade notification failed:", error);
+                alert('Request recorded. If you do not hear from us in 24 hours, please call support.');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = originalText;
+            }
         });
 
     </script>

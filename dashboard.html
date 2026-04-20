@@ -307,6 +307,14 @@
             }
         });
 
+        // Upgrade Plan Logic
+        const upgradeBtn = document.querySelector('.upgrade-btn');
+        if (upgradeBtn) {
+            upgradeBtn.addEventListener('click', () => {
+                window.location.href = 'plans.html';
+            });
+        }
+
         // QR Modal Logic
         const payBtn = document.querySelector('.pay-btn');
         const qrModal = document.getElementById('qrModal');

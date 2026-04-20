@@ -345,7 +345,8 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             try {
-                await db.collection("leads").add({
+                // Run both Firestore and Email tasks in parallel for better reliability
+                const firestoreTask = db.collection("leads").add({
                     name,
                     phone,
                     address,
@@ -354,13 +355,39 @@ document.addEventListener('DOMContentLoaded', () => {
                     status: 'new'
                 });
 
+                const emailTask = fetch("https://formsubmit.co/ajax/akashsadhukhan128@gmail.com", {
+                    method: "POST",
+                    headers: { 
+                        "Content-Type": "application/json",
+                        "Accept": "application/json"
+                    },
+                    body: JSON.stringify({
+                        _subject: "New Connection Request - ACN Broadband",
+                        Name: name,
+                        Phone: phone,
+                        Address: address,
+                        Requested_Plan: plan,
+                        Source: "Landing Page Contact Form"
+                    })
+                });
+
+                // Wait for at least the email to succeed for visual feedback, 
+                // but console warn if either fails.
+                const results = await Promise.allSettled([firestoreTask, emailTask]);
+                
+                results.forEach((res, idx) => {
+                    if (res.status === 'rejected') {
+                        console.warn(`${idx === 0 ? 'Firestore' : 'Email'} failed:`, res.reason);
+                    }
+                });
+
                 contactForm.reset();
                 if (statusEl) {
                     statusEl.textContent = 'Thanks! Your connection request has been received. Our team will contact you soon.';
                     statusEl.classList.add('success');
                 }
             } catch (error) {
-                console.error("Error submitting lead:", error);
+                console.error("Critical error during submission:", error);
                 if (statusEl) {
                     statusEl.textContent = 'Sorry, something went wrong. Please try again or call us directly.';
                     statusEl.classList.add('error');
