@@ -580,7 +580,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 { icon: 'ph-database', label: 'Data', value: 'Unlimited Data' },
                 { icon: 'ph-wrench', label: 'Installation', value: 'Free Installation' },
                 { icon: 'ph-router', label: 'Router', value: 'Chargeable' },
-                { icon: 'ph-television', label: 'OTT Apps', value: 'Prime Video, Hotstar, SonyLIV, Zee5 + 19 more (23+ Total)' },
+                { icon: 'ph-television', label: 'OTT Apps', value: 'Prime Video, JioHotstar, SonyLIV, Zee5 + 19 more (23+ Total)' },
                 { icon: 'ph-headset', label: 'Support', value: 'Priority Support' },
                 { icon: 'ph-star', label: 'Benefits', value: 'Ideal for 4K streaming and WFH.' }
             ]
@@ -592,7 +592,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 { icon: 'ph-database', label: 'Data', value: 'Unlimited Data' },
                 { icon: 'ph-wrench', label: 'Installation', value: 'Free Priority Installation' },
                 { icon: 'ph-router', label: 'Router', value: 'Free Premium Wi-Fi 6 Router' },
-                { icon: 'ph-television', label: 'OTT Apps', value: 'Netflix, Prime, Hotstar, SonyLIV + Live TV' },
+                { icon: 'ph-television', label: 'OTT Apps', value: 'Netflix, Prime, JioHotstar, SonyLIV + Live TV' },
                 { icon: 'ph-headset', label: 'Support', value: '24x7 VIP Support' },
                 { icon: 'ph-star', label: 'Benefits', value: 'Ultimate gaming and 8K streaming experience.' }
             ]
