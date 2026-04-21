@@ -1874,9 +1874,10 @@ h3 {
 }
 
 .ott-logo-box img {
-    width: 100%;
-    height: 100%;
+    max-width: 85%;
+    max-height: 85%;
     object-fit: contain;
+    transition: transform 0.3s ease;
 }
 
 @media (max-width: 768px) {
