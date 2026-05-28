@@ -694,4 +694,87 @@ document.addEventListener('DOMContentLoaded', () => {
             window.location.href = 'plans.html';
         });
     }
+
+    // --- Sliding Sidebar Toggle Logic ---
+    const sidebarToggle = document.getElementById('sidebarToggle');
+    const sidebarMenu = document.getElementById('sidebarMenu');
+    const sidebarOverlay = document.getElementById('sidebarOverlay');
+
+    if (sidebarToggle && sidebarMenu && sidebarOverlay) {
+        const toggleSidebar = () => {
+            const isOpen = sidebarMenu.classList.contains('active');
+            if (isOpen) {
+                closeSidebar();
+            } else {
+                openSidebar();
+            }
+        };
+
+        const openSidebar = () => {
+            sidebarMenu.classList.add('active');
+            sidebarOverlay.classList.add('active');
+            sidebarToggle.classList.add('active');
+            // Change toggle icon from list to x
+            const toggleIcon = sidebarToggle.querySelector('i');
+            if (toggleIcon) {
+                toggleIcon.className = 'ph ph-x';
+            }
+            // Freeze background scroll
+            document.body.style.overflow = 'hidden';
+        };
+
+        const closeSidebar = () => {
+            sidebarMenu.classList.remove('active');
+            sidebarOverlay.classList.remove('active');
+            sidebarToggle.classList.remove('active');
+            // Change toggle icon from x to list
+            const toggleIcon = sidebarToggle.querySelector('i');
+            if (toggleIcon) {
+                toggleIcon.className = 'ph ph-list';
+            }
+            // Unfreeze background scroll
+            document.body.style.overflow = '';
+        };
+
+        // Click event on toggle button
+        sidebarToggle.addEventListener('click', (e) => {
+            e.stopPropagation();
+            toggleSidebar();
+        });
+
+        // Click event on backdrop overlay to close sidebar
+        sidebarOverlay.addEventListener('click', closeSidebar);
+
+        // Close sidebar when a navigation link is clicked
+        const sidebarLinks = sidebarMenu.querySelectorAll('.sidebar-link');
+        sidebarLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                const href = link.getAttribute('href');
+                
+                // If it's a hash link on the same page, scroll and close
+                if (href.startsWith('#')) {
+                    e.preventDefault();
+                    closeSidebar();
+                    
+                    const targetEl = document.querySelector(href);
+                    if (targetEl) {
+                        // Small timeout to allow slide-out animation to complete smoothly
+                        setTimeout(() => {
+                            targetEl.scrollIntoView({ behavior: 'smooth' });
+                        }, 300);
+                    }
+                } else {
+                    // Normal link to another page
+                    closeSidebar();
+                }
+            });
+        });
+
+        // Esc key press to close sidebar
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && sidebarMenu.classList.contains('active')) {
+                closeSidebar();
+            }
+        });
+    }
 });
