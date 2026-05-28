@@ -1910,7 +1910,7 @@ h3 {
 .sidebar-toggle {
     position: fixed;
     top: 34px;
-    right: 40px; /* Aligns horizontally with centered navbar */
+    right: 20px; /* Aligns horizontally with centered navbar */
     width: 48px;
     height: 48px;
     border-radius: 50%;
@@ -1927,6 +1927,12 @@ h3 {
     box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
     transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
     font-size: 1.4rem;
+}
+
+@media (min-width: 1340px) {
+    .sidebar-toggle {
+        right: calc(50% - 600px - 68px); /* Keep close to the centered navbar with a short gap of 20px */
+    }
 }
 
 .sidebar-toggle:hover {
