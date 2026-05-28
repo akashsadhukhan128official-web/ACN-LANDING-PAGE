@@ -674,6 +674,11 @@ h3 {
     height: 100%;
     object-fit: cover;
     transition: transform 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+    /* Prevent browser blurriness during scale animations */
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    will-change: transform;
+    transform: translateZ(0);
 }
 
 /* Slider Navigation Controls */
