@@ -777,4 +777,69 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
+
+    // --- Counter Animation for Combo Section Stats ---
+    const stats = document.querySelectorAll('.stat-number');
+    
+    if (stats.length > 0) {
+        // Pre-parse target numbers and suffixes
+        const statData = Array.from(stats).map(el => {
+            const text = el.textContent.trim();
+            const match = text.match(/^(\d+)(.*)$/);
+            if (match) {
+                return {
+                    element: el,
+                    target: parseInt(match[1], 10),
+                    suffix: match[2] || ''
+                };
+            }
+            return null;
+        }).filter(Boolean);
+
+        const countUp = (data) => {
+            const { element, target, suffix } = data;
+            const duration = 2000; // 2 seconds
+            const start = performance.now();
+            
+            const animate = (now) => {
+                const progress = Math.min((now - start) / duration, 1);
+                // Ease out cubic: f(t) = 1 - (1-t)^3
+                const easeProgress = 1 - Math.pow(1 - progress, 3);
+                const current = Math.floor(easeProgress * target);
+                
+                element.textContent = current + suffix;
+                
+                if (progress < 1) {
+                    requestAnimationFrame(animate);
+                } else {
+                    element.textContent = target + suffix;
+                }
+            };
+            
+            requestAnimationFrame(animate);
+        };
+        
+        const statsObserver = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const el = entry.target;
+                    const data = statData.find(d => d.element === el);
+                    if (data) {
+                        countUp(data);
+                    }
+                    observer.unobserve(el);
+                }
+            });
+        }, {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px' // Trigger slightly before fully visible for smoother UX
+        });
+        
+        statData.forEach(data => {
+            // Set initial state to 0 + suffix
+            data.element.textContent = '0' + data.suffix;
+            statsObserver.observe(data.element);
+        });
+    }
 });
+
