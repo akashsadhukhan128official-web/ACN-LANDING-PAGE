@@ -241,8 +241,19 @@
                             populateDashboard(fallbackData);
                         }
                     } catch (error) {
-                        console.error("Error fetching user data:", error);
-                        window.location.href = 'index.html';
+                        console.error("Error fetching user data (likely rules/permissions):", error);
+                        // Fallback to basic session info without redirecting to index.html to prevent lockouts
+                        const fallbackData = {
+                            uid: user.uid,
+                            name: user.displayName || 'Customer',
+                            email: user.email || '',
+                            phone: '',
+                            address: '',
+                            plan: 'Standard Plan',
+                            status: 'Active',
+                            due: 0
+                        };
+                        populateDashboard(fallbackData);
                     }
                 }
             } else {

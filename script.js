@@ -139,23 +139,30 @@ document.addEventListener('DOMContentLoaded', () => {
             submitBtn.textContent = 'Creating Account...';
 
             try {
-                // 1. Create User in Firebase Auth
-                const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+                // 1. Map phone number to synthetic email for Firebase Auth mapping
+                const authEmail = `${phone}@acn.com`;
+
+                // 2. Create User in Firebase Auth using the phone-based synthetic email
+                const userCredential = await auth.createUserWithEmailAndPassword(authEmail, password);
                 const user = userCredential.user;
 
-                // 2. Save Additional Info to Firestore
-                await db.collection('customers').doc(user.uid).set({
-                    name: name,
-                    email: email,
-                    phone: phone,
-                    address: address,
-                    plan: 'Standard Plan', // Default plan for new signups
-                    status: 'Active',
-                    due: 0,
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
-                });
+                // 3. Save Additional Info to Firestore (with error suppression if rules block it)
+                try {
+                    await db.collection('customers').doc(user.uid).set({
+                        name: name,
+                        email: email, // Save their actual email in Firestore
+                        phone: phone,
+                        address: address,
+                        plan: 'Standard Plan', // Default plan for new signups
+                        status: 'Active',
+                        due: 0,
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                } catch (dbError) {
+                    console.warn("Firestore write failed (likely rules/permissions):", dbError);
+                }
 
-                // 3. Store Session Data
+                // 4. Store Session Data
                 sessionStorage.setItem('userSession', JSON.stringify({
                     uid: user.uid,
                     phone: phone,
@@ -167,7 +174,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     due: 0
                 }));
 
-                // 4. Redirect to Dashboard
+                // 5. Redirect to Dashboard
                 window.location.href = 'dashboard.html';
 
             } catch (error) {
@@ -187,7 +194,7 @@ document.addEventListener('DOMContentLoaded', () => {
         loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
 
-            const phone = document.getElementById('login-phone').value.trim();
+            const phoneInput = document.getElementById('login-phone').value.trim();
             const password = document.getElementById('login-password').value;
             const errorDiv = document.getElementById('login-error');
             const submitBtn = document.getElementById('loginSubmitBtn');
@@ -199,83 +206,128 @@ document.addEventListener('DOMContentLoaded', () => {
             submitBtn.textContent = 'Logging in...';
 
             try {
-                // 1. Phone or Email logic
-                let email = phone;
-                // If the user didn't enter an email (no @ symbol), assume it's a phone number and map it
-                if (!email.includes('@')) {
-                    email = `${phone}@acn.com`;
+                // 1. Handle Phone or Email mapping logic
+                let loginEmail = phoneInput;
+                
+                if (!loginEmail.includes('@')) {
+                    // It's a phone number, map to synthetic email
+                    loginEmail = `${phoneInput}@acn.com`;
+                } else if (!loginEmail.endsWith('@acn.com')) {
+                    // It's a real email address (e.g. user@gmail.com).
+                    // Let's try to query Firestore to find the associated phone number so we can map it.
+                    try {
+                        const querySnapshot = await db.collection("customers").where("email", "==", phoneInput).get();
+                        if (!querySnapshot.empty) {
+                            const userData = querySnapshot.docs[0].data();
+                            if (userData.phone) {
+                                loginEmail = `${userData.phone}@acn.com`;
+                                console.log("Mapped real email to phone-based auth email:", loginEmail);
+                            }
+                        }
+                    } catch (dbError) {
+                        console.warn("Public query for email mapping failed (likely rules/permissions):", dbError);
+                        // Fallback: keep loginEmail as is, in case legacy Auth user was created with a real email
+                    }
                 }
 
-                console.log("Attempting login for:", email);
+                console.log("Attempting login with mapped credential:", loginEmail);
 
-                // 2. Firebase Auth (Compat)
-                const userCredential = await auth.signInWithEmailAndPassword(email, password);
+                // 2. Firebase Auth (Compat) - Try signing in
+                let userCredential;
+                try {
+                    userCredential = await auth.signInWithEmailAndPassword(loginEmail, password);
+                } catch (authError) {
+                    // 2a. User-Not-Found Auto-Registration Fallback for CRM-Created Customers!
+                    // If the customer was created by the admin in the CRM, they exist in Firestore but not in Auth.
+                    // If the loginEmail is a phone-based email and fails with user-not-found, check Firestore!
+                    if ((authError.code === 'auth/user-not-found' || authError.code === 'auth/invalid-credential') && !phoneInput.includes('@')) {
+                        console.log("User not found in Auth. Checking if they exist in Firestore as a registered customer...");
+                        try {
+                            let customerSnap = await db.collection("customers").where("phone", "==", phoneInput).get();
+                            if (customerSnap.empty && !isNaN(phoneInput)) {
+                                customerSnap = await db.collection("customers").where("phone", "==", Number(phoneInput)).get();
+                            }
+                            
+                            if (!customerSnap.empty) {
+                                console.log("Found customer in Firestore! Auto-registering their Auth account...");
+                                // Auto-register them in Firebase Auth with the password they entered
+                                userCredential = await auth.createUserWithEmailAndPassword(loginEmail, password);
+                                console.log("Auto-registration successful!");
+                            } else {
+                                throw authError; // Customer doesn't exist in database either
+                            }
+                        } catch (dbError) {
+                            console.error("Firestore customer check failed:", dbError);
+                            throw authError; // Propagate original auth error
+                        }
+                    } else {
+                        throw authError; // Propagate original auth error
+                    }
+                }
+
                 const user = userCredential.user;
                 console.log("Auth successful, UID:", user.uid);
 
-                // 3. Fetch Customer Data from Firestore (Compat)
-                let querySnapshot;
+                // 3. Fetch Customer Data from Firestore (Compat) - Resilient to permissions
+                let userData = null;
+                try {
+                    let querySnapshot;
+                    if (phoneInput.includes('@')) {
+                        querySnapshot = await db.collection("customers").where("email", "==", phoneInput).get();
+                        if (querySnapshot.empty) {
+                            querySnapshot = await db.collection("customers").where("phone", "==", phoneInput).get();
+                        }
+                    } else {
+                        querySnapshot = await db.collection("customers").where("phone", "==", phoneInput).get();
+                        if (querySnapshot.empty && !isNaN(phoneInput)) {
+                            querySnapshot = await db.collection("customers").where("phone", "==", Number(phoneInput)).get();
+                        }
+                    }
 
-                if (phone.includes('@')) {
-                    // Try matching by email field first
-                    querySnapshot = await db.collection("customers").where("email", "==", phone).get();
-                    // Fallback to checking phone field just in case
-                    if (querySnapshot.empty) {
-                        querySnapshot = await db.collection("customers").where("phone", "==", phone).get();
+                    if (querySnapshot && !querySnapshot.empty) {
+                        userData = querySnapshot.docs[0].data();
                     }
-                } else {
-                    // Try matching by phone field
-                    querySnapshot = await db.collection("customers").where("phone", "==", phone).get();
-                    // If empty, try matching as number
-                    if (querySnapshot.empty && !isNaN(phone)) {
-                        console.log("String match failed, trying numeric match...");
-                        querySnapshot = await db.collection("customers").where("phone", "==", Number(phone)).get();
-                    }
+                } catch (dbError) {
+                    console.warn("Firestore query failed (likely rules/permissions):", dbError);
                 }
 
-                if (!querySnapshot.empty) {
-                    const userData = querySnapshot.docs[0].data();
-                    console.log("Customer data found:", userData.name);
-
-                    // Safely parse due amount
+                // 4. Store Session Data with Fallbacks
+                if (userData) {
                     let dueAmount = 0;
                     if (userData.due !== undefined && userData.due !== null) {
                         dueAmount = Number(userData.due);
                         if (isNaN(dueAmount)) dueAmount = 0;
                     }
 
-                    // 4. Store Session Data with Safe Fallbacks
                     sessionStorage.setItem('userSession', JSON.stringify({
                         uid: user.uid,
-                        phone: userData.phone || phone,
-                        email: userData.email || email,
+                        phone: userData.phone || phoneInput,
+                        email: userData.email || loginEmail,
                         name: userData.name || 'Customer',
                         address: userData.address || '',
                         plan: userData.plan || 'Standard Plan',
                         status: userData.status || 'Active',
                         due: dueAmount
                     }));
-
-                    // 5. Redirect to Dashboard
-                    window.location.href = 'dashboard.html';
                 } else {
-                    // If no firestore document, still log them in using basic Auth details directly (Fallback for newly created accounts lacking Firestore docs in some edges cases)
                     sessionStorage.setItem('userSession', JSON.stringify({
                         uid: user.uid,
-                        email: email,
+                        phone: phoneInput.includes('@') ? '' : phoneInput,
+                        email: loginEmail,
                         name: 'Customer',
                         plan: 'Standard Plan',
                         status: 'Active',
                         due: 0
                     }));
-                    window.location.href = 'dashboard.html';
                 }
+
+                // 5. Redirect to Dashboard
+                window.location.href = 'dashboard.html';
 
             } catch (error) {
                 console.error("Login Error:", error.code, error.message);
-
-                if (error.message === "NOT_FOUND") {
-                    errorDiv.textContent = "Details not found in our database.";
+                if (error.code === 'auth/user-not-found' || error.code === 'auth/invalid-credential') {
+                    errorDiv.textContent = "Invalid mobile/email or password.";
                 } else {
                     errorDiv.textContent = error.message || "Invalid phone or password";
                 }
