@@ -221,13 +221,38 @@
                 } else {
                     // Fallback: Fetch from Firestore
                     try {
+                        let userData = null;
+                        
+                        // 1. Try fetching by user.uid document ID first
                         const doc = await db.collection('customers').doc(user.uid).get();
                         if (doc.exists) {
-                            const userData = doc.data();
+                            userData = doc.data();
                             userData.uid = user.uid;
+                        } else {
+                            // 2. If not found, extract phone from user.email (synthetic email like 9876543210@acn.com)
+                            const userEmail = user.email || '';
+                            if (userEmail.endsWith('@acn.com')) {
+                                const phone = userEmail.split('@')[0];
+                                console.log("Searching Firestore customer by phone:", phone);
+                                let querySnapshot = await db.collection('customers').where('phone', '==', phone).get();
+                                if (querySnapshot.empty && !isNaN(phone)) {
+                                    querySnapshot = await db.collection('customers').where('phone', '==', Number(phone)).get();
+                                }
+                                
+                                if (!querySnapshot.empty) {
+                                    userData = querySnapshot.docs[0].data();
+                                    userData.uid = user.uid;
+                                    userData.firestoreId = querySnapshot.docs[0].id;
+                                    console.log("Found customer in Firestore by phone query:", userData.name);
+                                }
+                            }
+                        }
+
+                        if (userData) {
                             sessionStorage.setItem('userSession', JSON.stringify(userData));
                             populateDashboard(userData);
                         } else {
+                            // 3. Fallback to basic details if nowhere in database
                             const fallbackData = {
                                 uid: user.uid,
                                 name: user.displayName || 'Customer',

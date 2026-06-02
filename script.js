@@ -146,20 +146,25 @@ document.addEventListener('DOMContentLoaded', () => {
                 const userCredential = await auth.createUserWithEmailAndPassword(authEmail, password);
                 const user = userCredential.user;
 
-                // 3. Save Additional Info to Firestore (with error suppression if rules block it)
+                // 3. Save Additional Info to Firestore (using .add() to ensure auto-generated IDs are permitted)
                 try {
-                    await db.collection('customers').doc(user.uid).set({
+                    await db.collection('customers').add({
+                        id: Math.floor(Math.random() * 9000 + 1000).toString(),
                         name: name,
                         email: email, // Save their actual email in Firestore
                         phone: phone,
                         address: address,
                         plan: 'Standard Plan', // Default plan for new signups
+                        amount: 599, // Default plan price
                         status: 'Active',
+                        paymentStatus: 'Paid',
                         due: 0,
-                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                        createdAt: new Date().toISOString()
                     });
+                    console.log("Customer data successfully written to Firestore 'customers' collection.");
                 } catch (dbError) {
-                    console.warn("Firestore write failed (likely rules/permissions):", dbError);
+                    console.error("Firestore write failed:", dbError);
+                    throw new Error("Could not save customer details to database: " + dbError.message);
                 }
 
                 // 4. Store Session Data
