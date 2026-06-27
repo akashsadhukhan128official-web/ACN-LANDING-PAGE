@@ -595,7 +595,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let currentSlide = 0;
     let slideInterval;
-    const INTERVAL_TIME = 15000; // 15 seconds
+
+    function getSliderIntervalTime() {
+        const stored = localStorage.getItem('acn_hero_slide_interval');
+        return stored ? parseInt(stored, 10) : 5000; // Default to 5 seconds
+    }
 
     function updateSlider() {
         // Update Slides
@@ -635,7 +639,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function startAutoSlide() {
         stopAutoSlide();
-        slideInterval = setInterval(nextSlide, INTERVAL_TIME);
+        slideInterval = setInterval(nextSlide, getSliderIntervalTime());
     }
 
     function stopAutoSlide() {
