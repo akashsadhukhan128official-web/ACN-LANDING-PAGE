@@ -528,6 +528,65 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // --- Admin Dynamic Data Sync (Hero Slides, OTT Logos, Plans) ---
+    const storedSlides = localStorage.getItem('acn_hero_slides');
+    if (storedSlides) {
+        try {
+            const slidesArr = JSON.parse(storedSlides);
+            const heroSlider = document.querySelector('.hero-slider');
+            const sliderDots = document.querySelector('.slider-dots');
+            if (heroSlider && sliderDots && slidesArr.length > 0) {
+                heroSlider.innerHTML = '';
+                sliderDots.innerHTML = '';
+                slidesArr.forEach((slide, idx) => {
+                    const itemDiv = document.createElement('div');
+                    itemDiv.className = `slider-item ${idx === 0 ? 'active' : ''}`;
+                    itemDiv.innerHTML = `<img src="${slide.url}" alt="${slide.title}">`;
+                    heroSlider.appendChild(itemDiv);
+
+                    const dotSpan = document.createElement('span');
+                    dotSpan.className = `dot ${idx === 0 ? 'active' : ''}`;
+                    dotSpan.setAttribute('data-index', idx);
+                    sliderDots.appendChild(dotSpan);
+                });
+            }
+        } catch (e) { console.warn('Failed to render dynamic hero slides', e); }
+    }
+
+    const storedOtt = localStorage.getItem('acn_ott_logos');
+    if (storedOtt) {
+        try {
+            const ottArr = JSON.parse(storedOtt);
+            const ottRow = document.querySelector('.ott-logos-row');
+            if (ottRow && ottArr.length > 0) {
+                ottRow.innerHTML = '';
+                ottArr.forEach((ott) => {
+                    const box = document.createElement('div');
+                    box.className = 'ott-logo-box fade-in visible';
+                    box.innerHTML = `<img src="${ott.url}" alt="${ott.name}">`;
+                    ottRow.appendChild(box);
+                });
+            }
+        } catch (e) { console.warn('Failed to render dynamic OTT logos', e); }
+    }
+
+    const storedPlans = localStorage.getItem('acn_plans');
+    if (storedPlans) {
+        try {
+            const plansArr = JSON.parse(storedPlans);
+            plansArr.forEach(p => {
+                const btn = document.querySelector(`.more-details-btn[data-plan="${p.id}"]`);
+                if (btn) {
+                    const card = btn.closest('.plan-card');
+                    if (card) {
+                        const priceEl = card.querySelector('.price');
+                        if (priceEl) priceEl.innerHTML = `${p.price}<span>/month</span>`;
+                    }
+                }
+            });
+        } catch (e) { console.warn('Failed to render dynamic plans', e); }
+    }
+
     // Hero Image Slider Logic
     const sliderItems = document.querySelectorAll('.slider-item');
     const dots = document.querySelectorAll('.dot');
@@ -540,7 +599,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function updateSlider() {
         // Update Slides
-        sliderItems.forEach((item, index) => {
+        const currentSliderItems = document.querySelectorAll('.slider-item');
+        const currentDots = document.querySelectorAll('.dot');
+        currentSliderItems.forEach((item, index) => {
             if (index === currentSlide) {
                 item.classList.add('active');
             } else {
@@ -549,7 +610,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         // Update Dots
-        dots.forEach((dot, index) => {
+        currentDots.forEach((dot, index) => {
             if (index === currentSlide) {
                 dot.classList.add('active');
             } else {
@@ -559,12 +620,16 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function nextSlide() {
-        currentSlide = (currentSlide + 1) % sliderItems.length;
+        const currentSliderItems = document.querySelectorAll('.slider-item');
+        if (currentSliderItems.length === 0) return;
+        currentSlide = (currentSlide + 1) % currentSliderItems.length;
         updateSlider();
     }
 
     function prevSlide() {
-        currentSlide = (currentSlide - 1 + sliderItems.length) % sliderItems.length;
+        const currentSliderItems = document.querySelectorAll('.slider-item');
+        if (currentSliderItems.length === 0) return;
+        currentSlide = (currentSlide - 1 + currentSliderItems.length) % currentSliderItems.length;
         updateSlider();
     }
 
@@ -592,7 +657,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    dots.forEach((dot, index) => {
+    document.querySelectorAll('.dot').forEach((dot, index) => {
         dot.addEventListener('click', () => {
             currentSlide = index;
             updateSlider();
@@ -600,7 +665,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    if (sliderItems.length > 0) {
+    if (document.querySelectorAll('.slider-item').length > 0) {
         startAutoSlide();
     }
 
@@ -611,7 +676,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const modalPlanName = document.getElementById('modalPlanName');
     const modalPlanFeatures = document.getElementById('modalPlanFeatures');
 
-    const planData = {
+    let planData = {
         'Basic': {
             name: 'Basic Plan (₹499*/mo)',
             features: [
@@ -679,6 +744,20 @@ document.addEventListener('DOMContentLoaded', () => {
             ]
         }
     };
+
+    if (storedPlans) {
+        try {
+            const plansArr = JSON.parse(storedPlans);
+            plansArr.forEach(p => {
+                if (planData[p.id]) {
+                    planData[p.id].name = `${p.title} (${p.price}/mo)`;
+                    if (p.speed && planData[p.id].features.length > 0) {
+                        planData[p.id].features[0].value = p.speed;
+                    }
+                }
+            });
+        } catch(e) {}
+    }
 
     if (planDetailsModal && closePlanModal) {
         moreDetailsBtns.forEach(btn => {
