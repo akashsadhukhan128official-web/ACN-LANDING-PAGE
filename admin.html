@@ -774,6 +774,43 @@
         };
 
         // 2. Plans Management
+        function openEditPlanModal(index) {
+            const plan = plansData[index];
+            if (!plan) return;
+            document.getElementById('editPlanId').value = index;
+            document.getElementById('editPlanTitle').value = plan.title;
+            document.getElementById('editPlanPrice').value = plan.price;
+            document.getElementById('editPlanSpeed').value = plan.speed || '';
+            document.getElementById('editPlanCategory').value = plan.category || 'combo';
+            document.getElementById('editPlanPopular').checked = !!plan.popular;
+            document.getElementById('editPlanFeatures').value = plan.features ? plan.features.join(', ') : '';
+
+            const details = plan.details || {};
+            document.getElementById('editPlanData').value = details.data || 'Unlimited Data';
+            document.getElementById('editPlanInstallation').value = details.installation || 'Free Installation';
+            document.getElementById('editPlanRouter').value = details.router || '';
+            document.getElementById('editPlanOtt').value = details.ott || '';
+            document.getElementById('editPlanSupport').value = details.support || '';
+            document.getElementById('editPlanBenefits').value = details.benefits || '';
+
+            document.getElementById('editPlanModal').style.display = 'flex';
+        }
+        window.openEditPlanModal = openEditPlanModal;
+
+        function closeEditPlanModal() {
+            document.getElementById('editPlanModal').style.display = 'none';
+        }
+        window.closeEditPlanModal = closeEditPlanModal;
+
+        function deletePlan(index) {
+            if (confirm('Are you sure you want to delete this subscription plan?')) {
+                plansData.splice(index, 1);
+                localStorage.setItem('acn_plans', JSON.stringify(plansData));
+                renderPlans();
+            }
+        }
+        window.deletePlan = deletePlan;
+
         function renderPlans() {
             const grid = document.getElementById('plansGrid');
             grid.innerHTML = '';
@@ -794,11 +831,29 @@
                     </div>
                     <p style="color:#cbd5e1; font-size:0.85rem; margin-bottom:1rem; line-height:1.4;">${featuresList}</p>
                     <div class="action-btns" style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
-                        <button class="btn-sm btn-secondary" onclick="openEditPlanModal(${index})"><i class="ph ph-pencil-simple"></i> Edit Details</button>
-                        <button class="btn-sm btn-danger" onclick="deletePlan(${index})"><i class="ph ph-trash"></i> Delete</button>
+                        <button type="button" class="btn-sm btn-secondary edit-plan-btn" data-index="${index}" onclick="openEditPlanModal(${index})"><i class="ph ph-pencil-simple"></i> Edit Details</button>
+                        <button type="button" class="btn-sm btn-danger delete-plan-btn" data-index="${index}" onclick="deletePlan(${index})"><i class="ph ph-trash"></i> Delete</button>
                     </div>
                 `;
                 grid.appendChild(card);
+            });
+        }
+
+        const plansGrid = document.getElementById('plansGrid');
+        if (plansGrid) {
+            plansGrid.addEventListener('click', (e) => {
+                const editBtn = e.target.closest('.edit-plan-btn');
+                if (editBtn) {
+                    const idx = parseInt(editBtn.getAttribute('data-index'), 10);
+                    if (!isNaN(idx)) openEditPlanModal(idx);
+                    return;
+                }
+                const delBtn = e.target.closest('.delete-plan-btn');
+                if (delBtn) {
+                    const idx = parseInt(delBtn.getAttribute('data-index'), 10);
+                    if (!isNaN(idx)) deletePlan(idx);
+                    return;
+                }
             });
         }
 
@@ -845,40 +900,6 @@
             document.getElementById('addPlanForm').reset();
             alert(`New plan "${title}" successfully added!`);
         });
-
-        window.deletePlan = function(index) {
-            if (confirm('Are you sure you want to delete this subscription plan?')) {
-                plansData.splice(index, 1);
-                localStorage.setItem('acn_plans', JSON.stringify(plansData));
-                renderPlans();
-            }
-        };
-
-        window.openEditPlanModal = function(index) {
-            const plan = plansData[index];
-            if (!plan) return;
-            document.getElementById('editPlanId').value = index;
-            document.getElementById('editPlanTitle').value = plan.title;
-            document.getElementById('editPlanPrice').value = plan.price;
-            document.getElementById('editPlanSpeed').value = plan.speed || '';
-            document.getElementById('editPlanCategory').value = plan.category || 'combo';
-            document.getElementById('editPlanPopular').checked = !!plan.popular;
-            document.getElementById('editPlanFeatures').value = plan.features ? plan.features.join(', ') : '';
-
-            const details = plan.details || {};
-            document.getElementById('editPlanData').value = details.data || 'Unlimited Data';
-            document.getElementById('editPlanInstallation').value = details.installation || 'Free Installation';
-            document.getElementById('editPlanRouter').value = details.router || '';
-            document.getElementById('editPlanOtt').value = details.ott || '';
-            document.getElementById('editPlanSupport').value = details.support || '';
-            document.getElementById('editPlanBenefits').value = details.benefits || '';
-
-            document.getElementById('editPlanModal').style.display = 'flex';
-        };
-
-        window.closeEditPlanModal = function() {
-            document.getElementById('editPlanModal').style.display = 'none';
-        };
 
         document.getElementById('editPlanForm').addEventListener('submit', (e) => {
             e.preventDefault();
