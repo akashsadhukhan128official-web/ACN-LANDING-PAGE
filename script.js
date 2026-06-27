@@ -574,12 +574,45 @@ document.addEventListener('DOMContentLoaded', () => {
     const comboGrid = document.getElementById('combo-plans-grid');
     const wifiGrid = document.getElementById('wifi-plans-grid');
 
+    const defaultPlansList = [
+        { 
+            id: 'Basic', title: 'Basic Plan', price: '₹499*', period: '/month', speed: '70 Mbps Speed', category: 'combo', popular: false, 
+            features: ['70 Mbps Speed', 'Unlimited Data', 'OTT / Live TV Plan'],
+            details: { speed: '70 Mbps Speed', data: 'Unlimited Data', installation: 'Free Installation', router: 'Available on request', ott: 'Zee5, Hoichoi, SonyLIV, JioHotstar + 17 more', support: '24×7 Support', benefits: 'Perfect for seamless daily browsing.' }
+        },
+        { 
+            id: 'Standard', title: 'Standard Plan', price: '₹599*', period: '/month', speed: '100 Mbps Speed', category: 'combo', popular: true, 
+            features: ['100 Mbps Speed', 'Unlimited Data', '23+ OTTs', '900+ Channels'],
+            details: { speed: '100 Mbps Speed', data: 'Unlimited Data', installation: 'Free Installation', router: 'Chargeable', ott: 'Prime Video, JioHotstar, SonyLIV, Zee5 + 19 more (23+ Total)', support: 'Priority Support', benefits: 'Ideal for 4K streaming and WFH.' }
+        },
+        { 
+            id: 'Premium', title: 'Premium Plan', price: '₹999*', period: '/month', speed: '200 Mbps Speed', category: 'combo', popular: false, 
+            features: ['200 Mbps Speed', 'Unlimited Data', 'Gaming Optimized', 'Priority Support'],
+            details: { speed: '200 Mbps Speed', data: 'Unlimited Data', installation: 'Free Priority Installation', router: 'Free Premium Wi-Fi 6 Router', ott: 'Netflix, Prime, JioHotstar, SonyLIV + Live TV', support: '24x7 VIP Support', benefits: 'Ultimate gaming and 8K streaming experience.' }
+        },
+        { 
+            id: 'Basic WiFi', title: 'Basic WiFi', price: '₹339*', period: '/month', speed: '70 Mbps Speed', category: 'wifi', popular: false, 
+            features: ['70 Mbps Speed', 'Unlimited Data', 'Home Perfect'],
+            details: { speed: '70 Mbps Speed', data: 'Unlimited Data', installation: 'Free Installation', router: 'Free Dual Band Router', ott: 'Not Included', support: '24×7 Support', benefits: 'Home Perfect.' }
+        },
+        { 
+            id: 'Standard WiFi', title: 'Standard WiFi', price: '₹424*', period: '/month', speed: '100 Mbps Speed', category: 'wifi', popular: false, 
+            features: ['100 Mbps Speed', 'Unlimited Data', 'Office & Gaming', 'And many more'],
+            details: { speed: '100 Mbps Speed', data: 'Unlimited Data', installation: 'Free Installation', router: 'Free 5G Dual Band Router', ott: 'Not Included', support: 'Priority Support', benefits: 'Office, Gaming and many more.' }
+        }
+    ];
+
     const storedPlans = localStorage.getItem('acn_plans');
     let plansList = [];
     if (storedPlans) {
         try {
             plansList = JSON.parse(storedPlans);
         } catch (e) { console.warn('Failed to parse acn_plans', e); }
+    }
+
+    if (!plansList || plansList.length === 0) {
+        plansList = defaultPlansList;
+        localStorage.setItem('acn_plans', JSON.stringify(plansList));
     }
 
     if (plansList && plansList.length > 0) {
@@ -592,7 +625,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!targetGrid) return;
 
             const card = document.createElement('div');
-            card.className = `plan-card fade-in ${p.popular ? 'popular' : ''}`;
+            card.className = `plan-card fade-in visible ${p.popular ? 'popular' : ''}`;
             
             let featuresHtml = '';
             if (p.features && Array.isArray(p.features)) {

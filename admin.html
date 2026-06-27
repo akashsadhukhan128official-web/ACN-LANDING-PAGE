@@ -552,7 +552,12 @@
                 return fallback;
             }
             try {
-                return JSON.parse(data);
+                const parsed = JSON.parse(data);
+                if (Array.isArray(parsed) && parsed.length === 0 && key === 'acn_plans') {
+                    localStorage.setItem(key, JSON.stringify(fallback));
+                    return fallback;
+                }
+                return parsed;
             } catch(e) {
                 return fallback;
             }
