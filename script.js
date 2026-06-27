@@ -570,21 +570,52 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (e) { console.warn('Failed to render dynamic OTT logos', e); }
     }
 
+    // Dynamic Plan Grid & Details Rendering
+    const comboGrid = document.getElementById('combo-plans-grid');
+    const wifiGrid = document.getElementById('wifi-plans-grid');
+
     const storedPlans = localStorage.getItem('acn_plans');
+    let plansList = [];
     if (storedPlans) {
         try {
-            const plansArr = JSON.parse(storedPlans);
-            plansArr.forEach(p => {
-                const btn = document.querySelector(`.more-details-btn[data-plan="${p.id}"]`);
-                if (btn) {
-                    const card = btn.closest('.plan-card');
-                    if (card) {
-                        const priceEl = card.querySelector('.price');
-                        if (priceEl) priceEl.innerHTML = `${p.price}<span>/month</span>`;
-                    }
-                }
-            });
-        } catch (e) { console.warn('Failed to render dynamic plans', e); }
+            plansList = JSON.parse(storedPlans);
+        } catch (e) { console.warn('Failed to parse acn_plans', e); }
+    }
+
+    if (plansList && plansList.length > 0) {
+        if (comboGrid) comboGrid.innerHTML = '';
+        if (wifiGrid) wifiGrid.innerHTML = '';
+
+        plansList.forEach(p => {
+            const isWifi = p.category === 'wifi';
+            const targetGrid = isWifi ? wifiGrid : comboGrid;
+            if (!targetGrid) return;
+
+            const card = document.createElement('div');
+            card.className = `plan-card fade-in ${p.popular ? 'popular' : ''}`;
+            
+            let featuresHtml = '';
+            if (p.features && Array.isArray(p.features)) {
+                p.features.forEach(f => {
+                    featuresHtml += `<li><i class="ph ph-check-circle"></i> ${f}</li>`;
+                });
+            }
+
+            const btnClass = p.popular ? 'btn-primary' : 'btn-outline';
+
+            card.innerHTML = `
+                ${p.popular ? '<div class="popular-badge">Most Popular</div>' : ''}
+                <div class="plan-header">
+                    <h3>${p.title}</h3>
+                    <div class="price">${p.price}<span>/month</span></div>
+                </div>
+                <ul class="plan-features">
+                    ${featuresHtml}
+                </ul>
+                <button class="${btnClass} more-details-btn" data-plan="${p.id}">More Details</button>
+            `;
+            targetGrid.appendChild(card);
+        });
     }
 
     // Hero Image Slider Logic
@@ -676,7 +707,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // Plan Details Modal Logic
     const planDetailsModal = document.getElementById('planDetailsModal');
     const closePlanModal = document.getElementById('closePlanModal');
-    const moreDetailsBtns = document.querySelectorAll('.more-details-btn');
     const modalPlanName = document.getElementById('modalPlanName');
     const modalPlanFeatures = document.getElementById('modalPlanFeatures');
 
@@ -688,13 +718,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 { icon: 'ph-database', label: 'Data', value: 'Unlimited Data' },
                 { icon: 'ph-wrench', label: 'Installation', value: 'Free Installation' },
                 { icon: 'ph-router', label: 'Router', value: 'Available on request' },
-                { icon: 'ph-television', label: 'OTT Apps', value: `<div style="display:flex;align-items:center;margin-top:6px;">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/9a/Zee5_logo.svg/512px-Zee5_logo.svg.png" alt="Zee5" title="Zee5" style="width:50px;height:50px;border-radius:14px;object-fit:contain;border:2px solid #222;background:#000;box-shadow:2px 2px 6px rgba(0,0,0,0.25);margin-right:-8px;position:relative;z-index:4;">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/85/Hoichoi_logo.png/480px-Hoichoi_logo.png" alt="Hoichoi" title="Hoichoi" style="width:50px;height:50px;border-radius:14px;object-fit:contain;border:2px solid #c0392b;background:#e74c3c;box-shadow:2px 2px 6px rgba(0,0,0,0.25);margin-right:-8px;position:relative;z-index:3;">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/SonyLIV_logo.svg/512px-SonyLIV_logo.svg.png" alt="SonyLiv" title="Sony LIV" style="width:50px;height:50px;border-radius:14px;object-fit:contain;border:2px solid #111;background:#111;box-shadow:2px 2px 6px rgba(0,0,0,0.25);margin-right:-8px;position:relative;z-index:2;">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/Jio_Hotstar_logo.svg/512px-Jio_Hotstar_logo.svg.png" alt="JioHotstar" title="JioHotstar" style="width:50px;height:50px;border-radius:14px;object-fit:contain;border:2px solid #6a0dad;background:linear-gradient(135deg,#7b2ff7,#3b0f8c);box-shadow:2px 2px 6px rgba(0,0,0,0.25);margin-right:4px;position:relative;z-index:1;">
-                    <div title="More" style="width:50px;height:50px;border-radius:14px;background:#1a3c6e;color:#fff;font-size:1.4rem;font-weight:700;display:flex;align-items:center;justify-content:center;box-shadow:2px 2px 6px rgba(0,0,0,0.2);">+</div>
-                </div>` },
+                { icon: 'ph-television', label: 'OTT Apps', value: 'Zee5, Hoichoi, SonyLIV, JioHotstar' },
                 { icon: 'ph-headset', label: 'Support', value: '24×7 Support' },
                 { icon: 'ph-star', label: 'Benefits', value: 'Perfect for seamless daily browsing.' }
             ]
@@ -749,23 +773,28 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    if (storedPlans) {
-        try {
-            const plansArr = JSON.parse(storedPlans);
-            plansArr.forEach(p => {
-                if (planData[p.id]) {
-                    planData[p.id].name = `${p.title} (${p.price}/mo)`;
-                    if (p.speed && planData[p.id].features.length > 0) {
-                        planData[p.id].features[0].value = p.speed;
-                    }
-                }
-            });
-        } catch(e) {}
+    if (plansList && plansList.length > 0) {
+        plansList.forEach(p => {
+            const detailsObj = p.details || {};
+            planData[p.id] = {
+                name: `${p.title} (${p.price}/mo)`,
+                features: [
+                    { icon: 'ph-speedometer', label: 'Speed', value: detailsObj.speed || p.speed || 'High Speed' },
+                    { icon: 'ph-database', label: 'Data', value: detailsObj.data || 'Unlimited Data' },
+                    { icon: 'ph-wrench', label: 'Installation', value: detailsObj.installation || 'Free Installation' },
+                    { icon: 'ph-router', label: 'Router', value: detailsObj.router || 'Included' },
+                    { icon: 'ph-television', label: 'OTT Apps', value: detailsObj.ott || 'Standard Package' },
+                    { icon: 'ph-headset', label: 'Support', value: detailsObj.support || '24x7 Support' },
+                    { icon: 'ph-star', label: 'Benefits', value: detailsObj.benefits || 'High performance fiber connectivity.' }
+                ]
+            };
+        });
     }
 
     if (planDetailsModal && closePlanModal) {
-        moreDetailsBtns.forEach(btn => {
-            btn.addEventListener('click', () => {
+        document.addEventListener('click', (e) => {
+            const btn = e.target.closest('.more-details-btn');
+            if (btn) {
                 const planType = btn.getAttribute('data-plan');
                 const details = planData[planType];
 
@@ -801,7 +830,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     planDetailsModal.classList.add('show');
                     document.body.style.overflow = 'hidden';
                 }
-            });
+            }
         });
 
         closePlanModal.addEventListener('click', () => {
