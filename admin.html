@@ -599,6 +599,20 @@
         });
         localStorage.setItem('acn_plans', JSON.stringify(plansData));
         let ottLogos = getStoredData('acn_ott_logos', defaultOttLogos);
+        // Normalize ottLogos to guarantee every item has valid id, name, url, and fitMode properties
+        ottLogos = ottLogos.map((ott, idx) => {
+            if (typeof ott === 'string') {
+                return { id: String(idx + 1), name: ott, url: '', fitMode: 'contain' };
+            }
+            return {
+                id: ott.id ? String(ott.id) : String(idx + 1),
+                name: ott.name || `OTT App ${idx + 1}`,
+                url: ott.url || '',
+                fitMode: ott.fitMode || (ott.fullFill ? 'cover' : 'contain'),
+                fullFill: ott.fullFill !== undefined ? ott.fullFill : (ott.fitMode === 'cover')
+            };
+        });
+        localStorage.setItem('acn_ott_logos', JSON.stringify(ottLogos));
 
         // --- Authentication Check ---
         const loginArea = document.getElementById('adminLoginArea');
@@ -651,6 +665,27 @@
                 document.getElementById(targetTab).classList.add('active');
             });
         });
+
+        // --- Toast Notification Helper ---
+        function showAdminToast(msg, type = 'success') {
+            let toastContainer = document.getElementById('adminToastContainer');
+            if (!toastContainer) {
+                toastContainer = document.createElement('div');
+                toastContainer.id = 'adminToastContainer';
+                toastContainer.style.cssText = 'position: fixed; top: 25px; right: 25px; z-index: 99999; display: flex; flex-direction: column; gap: 10px; pointer-events: none;';
+                document.body.appendChild(toastContainer);
+            }
+            const item = document.createElement('div');
+            item.style.cssText = `background: ${type === 'danger' ? '#ef4444' : '#10b981'}; color: white; padding: 12px 22px; border-radius: 12px; font-weight: 600; font-size: 0.95rem; box-shadow: 0 10px 30px rgba(0,0,0,0.4); transition: all 0.3s ease; opacity: 0; transform: translateY(-15px); pointer-events: auto; display: flex; align-items: center; gap: 8px;`;
+            item.innerHTML = `<i class="ph ph-${type === 'danger' ? 'trash' : 'check-circle'}" style="font-size: 1.2rem;"></i> ${msg}`;
+            toastContainer.appendChild(item);
+            setTimeout(() => { item.style.opacity = '1'; item.style.transform = 'translateY(0)'; }, 10);
+            setTimeout(() => {
+                item.style.opacity = '0';
+                item.style.transform = 'translateY(-15px)';
+                setTimeout(() => item.remove(), 300);
+            }, 3000);
+        }
 
         // --- Slider Pass Speed Settings ---
         function initSliderSpeed() {
@@ -1002,26 +1037,36 @@
         }
 
         window.openEditOttModal = function(id) {
-            const ott = ottLogos.find(o => String(o.id) === String(id));
-            if (!ott) return;
+            const ott = ottLogos.find(o => String(o.id) === String(id) || String(o.name) === String(id));
+            if (!ott) {
+                console.warn('OTT logo not found for id/name:', id);
+                return;
+            }
             document.getElementById('editOttId').value = ott.id;
             document.getElementById('editOttName').value = ott.name;
-            document.getElementById('editOttUrl').value = ott.url;
+            document.getElementById('editOttUrl').value = ott.url || '';
             document.getElementById('editOttFile').value = '';
             document.getElementById('editOttFitMode').value = (ott.fitMode === 'cover' || ott.fullFill) ? 'cover' : 'contain';
-            document.getElementById('editOttModal').style.display = 'flex';
+            const modal = document.getElementById('editOttModal');
+            if (modal) {
+                modal.style.display = 'flex';
+            }
         };
 
         window.closeEditOttModal = function() {
-            document.getElementById('editOttModal').style.display = 'none';
+            const modal = document.getElementById('editOttModal');
+            if (modal) {
+                modal.style.display = 'none';
+            }
         };
 
         window.deleteOttLogo = function(id) {
-            if (confirm('Are you sure you want to remove this OTT logo?')) {
-                ottLogos = ottLogos.filter(o => String(o.id) !== String(id));
-                localStorage.setItem('acn_ott_logos', JSON.stringify(ottLogos));
-                renderOttLogos();
-            }
+            const ott = ottLogos.find(o => String(o.id) === String(id) || String(o.name) === String(id));
+            const ottName = ott ? ott.name : 'OTT Logo';
+            ottLogos = ottLogos.filter(o => String(o.id) !== String(id) && String(o.name) !== String(id));
+            localStorage.setItem('acn_ott_logos', JSON.stringify(ottLogos));
+            renderOttLogos();
+            showAdminToast(`Removed "${ottName}" successfully`, 'danger');
         };
 
         document.getElementById('editOttForm').addEventListener('submit', async (e) => {
@@ -1037,16 +1082,16 @@
                 finalUrl = await readFileAsDataURL(fileInput.files[0]);
             }
 
-            const ottIndex = ottLogos.findIndex(o => String(o.id) === String(id));
+            const ottIndex = ottLogos.findIndex(o => String(o.id) === String(id) || String(o.name) === String(id));
             if (ottIndex !== -1) {
                 ottLogos[ottIndex].name = name;
-                ottLogos[ottIndex].url = finalUrl || ottLogos[ottIndex].url;
+                if (finalUrl) ottLogos[ottIndex].url = finalUrl;
                 ottLogos[ottIndex].fitMode = fitMode;
                 ottLogos[ottIndex].fullFill = (fitMode === 'cover');
                 localStorage.setItem('acn_ott_logos', JSON.stringify(ottLogos));
                 renderOttLogos();
                 window.closeEditOttModal();
-                alert(`OTT logo "${name}" updated successfully!`);
+                showAdminToast(`Updated "${name}" logo successfully!`, 'success');
             }
         });
 
@@ -1063,7 +1108,7 @@
             }
 
             if (!finalUrl) {
-                alert('Please enter a logo image URL or select an image file to upload.');
+                showAdminToast('Please enter a logo image URL or select a file to upload.', 'danger');
                 return;
             }
 
@@ -1079,16 +1124,8 @@
             localStorage.setItem('acn_ott_logos', JSON.stringify(ottLogos));
             renderOttLogos();
             document.getElementById('addOttForm').reset();
-            alert('OTT app logo added successfully!');
+            showAdminToast(`Added "${name}" OTT logo successfully!`, 'success');
         });
-
-        window.deleteOttLogo = function(id) {
-            if (confirm('Are you sure you want to remove this OTT logo?')) {
-                ottLogos = ottLogos.filter(o => o.id !== id);
-                localStorage.setItem('acn_ott_logos', JSON.stringify(ottLogos));
-                renderOttLogos();
-            }
-        };
 
         // Helper to convert uploaded files to Base64
         function readFileAsDataURL(file) {
