@@ -562,7 +562,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 ottRow.innerHTML = '';
                 ottArr.forEach((ott) => {
                     const box = document.createElement('div');
-                    box.className = 'ott-logo-box fade-in visible';
+                    const isFullFill = ott.fitMode === 'cover' || ott.fullFill;
+                    box.className = `ott-logo-box fade-in visible ${isFullFill ? 'full-fill' : ''}`;
                     box.innerHTML = `<img src="${ott.url}" alt="${ott.name}">`;
                     ottRow.appendChild(box);
                 });
