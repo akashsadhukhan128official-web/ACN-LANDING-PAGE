@@ -19,6 +19,13 @@
     box-sizing: border-box;
 }
 
+html, body {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+}
+
 body {
     font-family: var(--font-body);
     /* Premium SaaS Gradient Background */
@@ -26,7 +33,6 @@ body {
     background-attachment: fixed;
     color: var(--text-dark);
     line-height: 1.6;
-    overflow-x: hidden;
     position: relative;
 }
 
@@ -1986,9 +1992,10 @@ h3 {
     -webkit-backdrop-filter: blur(35px);
     border-left: 1px solid rgba(255, 255, 255, 0.12);
     z-index: 2000;
-    box-shadow: -15px 0 45px rgba(0, 0, 0, 0.8);
     transform: translateX(100%);
-    transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    visibility: hidden;
+    pointer-events: none;
+    transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.5s cubic-bezier(0.16, 1, 0.3, 1);
     display: flex;
     flex-direction: column;
     padding: 2.5rem 2rem;
@@ -2011,6 +2018,9 @@ h3 {
 
 .sidebar-menu.active {
     transform: translateX(0);
+    visibility: visible;
+    pointer-events: auto;
+    box-shadow: -15px 0 45px rgba(0, 0, 0, 0.8);
 }
 
 /* Sidebar Header styles */

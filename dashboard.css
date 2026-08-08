@@ -2,6 +2,13 @@
 
 /* Base Styles from style.css are inherited, adding specific dashboard overrides */
 
+html, body {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+}
+
 body {
     background: linear-gradient(135deg, #eef2f3 0%, #dbdee4 100%);
     /* Slightly different/cleaner bg for dashboard */
