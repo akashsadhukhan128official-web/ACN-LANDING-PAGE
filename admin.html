@@ -506,6 +506,100 @@
     </div>
 
     <script>
+        // --- Storage Safety Helper ---
+        function safeSetItem(key, value) {
+            try {
+                localStorage.setItem(key, value);
+                return true;
+            } catch (e) {
+                console.warn(`localStorage setItem failed for "${key}":`, e);
+                return false;
+            }
+        }
+
+        // --- Persistent Admin Session Helpers ---
+        function isAdminLoggedIn() {
+            try {
+                return localStorage.getItem('acnAdminLoggedIn') === 'true' || 
+                       sessionStorage.getItem('acnAdminLoggedIn') === 'true';
+            } catch(e) {
+                return sessionStorage.getItem('acnAdminLoggedIn') === 'true';
+            }
+        }
+
+        function setAdminAuth(val) {
+            try {
+                if (val) {
+                    localStorage.setItem('acnAdminLoggedIn', 'true');
+                    sessionStorage.setItem('acnAdminLoggedIn', 'true');
+                } else {
+                    localStorage.removeItem('acnAdminLoggedIn');
+                    sessionStorage.removeItem('acnAdminLoggedIn');
+                }
+            } catch(e) {
+                if (val) {
+                    sessionStorage.setItem('acnAdminLoggedIn', 'true');
+                } else {
+                    sessionStorage.removeItem('acnAdminLoggedIn');
+                }
+            }
+        }
+
+        // --- Image Compression Helpers (Preserves quota & prevents crashes) ---
+        function compressBase64(dataUrl, maxWidth = 1600, maxHeight = 900, quality = 0.75) {
+            return new Promise((resolve) => {
+                const img = new Image();
+                img.onload = () => {
+                    let width = img.width;
+                    let height = img.height;
+                    if (width > maxWidth || height > maxHeight) {
+                        if (width / height > maxWidth / maxHeight) {
+                            height = Math.round((height * maxWidth) / width);
+                            width = maxWidth;
+                        } else {
+                            width = Math.round((width * maxHeight) / height);
+                            height = maxHeight;
+                        }
+                    }
+                    const canvas = document.createElement('canvas');
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+
+                    let compressed = canvas.toDataURL('image/jpeg', quality);
+                    // If still unexpectedly large (> 600KB), compress further
+                    if (compressed.length > 700000) {
+                        compressed = canvas.toDataURL('image/jpeg', 0.6);
+                    }
+                    resolve(compressed);
+                };
+                img.onerror = () => resolve(dataUrl);
+                img.src = dataUrl;
+            });
+        }
+
+        function compressImage(file, maxWidth = 1600, maxHeight = 900, quality = 0.75) {
+            return new Promise((resolve, reject) => {
+                if (!file) return resolve('');
+                if (file.type === 'image/svg+xml') {
+                    const reader = new FileReader();
+                    reader.onload = () => resolve(reader.result);
+                    reader.onerror = reject;
+                    reader.readAsDataURL(file);
+                    return;
+                }
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    compressBase64(e.target.result, maxWidth, maxHeight, quality)
+                        .then(resolve)
+                        .catch(() => resolve(e.target.result));
+                };
+                reader.onerror = reject;
+                reader.readAsDataURL(file);
+            });
+        }
+
         // --- Default Data Storage Initialization ---
         const defaultHeroSlides = [
             { id: '1', title: 'ACN Combo Broadband - Happy Family', url: 'images/hero-family.png' },
@@ -557,13 +651,13 @@
         function getStoredData(key, fallback) {
             const data = localStorage.getItem(key);
             if (!data) {
-                localStorage.setItem(key, JSON.stringify(fallback));
+                safeSetItem(key, JSON.stringify(fallback));
                 return fallback;
             }
             try {
                 const parsed = JSON.parse(data);
                 if (Array.isArray(parsed) && parsed.length === 0 && key === 'acn_plans') {
-                    localStorage.setItem(key, JSON.stringify(fallback));
+                    safeSetItem(key, JSON.stringify(fallback));
                     return fallback;
                 }
                 return parsed;
@@ -573,6 +667,29 @@
         }
 
         let heroSlides = getStoredData('acn_hero_slides', defaultHeroSlides);
+
+        // Sanitize & optimize any previously saved oversized slides in the background
+        async function optimizeExistingSlides() {
+            let changed = false;
+            for (let i = 0; i < heroSlides.length; i++) {
+                const s = heroSlides[i];
+                if (s && s.url && s.url.startsWith('data:image') && s.url.length > 700000) {
+                    try {
+                        const opt = await compressBase64(s.url, 1600, 900, 0.7);
+                        if (opt && opt.length < s.url.length) {
+                            s.url = opt;
+                            changed = true;
+                        }
+                    } catch(e) {}
+                }
+            }
+            if (changed) {
+                safeSetItem('acn_hero_slides', JSON.stringify(heroSlides));
+                renderHeroSlides();
+            }
+        }
+        setTimeout(optimizeExistingSlides, 500);
+
         let plansData = getStoredData('acn_plans', defaultPlans);
         // Normalize plansData to ensure legacy browser cache gets details & category properties
         plansData = plansData.map(p => {
@@ -597,7 +714,7 @@
                 }
             };
         });
-        localStorage.setItem('acn_plans', JSON.stringify(plansData));
+        safeSetItem('acn_plans', JSON.stringify(plansData));
         let ottLogos = getStoredData('acn_ott_logos', defaultOttLogos);
         // Normalize ottLogos to guarantee every item has valid id, name, url, and fitMode properties
         ottLogos = ottLogos.map((ott, idx) => {
@@ -612,7 +729,7 @@
                 fullFill: ott.fullFill !== undefined ? ott.fullFill : (ott.fitMode === 'cover')
             };
         });
-        localStorage.setItem('acn_ott_logos', JSON.stringify(ottLogos));
+        safeSetItem('acn_ott_logos', JSON.stringify(ottLogos));
 
         // --- Authentication Check ---
         const loginArea = document.getElementById('adminLoginArea');
@@ -621,7 +738,7 @@
         const loginError = document.getElementById('admin-login-error');
 
         function checkAuth() {
-            if (sessionStorage.getItem('acnAdminLoggedIn') === 'true') {
+            if (isAdminLoggedIn()) {
                 loginArea.style.display = 'none';
                 dashboardArea.style.display = 'block';
                 renderAllAdminSections();
@@ -637,7 +754,7 @@
             const passwordInput = document.getElementById('admin-password').value.trim();
 
             if (usernameInput === 'akash128' && passwordInput === '8013773652') {
-                sessionStorage.setItem('acnAdminLoggedIn', 'true');
+                setAdminAuth(true);
                 loginError.style.display = 'none';
                 checkAuth();
             } else {
@@ -647,7 +764,7 @@
         });
 
         document.getElementById('adminLogoutBtn').addEventListener('click', () => {
-            sessionStorage.removeItem('acnAdminLoggedIn');
+            setAdminAuth(false);
             checkAuth();
         });
 
@@ -697,9 +814,9 @@
         document.getElementById('sliderSpeedForm').addEventListener('submit', (e) => {
             e.preventDefault();
             const val = document.getElementById('slideIntervalSelect').value;
-            localStorage.setItem('acn_hero_slide_interval', val);
+            safeSetItem('acn_hero_slide_interval', val);
             const seconds = parseInt(val) / 1000;
-            alert(`Slide pass time successfully updated to ${seconds} seconds!`);
+            showAdminToast(`Slide pass time updated to ${seconds} seconds!`, 'success');
         });
 
         // --- Render Functions ---
@@ -744,7 +861,7 @@
             const temp = heroSlides[index];
             heroSlides[index] = heroSlides[targetIndex];
             heroSlides[targetIndex] = temp;
-            localStorage.setItem('acn_hero_slides', JSON.stringify(heroSlides));
+            safeSetItem('acn_hero_slides', JSON.stringify(heroSlides));
             renderHeroSlides();
         };
 
@@ -753,7 +870,7 @@
             if (!slide) return;
             document.getElementById('editSlideId').value = slide.id;
             document.getElementById('editSlideTitle').value = slide.title;
-            document.getElementById('editSlideUrl').value = slide.url;
+            document.getElementById('editSlideUrl').value = slide.url.startsWith('data:') ? '' : slide.url;
             document.getElementById('editSlideFile').value = '';
             document.getElementById('editSlideModal').style.display = 'flex';
         };
@@ -764,61 +881,120 @@
 
         document.getElementById('editHeroSlideForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const id = document.getElementById('editSlideId').value;
-            const title = document.getElementById('editSlideTitle').value.trim();
-            const urlInput = document.getElementById('editSlideUrl').value.trim();
-            const fileInput = document.getElementById('editSlideFile');
-
-            let finalUrl = urlInput;
-            if (fileInput.files && fileInput.files[0]) {
-                finalUrl = await readFileAsDataURL(fileInput.files[0]);
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            const originalBtnHtml = submitBtn ? submitBtn.innerHTML : '';
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="ph ph-spinner"></i> Saving...';
             }
 
-            const slideIndex = heroSlides.findIndex(s => s.id === id);
-            if (slideIndex !== -1) {
-                heroSlides[slideIndex].title = title;
-                heroSlides[slideIndex].url = finalUrl || heroSlides[slideIndex].url;
-                localStorage.setItem('acn_hero_slides', JSON.stringify(heroSlides));
-                renderHeroSlides();
-                closeEditSlideModal();
-                alert('Hero poster slide updated successfully!');
+            try {
+                const id = document.getElementById('editSlideId').value;
+                const title = document.getElementById('editSlideTitle').value.trim();
+                const urlInput = document.getElementById('editSlideUrl').value.trim();
+                const fileInput = document.getElementById('editSlideFile');
+
+                let finalUrl = urlInput;
+                if (fileInput.files && fileInput.files[0]) {
+                    finalUrl = await compressImage(fileInput.files[0], 1600, 900, 0.75);
+                }
+
+                const slideIndex = heroSlides.findIndex(s => s.id === id);
+                if (slideIndex !== -1) {
+                    const previousUrl = heroSlides[slideIndex].url;
+                    heroSlides[slideIndex].title = title;
+                    if (finalUrl) heroSlides[slideIndex].url = finalUrl;
+                    
+                    const saved = safeSetItem('acn_hero_slides', JSON.stringify(heroSlides));
+                    if (!saved) {
+                        heroSlides[slideIndex].url = previousUrl;
+                        alert('Browser storage quota reached. Please delete an older slide first, or use a direct image URL.');
+                        return;
+                    }
+
+                    renderHeroSlides();
+                    closeEditSlideModal();
+                    showAdminToast('Hero poster slide updated successfully!', 'success');
+                }
+            } catch (err) {
+                console.error('Error modifying poster slide:', err);
+                alert('Failed to modify slide: ' + (err.message || err));
+            } finally {
+                if (submitBtn) {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = originalBtnHtml;
+                }
             }
         });
 
         document.getElementById('addHeroSlideForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const title = document.getElementById('slideTitle').value.trim();
-            const urlInput = document.getElementById('slideUrl').value.trim();
-            const fileInput = document.getElementById('slideFile');
-
-            let finalUrl = urlInput;
-            if (fileInput.files && fileInput.files[0]) {
-                finalUrl = await readFileAsDataURL(fileInput.files[0]);
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            const originalBtnHtml = submitBtn ? submitBtn.innerHTML : '';
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="ph ph-spinner"></i> Uploading & Compressing...';
             }
 
-            if (!finalUrl) {
-                alert('Please enter an image URL or choose an image file to upload.');
-                return;
+            try {
+                const title = document.getElementById('slideTitle').value.trim();
+                const urlInput = document.getElementById('slideUrl').value.trim();
+                const fileInput = document.getElementById('slideFile');
+
+                let finalUrl = urlInput;
+                if (fileInput.files && fileInput.files[0]) {
+                    finalUrl = await compressImage(fileInput.files[0], 1600, 900, 0.75);
+                }
+
+                if (!finalUrl) {
+                    alert('Please enter an image URL or choose an image file to upload.');
+                    return;
+                }
+
+                const newSlide = {
+                    id: Date.now().toString(),
+                    title: title,
+                    url: finalUrl
+                };
+
+                heroSlides.push(newSlide);
+                let saved = safeSetItem('acn_hero_slides', JSON.stringify(heroSlides));
+
+                if (!saved) {
+                    // Try more aggressive compression if file was uploaded
+                    if (fileInput.files && fileInput.files[0]) {
+                        finalUrl = await compressImage(fileInput.files[0], 1200, 675, 0.6);
+                        newSlide.url = finalUrl;
+                        heroSlides[heroSlides.length - 1] = newSlide;
+                        saved = safeSetItem('acn_hero_slides', JSON.stringify(heroSlides));
+                    }
+                    if (!saved) {
+                        heroSlides.pop();
+                        alert('Browser storage quota reached. Please remove one or more older poster slides first, or enter an image URL.');
+                        return;
+                    }
+                }
+
+                renderHeroSlides();
+                document.getElementById('addHeroSlideForm').reset();
+                showAdminToast('New hero poster slide added successfully!', 'success');
+            } catch (err) {
+                console.error('Error adding hero poster:', err);
+                alert('Failed to add poster: ' + (err.message || err));
+            } finally {
+                if (submitBtn) {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = originalBtnHtml;
+                }
             }
-
-            const newSlide = {
-                id: Date.now().toString(),
-                title: title,
-                url: finalUrl
-            };
-
-            heroSlides.push(newSlide);
-            localStorage.setItem('acn_hero_slides', JSON.stringify(heroSlides));
-            renderHeroSlides();
-            document.getElementById('addHeroSlideForm').reset();
-            alert('New slide poster added successfully!');
         });
 
         window.deleteHeroSlide = function(id) {
             if (confirm('Are you sure you want to delete this hero poster slide?')) {
                 heroSlides = heroSlides.filter(s => s.id !== id);
-                localStorage.setItem('acn_hero_slides', JSON.stringify(heroSlides));
+                safeSetItem('acn_hero_slides', JSON.stringify(heroSlides));
                 renderHeroSlides();
+                showAdminToast('Hero poster slide deleted successfully.', 'danger');
             }
         };
 
@@ -854,8 +1030,9 @@
         function deletePlan(index) {
             if (confirm('Are you sure you want to delete this subscription plan?')) {
                 plansData.splice(index, 1);
-                localStorage.setItem('acn_plans', JSON.stringify(plansData));
+                safeSetItem('acn_plans', JSON.stringify(plansData));
                 renderPlans();
+                showAdminToast('Plan deleted successfully.', 'danger');
             }
         }
         window.deletePlan = deletePlan;
@@ -944,10 +1121,10 @@
             };
 
             plansData.push(newPlan);
-            localStorage.setItem('acn_plans', JSON.stringify(plansData));
+            safeSetItem('acn_plans', JSON.stringify(plansData));
             renderPlans();
             document.getElementById('addPlanForm').reset();
-            alert(`New plan "${title}" successfully added!`);
+            showAdminToast(`New plan "${title}" successfully added!`, 'success');
         });
 
         document.getElementById('editPlanForm').addEventListener('submit', (e) => {
@@ -987,10 +1164,10 @@
                 benefits: benefits
             };
 
-            localStorage.setItem('acn_plans', JSON.stringify(plansData));
+            safeSetItem('acn_plans', JSON.stringify(plansData));
             renderPlans();
             closeEditPlanModal();
-            alert(`Updated plan "${title}" successfully!`);
+            showAdminToast(`Updated plan "${title}" successfully!`, 'success');
         });
 
         // 3. OTT Logos Management
@@ -1064,67 +1241,101 @@
             const ott = ottLogos.find(o => String(o.id) === String(id) || String(o.name) === String(id));
             const ottName = ott ? ott.name : 'OTT Logo';
             ottLogos = ottLogos.filter(o => String(o.id) !== String(id) && String(o.name) !== String(id));
-            localStorage.setItem('acn_ott_logos', JSON.stringify(ottLogos));
+            safeSetItem('acn_ott_logos', JSON.stringify(ottLogos));
             renderOttLogos();
             showAdminToast(`Removed "${ottName}" successfully`, 'danger');
         };
 
         document.getElementById('editOttForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const id = document.getElementById('editOttId').value;
-            const name = document.getElementById('editOttName').value.trim();
-            const urlInput = document.getElementById('editOttUrl').value.trim();
-            const fileInput = document.getElementById('editOttFile');
-            const fitMode = document.getElementById('editOttFitMode').value;
-
-            let finalUrl = urlInput;
-            if (fileInput.files && fileInput.files[0]) {
-                finalUrl = await readFileAsDataURL(fileInput.files[0]);
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            const originalBtnHtml = submitBtn ? submitBtn.innerHTML : '';
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="ph ph-spinner"></i> Saving...';
             }
 
-            const ottIndex = ottLogos.findIndex(o => String(o.id) === String(id) || String(o.name) === String(id));
-            if (ottIndex !== -1) {
-                ottLogos[ottIndex].name = name;
-                if (finalUrl) ottLogos[ottIndex].url = finalUrl;
-                ottLogos[ottIndex].fitMode = fitMode;
-                ottLogos[ottIndex].fullFill = (fitMode === 'cover');
-                localStorage.setItem('acn_ott_logos', JSON.stringify(ottLogos));
-                renderOttLogos();
-                window.closeEditOttModal();
-                showAdminToast(`Updated "${name}" logo successfully!`, 'success');
+            try {
+                const id = document.getElementById('editOttId').value;
+                const name = document.getElementById('editOttName').value.trim();
+                const urlInput = document.getElementById('editOttUrl').value.trim();
+                const fileInput = document.getElementById('editOttFile');
+                const fitMode = document.getElementById('editOttFitMode').value;
+
+                let finalUrl = urlInput;
+                if (fileInput.files && fileInput.files[0]) {
+                    finalUrl = await compressImage(fileInput.files[0], 400, 400, 0.8);
+                }
+
+                const ottIndex = ottLogos.findIndex(o => String(o.id) === String(id) || String(o.name) === String(id));
+                if (ottIndex !== -1) {
+                    ottLogos[ottIndex].name = name;
+                    if (finalUrl) ottLogos[ottIndex].url = finalUrl;
+                    ottLogos[ottIndex].fitMode = fitMode;
+                    ottLogos[ottIndex].fullFill = (fitMode === 'cover');
+                    safeSetItem('acn_ott_logos', JSON.stringify(ottLogos));
+                    renderOttLogos();
+                    window.closeEditOttModal();
+                    showAdminToast(`Updated "${name}" logo successfully!`, 'success');
+                }
+            } catch (err) {
+                console.error('Error updating OTT logo:', err);
+                alert('Failed to update OTT logo: ' + (err.message || err));
+            } finally {
+                if (submitBtn) {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = originalBtnHtml;
+                }
             }
         });
 
         document.getElementById('addOttForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const name = document.getElementById('ottName').value.trim();
-            const urlInput = document.getElementById('ottUrl').value.trim();
-            const fileInput = document.getElementById('ottFile');
-            const fitMode = document.getElementById('ottFitMode').value;
-
-            let finalUrl = urlInput;
-            if (fileInput.files && fileInput.files[0]) {
-                finalUrl = await readFileAsDataURL(fileInput.files[0]);
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            const originalBtnHtml = submitBtn ? submitBtn.innerHTML : '';
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="ph ph-spinner"></i> Saving...';
             }
 
-            if (!finalUrl) {
-                showAdminToast('Please enter a logo image URL or select a file to upload.', 'danger');
-                return;
+            try {
+                const name = document.getElementById('ottName').value.trim();
+                const urlInput = document.getElementById('ottUrl').value.trim();
+                const fileInput = document.getElementById('ottFile');
+                const fitMode = document.getElementById('ottFitMode').value;
+
+                let finalUrl = urlInput;
+                if (fileInput.files && fileInput.files[0]) {
+                    finalUrl = await compressImage(fileInput.files[0], 400, 400, 0.8);
+                }
+
+                if (!finalUrl) {
+                    showAdminToast('Please enter a logo image URL or select a file to upload.', 'danger');
+                    return;
+                }
+
+                const newOtt = {
+                    id: Date.now().toString(),
+                    name: name,
+                    url: finalUrl,
+                    fitMode: fitMode,
+                    fullFill: (fitMode === 'cover')
+                };
+
+                ottLogos.push(newOtt);
+                safeSetItem('acn_ott_logos', JSON.stringify(ottLogos));
+                renderOttLogos();
+                document.getElementById('addOttForm').reset();
+                showAdminToast(`Added "${name}" OTT logo successfully!`, 'success');
+            } catch (err) {
+                console.error('Error adding OTT logo:', err);
+                alert('Failed to add OTT logo: ' + (err.message || err));
+            } finally {
+                if (submitBtn) {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = originalBtnHtml;
+                }
             }
-
-            const newOtt = {
-                id: Date.now().toString(),
-                name: name,
-                url: finalUrl,
-                fitMode: fitMode,
-                fullFill: (fitMode === 'cover')
-            };
-
-            ottLogos.push(newOtt);
-            localStorage.setItem('acn_ott_logos', JSON.stringify(ottLogos));
-            renderOttLogos();
-            document.getElementById('addOttForm').reset();
-            showAdminToast(`Added "${name}" OTT logo successfully!`, 'success');
         });
 
         // Helper to convert uploaded files to Base64
