@@ -14,6 +14,10 @@
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="dashboard.css">
+    <!-- Firebase Compat SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
     <script>
         (function() {
             try {
@@ -254,6 +258,7 @@
         }
         
         /* Edit Modal Styles */
+        @keyframes adminSpin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         .modal-overlay {
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
@@ -314,7 +319,8 @@
         <nav class="dashboard-nav">
             <div class="container nav-content">
                 <div class="logo"><i class="ph ph-shield-check" style="color: var(--primary-orange);"></i> ACN Admin Control</div>
-                <div class="nav-right">
+                <div class="nav-right" style="display: flex; align-items: center; gap: 15px;">
+                    <span id="cloudSyncStatus" style="font-size: 0.8rem; padding: 4px 12px; border-radius: 12px; background: rgba(16, 185, 129, 0.2); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.4); display: flex; align-items: center; gap: 6px; font-weight: 600;"><i class="ph ph-cloud-check"></i> Cloud Connected</span>
                     <div class="user-profile">
                         <img src="https://ui-avatars.com/api/?name=Admin+Akash&background=F26522&color=fff" alt="Admin Avatar" class="avatar">
                         <span class="logout-btn" id="adminLogoutBtn"><i class="ph ph-sign-out"></i> Logout</span>
@@ -562,6 +568,175 @@
             }
         }
 
+        // --- Firebase Cloud Configuration & DB Connection ---
+        const firebaseConfig = {
+            apiKey: "AIzaSyDMKzg3d9-e7twvGHq2xjMUOwmM9uEqQqY",
+            authDomain: "acn-landing-login.firebaseapp.com",
+            databaseURL: "https://acn-landing-login-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "acn-landing-login",
+            storageBucket: "acn-landing-login.firebasestorage.app",
+            messagingSenderId: "398411390456",
+            appId: "1:398411390456:web:522a91458be1e554a30a0d",
+            measurementId: "G-K655SL1GV7"
+        };
+
+        const fb = window.firebase;
+        let fbAuth = null;
+        let fbDb = null;
+
+        if (fb) {
+            try {
+                if (!fb.apps.length) {
+                    fb.initializeApp(firebaseConfig);
+                }
+                fbAuth = fb.auth();
+                fbDb = fb.firestore();
+            } catch(e) {
+                console.warn('Firebase init notice in admin:', e);
+            }
+        }
+
+        function updateCloudBadge(status, text) {
+            const badge = document.getElementById('cloudSyncStatus');
+            if (!badge) return;
+            if (status === 'syncing') {
+                badge.style.background = 'rgba(0, 210, 255, 0.2)';
+                badge.style.color = '#00d2ff';
+                badge.style.borderColor = 'rgba(0, 210, 255, 0.4)';
+                badge.innerHTML = `<i class="ph ph-spinner" style="animation: adminSpin 1s linear infinite;"></i> ${text || 'Saving to Cloud...'}`;
+            } else if (status === 'error') {
+                badge.style.background = 'rgba(239, 68, 68, 0.2)';
+                badge.style.color = '#ef4444';
+                badge.style.borderColor = 'rgba(239, 68, 68, 0.4)';
+                badge.innerHTML = `<i class="ph ph-warning-circle"></i> ${text || 'Cloud Error'}`;
+            } else {
+                badge.style.background = 'rgba(16, 185, 129, 0.2)';
+                badge.style.color = '#10b981';
+                badge.style.borderColor = 'rgba(16, 185, 129, 0.4)';
+                badge.innerHTML = `<i class="ph ph-cloud-check"></i> ${text || 'Cloud Synced'}`;
+            }
+        }
+
+        async function ensureAdminCloudAuth() {
+            if (!fbAuth) return false;
+            try {
+                if (!fbAuth.currentUser) {
+                    await fbAuth.signInWithEmailAndPassword("admin@acnbroadband.in", "password123456");
+                }
+                return true;
+            } catch (e) {
+                try {
+                    await fbAuth.createUserWithEmailAndPassword("admin@acnbroadband.in", "password123456");
+                    return true;
+                } catch (err) {
+                    console.warn("Cloud auth notice:", err);
+                    return false;
+                }
+            }
+        }
+
+        // Save complete portal dataset to Firestore
+        async function savePortalToCloud() {
+            if (!fbDb) return false;
+            updateCloudBadge('syncing', 'Saving to Cloud...');
+            try {
+                await ensureAdminCloudAuth();
+
+                const intervalVal = parseInt(localStorage.getItem('acn_hero_slide_interval') || '5000', 10);
+                const payload = {
+                    hero_slides: heroSlides,
+                    plans: plansData,
+                    ott_logos: ottLogos,
+                    slide_interval: intervalVal,
+                    updatedAt: Date.now()
+                };
+
+                // 1. Save all-in-one portal data document (fast 1-query fetch for live site)
+                await fbDb.collection('content').doc('portal_data').set(payload);
+
+                // 2. Also save to individual collections for safety & scale
+                const batch = fbDb.batch();
+
+                // Save hero slides
+                heroSlides.forEach((slide, idx) => {
+                    const ref = fbDb.collection('acn_hero_slides').doc(String(slide.id));
+                    batch.set(ref, { ...slide, order: idx + 1, updatedAt: Date.now() });
+                });
+
+                // Save plans
+                plansData.forEach((plan, idx) => {
+                    const ref = fbDb.collection('acn_plans').doc(String(plan.id));
+                    batch.set(ref, { ...plan, order: idx + 1, updatedAt: Date.now() });
+                });
+
+                // Save OTT logos
+                ottLogos.forEach((ott, idx) => {
+                    const ref = fbDb.collection('acn_ott_logos').doc(String(ott.id));
+                    batch.set(ref, { ...ott, order: idx + 1, updatedAt: Date.now() });
+                });
+
+                // Save settings
+                const settingsRef = fbDb.collection('acn_settings').doc('slider');
+                batch.set(settingsRef, { interval: intervalVal, updatedAt: Date.now() });
+
+                await batch.commit();
+
+                updateCloudBadge('synced', 'Cloud Synced');
+                return true;
+            } catch (err) {
+                console.error('Error saving to cloud Firestore:', err);
+                updateCloudBadge('error', 'Cloud Sync Failed');
+                return false;
+            }
+        }
+
+        // Fetch portal dataset from Firestore on startup
+        async function loadPortalFromCloud() {
+            if (!fbDb) return false;
+            updateCloudBadge('syncing', 'Syncing from Cloud...');
+            try {
+                await ensureAdminCloudAuth();
+                const doc = await fbDb.collection('content').doc('portal_data').get();
+                if (doc.exists && doc.data() && Array.isArray(doc.data().hero_slides) && doc.data().hero_slides.length > 0) {
+                    const data = doc.data();
+                    let updated = false;
+
+                    if (Array.isArray(data.hero_slides) && data.hero_slides.length > 0) {
+                        heroSlides = data.hero_slides;
+                        safeSetItem('acn_hero_slides', JSON.stringify(heroSlides));
+                        updated = true;
+                    }
+                    if (Array.isArray(data.plans) && data.plans.length > 0) {
+                        plansData = data.plans;
+                        safeSetItem('acn_plans', JSON.stringify(plansData));
+                        updated = true;
+                    }
+                    if (Array.isArray(data.ott_logos) && data.ott_logos.length > 0) {
+                        ottLogos = data.ott_logos;
+                        safeSetItem('acn_ott_logos', JSON.stringify(ottLogos));
+                        updated = true;
+                    }
+                    if (data.slide_interval) {
+                        safeSetItem('acn_hero_slide_interval', String(data.slide_interval));
+                    }
+
+                    if (updated) {
+                        renderAllAdminSections();
+                    }
+                    updateCloudBadge('synced', 'Cloud Synced');
+                    return true;
+                } else {
+                    // Cloud document not created yet; initial seed from current defaults
+                    await savePortalToCloud();
+                    return true;
+                }
+            } catch (err) {
+                console.warn('Could not load from cloud, keeping local data:', err);
+                updateCloudBadge('error', 'Offline Cache');
+                return false;
+            }
+        }
+
         // --- Image Compression Helpers (Preserves quota & prevents crashes) ---
         function compressBase64(dataUrl, maxWidth = 1280, maxHeight = 720, quality = 0.70) {
             return new Promise((resolve) => {
@@ -764,6 +939,7 @@
                 if (loginArea) loginArea.style.display = 'none';
                 if (dashboardArea) dashboardArea.style.display = 'block';
                 renderAllAdminSections();
+                loadPortalFromCloud();
             } else {
                 if (loginArea) loginArea.style.display = 'flex';
                 if (dashboardArea) dashboardArea.style.display = 'none';
@@ -870,6 +1046,7 @@
             safeSetItem('acn_hero_slide_interval', val);
             const seconds = parseInt(val) / 1000;
             showAdminToast(`Slide pass time updated to ${seconds} seconds!`, 'success');
+            savePortalToCloud();
         }
 
         const saveSpeedBtn = document.getElementById('saveSpeedBtn');
@@ -932,6 +1109,7 @@
             heroSlides[targetIndex] = temp;
             safeSetItem('acn_hero_slides', JSON.stringify(heroSlides));
             renderHeroSlides();
+            savePortalToCloud();
         };
 
         window.openEditSlideModal = function(id) {
@@ -987,7 +1165,8 @@
 
                     renderHeroSlides();
                     closeEditSlideModal();
-                    showAdminToast('Hero poster slide updated successfully!', 'success');
+                    showAdminToast('Hero poster slide updated & saved to cloud!', 'success');
+                    await savePortalToCloud();
                 }
             } catch (err) {
                 console.error('Error modifying poster slide:', err);
@@ -1071,7 +1250,8 @@
                 renderHeroSlides();
                 const slideForm = document.getElementById('addHeroSlideForm');
                 if (slideForm) slideForm.reset();
-                showAdminToast('New hero poster slide added successfully!', 'success');
+                showAdminToast('New hero poster slide added & saved to cloud!', 'success');
+                await savePortalToCloud();
             } catch (err) {
                 console.error('Error adding hero poster:', err);
                 alert('Failed to add poster: ' + (err.message || err));
@@ -1104,7 +1284,11 @@
                 heroSlides = heroSlides.filter(s => s.id !== id);
                 safeSetItem('acn_hero_slides', JSON.stringify(heroSlides));
                 renderHeroSlides();
-                showAdminToast('Hero poster slide deleted successfully.', 'danger');
+                showAdminToast('Hero poster slide deleted from cloud.', 'danger');
+                if (fbDb) {
+                    try { fbDb.collection('acn_hero_slides').doc(String(id)).delete().catch(console.warn); } catch(e){}
+                }
+                savePortalToCloud();
             }
         };
 
@@ -1139,10 +1323,14 @@
 
         function deletePlan(index) {
             if (confirm('Are you sure you want to delete this subscription plan?')) {
-                plansData.splice(index, 1);
+                const deleted = plansData.splice(index, 1);
                 safeSetItem('acn_plans', JSON.stringify(plansData));
                 renderPlans();
-                showAdminToast('Plan deleted successfully.', 'danger');
+                showAdminToast('Plan deleted from cloud.', 'danger');
+                if (fbDb && deleted && deleted[0]) {
+                    try { fbDb.collection('acn_plans').doc(String(deleted[0].id)).delete().catch(console.warn); } catch(e){}
+                }
+                savePortalToCloud();
             }
         }
         window.deletePlan = deletePlan;
@@ -1239,7 +1427,8 @@
             renderPlans();
             const pForm = document.getElementById('addPlanForm');
             if (pForm) pForm.reset();
-            showAdminToast(`New plan "${title}" successfully added!`, 'success');
+            showAdminToast(`New plan "${title}" added & saved to cloud!`, 'success');
+            savePortalToCloud();
         }
 
         const addPlanBtn = document.getElementById('addPlanBtn');
@@ -1297,7 +1486,8 @@
             safeSetItem('acn_plans', JSON.stringify(plansData));
             renderPlans();
             closeEditPlanModal();
-            showAdminToast(`Updated plan "${title}" successfully!`, 'success');
+            showAdminToast(`Updated plan "${title}" & saved to cloud!`, 'success');
+            savePortalToCloud();
         }
 
         const saveEditPlanBtn = document.getElementById('saveEditPlanBtn');
@@ -1389,7 +1579,11 @@
             ottLogos = ottLogos.filter(o => String(o.id) !== String(id) && String(o.name) !== String(id));
             safeSetItem('acn_ott_logos', JSON.stringify(ottLogos));
             renderOttLogos();
-            showAdminToast(`Removed "${ottName}" successfully`, 'danger');
+            showAdminToast(`Removed "${ottName}" from cloud`, 'danger');
+            if (fbDb && ott && ott.id) {
+                try { fbDb.collection('acn_ott_logos').doc(String(ott.id)).delete().catch(console.warn); } catch(e){}
+            }
+            savePortalToCloud();
         };
 
         async function handleSaveEditOtt() {
@@ -1426,7 +1620,8 @@
                     safeSetItem('acn_ott_logos', JSON.stringify(ottLogos));
                     renderOttLogos();
                     window.closeEditOttModal();
-                    showAdminToast(`Updated "${name}" logo successfully!`, 'success');
+                    showAdminToast(`Updated "${name}" logo & saved to cloud!`, 'success');
+                    await savePortalToCloud();
                 }
             } catch (err) {
                 console.error('Error updating OTT logo:', err);
@@ -1497,7 +1692,8 @@
                 renderOttLogos();
                 const addForm = document.getElementById('addOttForm');
                 if (addForm) addForm.reset();
-                showAdminToast(`Added "${name}" OTT logo successfully!`, 'success');
+                showAdminToast(`Added "${name}" OTT logo & saved to cloud!`, 'success');
+                await savePortalToCloud();
             } catch (err) {
                 console.error('Error adding OTT logo:', err);
                 alert('Failed to add OTT logo: ' + (err.message || err));

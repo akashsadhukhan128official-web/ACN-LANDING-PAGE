@@ -528,222 +528,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- Admin Dynamic Data Sync (Hero Slides, OTT Logos, Plans) ---
-    const storedSlides = localStorage.getItem('acn_hero_slides');
-    if (storedSlides) {
-        try {
-            const slidesArr = JSON.parse(storedSlides);
-            const heroSlider = document.querySelector('.hero-slider');
-            const sliderDots = document.querySelector('.slider-dots');
-            if (heroSlider && sliderDots && slidesArr.length > 0) {
-                heroSlider.innerHTML = '';
-                sliderDots.innerHTML = '';
-                slidesArr.forEach((slide, idx) => {
-                    const itemDiv = document.createElement('div');
-                    itemDiv.className = `slider-item ${idx === 0 ? 'active' : ''}`;
-                    itemDiv.innerHTML = `<img src="${slide.url}" alt="${slide.title}">`;
-                    heroSlider.appendChild(itemDiv);
-
-                    const dotSpan = document.createElement('span');
-                    dotSpan.className = `dot ${idx === 0 ? 'active' : ''}`;
-                    dotSpan.setAttribute('data-index', idx);
-                    sliderDots.appendChild(dotSpan);
-                });
-            }
-        } catch (e) { console.warn('Failed to render dynamic hero slides', e); }
-    }
-
-    const storedOtt = localStorage.getItem('acn_ott_logos');
-    if (storedOtt) {
-        try {
-            const ottArr = JSON.parse(storedOtt);
-            const ottRow = document.querySelector('.ott-logos-row');
-            if (ottRow && ottArr.length > 0) {
-                ottRow.innerHTML = '';
-                ottArr.forEach((ott) => {
-                    const box = document.createElement('div');
-                    const isFullFill = ott.fitMode === 'cover' || ott.fullFill;
-                    box.className = `ott-logo-box fade-in visible ${isFullFill ? 'full-fill' : ''}`;
-                    box.innerHTML = `<img src="${ott.url}" alt="${ott.name}">`;
-                    ottRow.appendChild(box);
-                });
-            }
-        } catch (e) { console.warn('Failed to render dynamic OTT logos', e); }
-    }
-
-    // Dynamic Plan Grid & Details Rendering
-    const comboGrid = document.getElementById('combo-plans-grid');
-    const wifiGrid = document.getElementById('wifi-plans-grid');
-
-    const defaultPlansList = [
-        { 
-            id: 'Basic', title: 'Basic Plan', price: '₹499*', period: '/month', speed: '70 Mbps Speed', category: 'combo', popular: false, 
-            features: ['70 Mbps Speed', 'Unlimited Data', 'OTT / Live TV Plan'],
-            details: { speed: '70 Mbps Speed', data: 'Unlimited Data', installation: 'Free Installation', router: 'Available on request', ott: 'Zee5, Hoichoi, SonyLIV, JioHotstar + 17 more', support: '24×7 Support', benefits: 'Perfect for seamless daily browsing.' }
-        },
-        { 
-            id: 'Standard', title: 'Standard Plan', price: '₹599*', period: '/month', speed: '100 Mbps Speed', category: 'combo', popular: true, 
-            features: ['100 Mbps Speed', 'Unlimited Data', '23+ OTTs', '900+ Channels'],
-            details: { speed: '100 Mbps Speed', data: 'Unlimited Data', installation: 'Free Installation', router: 'Chargeable', ott: 'Prime Video, JioHotstar, SonyLIV, Zee5 + 19 more (23+ Total)', support: 'Priority Support', benefits: 'Ideal for 4K streaming and WFH.' }
-        },
-        { 
-            id: 'Premium', title: 'Premium Plan', price: '₹999*', period: '/month', speed: '200 Mbps Speed', category: 'combo', popular: false, 
-            features: ['200 Mbps Speed', 'Unlimited Data', 'Gaming Optimized', 'Priority Support'],
-            details: { speed: '200 Mbps Speed', data: 'Unlimited Data', installation: 'Free Priority Installation', router: 'Free Premium Wi-Fi 6 Router', ott: 'Netflix, Prime, JioHotstar, SonyLIV + Live TV', support: '24x7 VIP Support', benefits: 'Ultimate gaming and 8K streaming experience.' }
-        },
-        { 
-            id: 'Basic WiFi', title: 'Basic WiFi', price: '₹339*', period: '/month', speed: '70 Mbps Speed', category: 'wifi', popular: false, 
-            features: ['70 Mbps Speed', 'Unlimited Data', 'Home Perfect'],
-            details: { speed: '70 Mbps Speed', data: 'Unlimited Data', installation: 'Free Installation', router: 'Free Dual Band Router', ott: 'Not Included', support: '24×7 Support', benefits: 'Home Perfect.' }
-        },
-        { 
-            id: 'Standard WiFi', title: 'Standard WiFi', price: '₹424*', period: '/month', speed: '100 Mbps Speed', category: 'wifi', popular: false, 
-            features: ['100 Mbps Speed', 'Unlimited Data', 'Office & Gaming', 'And many more'],
-            details: { speed: '100 Mbps Speed', data: 'Unlimited Data', installation: 'Free Installation', router: 'Free 5G Dual Band Router', ott: 'Not Included', support: 'Priority Support', benefits: 'Office, Gaming and many more.' }
-        }
-    ];
-
-    const storedPlans = localStorage.getItem('acn_plans');
-    let plansList = [];
-    if (storedPlans) {
-        try {
-            plansList = JSON.parse(storedPlans);
-        } catch (e) { console.warn('Failed to parse acn_plans', e); }
-    }
-
-    if (!plansList || plansList.length === 0) {
-        plansList = defaultPlansList;
-        localStorage.setItem('acn_plans', JSON.stringify(plansList));
-    }
-
-    if (plansList && plansList.length > 0) {
-        if (comboGrid) comboGrid.innerHTML = '';
-        if (wifiGrid) wifiGrid.innerHTML = '';
-
-        plansList.forEach(p => {
-            const isWifi = p.category === 'wifi';
-            const targetGrid = isWifi ? wifiGrid : comboGrid;
-            if (!targetGrid) return;
-
-            const card = document.createElement('div');
-            card.className = `plan-card fade-in visible ${p.popular ? 'popular' : ''}`;
-            
-            let featuresHtml = '';
-            if (p.features && Array.isArray(p.features)) {
-                p.features.forEach(f => {
-                    featuresHtml += `<li><i class="ph ph-check-circle"></i> ${f}</li>`;
-                });
-            }
-
-            const btnClass = p.popular ? 'btn-primary' : 'btn-outline';
-
-            card.innerHTML = `
-                ${p.popular ? '<div class="popular-badge">Most Popular</div>' : ''}
-                <div class="plan-header">
-                    <h3>${p.title}</h3>
-                    <div class="price">${p.price}<span>/month</span></div>
-                </div>
-                <ul class="plan-features">
-                    ${featuresHtml}
-                </ul>
-                <button class="${btnClass} more-details-btn" data-plan="${p.id}">More Details</button>
-            `;
-            targetGrid.appendChild(card);
-        });
-    }
-
-    // Hero Image Slider Logic
-    const sliderItems = document.querySelectorAll('.slider-item');
-    const dots = document.querySelectorAll('.dot');
-    const prevBtn = document.querySelector('.slider-arrow.prev');
-    const nextBtn = document.querySelector('.slider-arrow.next');
-
-    let currentSlide = 0;
-    let slideInterval;
-
-    function getSliderIntervalTime() {
-        const stored = localStorage.getItem('acn_hero_slide_interval');
-        return stored ? parseInt(stored, 10) : 5000; // Default to 5 seconds
-    }
-
-    function updateSlider() {
-        // Update Slides
-        const currentSliderItems = document.querySelectorAll('.slider-item');
-        const currentDots = document.querySelectorAll('.dot');
-        currentSliderItems.forEach((item, index) => {
-            if (index === currentSlide) {
-                item.classList.add('active');
-            } else {
-                item.classList.remove('active');
-            }
-        });
-
-        // Update Dots
-        currentDots.forEach((dot, index) => {
-            if (index === currentSlide) {
-                dot.classList.add('active');
-            } else {
-                dot.classList.remove('active');
-            }
-        });
-    }
-
-    function nextSlide() {
-        const currentSliderItems = document.querySelectorAll('.slider-item');
-        if (currentSliderItems.length === 0) return;
-        currentSlide = (currentSlide + 1) % currentSliderItems.length;
-        updateSlider();
-    }
-
-    function prevSlide() {
-        const currentSliderItems = document.querySelectorAll('.slider-item');
-        if (currentSliderItems.length === 0) return;
-        currentSlide = (currentSlide - 1 + currentSliderItems.length) % currentSliderItems.length;
-        updateSlider();
-    }
-
-    function startAutoSlide() {
-        stopAutoSlide();
-        slideInterval = setInterval(nextSlide, getSliderIntervalTime());
-    }
-
-    function stopAutoSlide() {
-        if (slideInterval) clearInterval(slideInterval);
-    }
-
-    // Manual Controls
-    if (nextBtn) {
-        nextBtn.addEventListener('click', () => {
-            nextSlide();
-            startAutoSlide(); // Reset timer
-        });
-    }
-
-    if (prevBtn) {
-        prevBtn.addEventListener('click', () => {
-            prevSlide();
-            startAutoSlide(); // Reset timer
-        });
-    }
-
-    document.querySelectorAll('.dot').forEach((dot, index) => {
-        dot.addEventListener('click', () => {
-            currentSlide = index;
-            updateSlider();
-            startAutoSlide(); // Reset timer
-        });
-    });
-
-    if (document.querySelectorAll('.slider-item').length > 0) {
-        startAutoSlide();
-    }
-
-    // Plan Details Modal Logic
-    const planDetailsModal = document.getElementById('planDetailsModal');
-    const closePlanModal = document.getElementById('closePlanModal');
-    const modalPlanName = document.getElementById('modalPlanName');
-    const modalPlanFeatures = document.getElementById('modalPlanFeatures');
-
+    // --- Dynamic Plan Details Data Structure ---
     let planData = {
         'Basic': {
             name: 'Basic Plan (₹499*/mo)',
@@ -807,8 +592,88 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    if (plansList && plansList.length > 0) {
+    // --- Dynamic Hero Slides Renderer ---
+    function renderDynamicHeroSlides(slidesArr) {
+        if (!slidesArr || !Array.isArray(slidesArr) || slidesArr.length === 0) return;
+        const heroSlider = document.querySelector('.hero-slider');
+        const sliderDots = document.querySelector('.slider-dots');
+        if (!heroSlider || !sliderDots) return;
+
+        heroSlider.innerHTML = '';
+        sliderDots.innerHTML = '';
+        slidesArr.forEach((slide, idx) => {
+            const itemDiv = document.createElement('div');
+            itemDiv.className = `slider-item ${idx === 0 ? 'active' : ''}`;
+            itemDiv.innerHTML = `<img src="${slide.url}" alt="${slide.title}">`;
+            heroSlider.appendChild(itemDiv);
+
+            const dotSpan = document.createElement('span');
+            dotSpan.className = `dot ${idx === 0 ? 'active' : ''}`;
+            dotSpan.setAttribute('data-index', idx);
+            sliderDots.appendChild(dotSpan);
+        });
+        currentSlide = 0;
+        updateSlider();
+        startAutoSlide();
+    }
+
+    // --- Dynamic OTT Logos Renderer ---
+    function renderDynamicOttLogos(ottArr) {
+        if (!ottArr || !Array.isArray(ottArr) || ottArr.length === 0) return;
+        const ottRow = document.querySelector('.ott-logos-row');
+        if (!ottRow) return;
+
+        ottRow.innerHTML = '';
+        ottArr.forEach((ott) => {
+            const box = document.createElement('div');
+            const isFullFill = ott.fitMode === 'cover' || ott.fullFill;
+            box.className = `ott-logo-box fade-in visible ${isFullFill ? 'full-fill' : ''}`;
+            box.innerHTML = `<img src="${ott.url}" alt="${ott.name}">`;
+            ottRow.appendChild(box);
+        });
+    }
+
+    // --- Dynamic Plans Renderer ---
+    function renderDynamicPlans(plansList) {
+        if (!plansList || !Array.isArray(plansList) || plansList.length === 0) return;
+        const comboGrid = document.getElementById('combo-plans-grid');
+        const wifiGrid = document.getElementById('wifi-plans-grid');
+        if ((!comboGrid && !wifiGrid) || !plansList || plansList.length === 0) return;
+
+        if (comboGrid) comboGrid.innerHTML = '';
+        if (wifiGrid) wifiGrid.innerHTML = '';
+
         plansList.forEach(p => {
+            const isWifi = p.category === 'wifi';
+            const targetGrid = isWifi ? wifiGrid : comboGrid;
+            if (!targetGrid) return;
+
+            const card = document.createElement('div');
+            card.className = `plan-card fade-in visible ${p.popular ? 'popular' : ''}`;
+            
+            let featuresHtml = '';
+            if (p.features && Array.isArray(p.features)) {
+                p.features.forEach(f => {
+                    featuresHtml += `<li><i class="ph ph-check-circle"></i> ${f}</li>`;
+                });
+            }
+
+            const btnClass = p.popular ? 'btn-primary' : 'btn-outline';
+
+            card.innerHTML = `
+                ${p.popular ? '<div class="popular-badge">Most Popular</div>' : ''}
+                <div class="plan-header">
+                    <h3>${p.title}</h3>
+                    <div class="price">${p.price}<span>/month</span></div>
+                </div>
+                <ul class="plan-features">
+                    ${featuresHtml}
+                </ul>
+                <button class="${btnClass} more-details-btn" data-plan="${p.id}">More Details</button>
+            `;
+            targetGrid.appendChild(card);
+
+            // Update planData for More Details modal
             const detailsObj = p.details || {};
             planData[p.id] = {
                 name: `${p.title} (${p.price}/mo)`,
@@ -824,6 +689,162 @@ document.addEventListener('DOMContentLoaded', () => {
             };
         });
     }
+
+    // Hero Image Slider Logic
+    const prevBtn = document.querySelector('.slider-arrow.prev');
+    const nextBtn = document.querySelector('.slider-arrow.next');
+
+    let currentSlide = 0;
+    let slideInterval;
+
+    function getSliderIntervalTime() {
+        const stored = localStorage.getItem('acn_hero_slide_interval');
+        return stored ? parseInt(stored, 10) : 5000;
+    }
+
+    function updateSlider() {
+        const currentSliderItems = document.querySelectorAll('.slider-item');
+        const currentDots = document.querySelectorAll('.dot');
+        currentSliderItems.forEach((item, index) => {
+            if (index === currentSlide) {
+                item.classList.add('active');
+            } else {
+                item.classList.remove('active');
+            }
+        });
+
+        currentDots.forEach((dot, index) => {
+            if (index === currentSlide) {
+                dot.classList.add('active');
+            } else {
+                dot.classList.remove('active');
+            }
+        });
+    }
+
+    function nextSlide() {
+        const currentSliderItems = document.querySelectorAll('.slider-item');
+        if (currentSliderItems.length === 0) return;
+        currentSlide = (currentSlide + 1) % currentSliderItems.length;
+        updateSlider();
+    }
+
+    function prevSlide() {
+        const currentSliderItems = document.querySelectorAll('.slider-item');
+        if (currentSliderItems.length === 0) return;
+        currentSlide = (currentSlide - 1 + currentSliderItems.length) % currentSliderItems.length;
+        updateSlider();
+    }
+
+    function startAutoSlide() {
+        stopAutoSlide();
+        slideInterval = setInterval(nextSlide, getSliderIntervalTime());
+    }
+
+    function stopAutoSlide() {
+        if (slideInterval) clearInterval(slideInterval);
+    }
+
+    if (nextBtn) {
+        nextBtn.addEventListener('click', () => {
+            nextSlide();
+            startAutoSlide();
+        });
+    }
+
+    if (prevBtn) {
+        prevBtn.addEventListener('click', () => {
+            prevSlide();
+            startAutoSlide();
+        });
+    }
+
+    const sliderDotsContainer = document.querySelector('.slider-dots');
+    if (sliderDotsContainer) {
+        sliderDotsContainer.addEventListener('click', (e) => {
+            const dot = e.target.closest('.dot');
+            if (dot) {
+                const idx = parseInt(dot.getAttribute('data-index'), 10);
+                if (!isNaN(idx)) {
+                    currentSlide = idx;
+                    updateSlider();
+                    startAutoSlide();
+                }
+            }
+        });
+    }
+
+    // --- Initial Fast Render from LocalStorage Cache ---
+    const cachedSlides = localStorage.getItem('acn_hero_slides');
+    if (cachedSlides) {
+        try { renderDynamicHeroSlides(JSON.parse(cachedSlides)); } catch (e) {}
+    } else if (document.querySelectorAll('.slider-item').length > 0) {
+        startAutoSlide();
+    }
+
+    const cachedOtt = localStorage.getItem('acn_ott_logos');
+    if (cachedOtt) {
+        try { renderDynamicOttLogos(JSON.parse(cachedOtt)); } catch (e) {}
+    }
+
+    const cachedPlans = localStorage.getItem('acn_plans');
+    if (cachedPlans) {
+        try { renderDynamicPlans(JSON.parse(cachedPlans)); } catch (e) {}
+    }
+
+    // --- Real-time Cloud Sync from Firestore ---
+    async function ensurePublicReaderAuth() {
+        if (!auth) return false;
+        try {
+            if (!auth.currentUser) {
+                await auth.signInWithEmailAndPassword('public-reader@acnbroadband.in', 'ACNReader@2026');
+            }
+            return true;
+        } catch (e) {
+            console.warn('Silent public-reader auth:', e);
+            return false;
+        }
+    }
+
+    async function initCloudPortalSync() {
+        if (!db) return;
+        await ensurePublicReaderAuth();
+
+        db.collection('content').doc('portal_data').onSnapshot((doc) => {
+            if (doc.exists) {
+                const data = doc.data();
+
+                // 1. Sync Hero Slides
+                if (Array.isArray(data.hero_slides) && data.hero_slides.length > 0) {
+                    localStorage.setItem('acn_hero_slides', JSON.stringify(data.hero_slides));
+                    renderDynamicHeroSlides(data.hero_slides);
+                }
+
+                // 2. Sync Plans
+                if (Array.isArray(data.plans) && data.plans.length > 0) {
+                    localStorage.setItem('acn_plans', JSON.stringify(data.plans));
+                    renderDynamicPlans(data.plans);
+                }
+
+                // 3. Sync OTT Logos
+                if (Array.isArray(data.ott_logos) && data.ott_logos.length > 0) {
+                    localStorage.setItem('acn_ott_logos', JSON.stringify(data.ott_logos));
+                    renderDynamicOttLogos(data.ott_logos);
+                }
+
+                // 4. Sync Slide Interval
+                if (data.slide_interval) {
+                    localStorage.setItem('acn_hero_slide_interval', String(data.slide_interval));
+                    startAutoSlide();
+                }
+            }
+        }, (err) => {
+            console.warn('Live portal cloud sync notice:', err);
+        });
+    }
+
+    // Start Realtime Cloud Sync
+    initCloudPortalSync();
 
     if (planDetailsModal && closePlanModal) {
         document.addEventListener('click', (e) => {
